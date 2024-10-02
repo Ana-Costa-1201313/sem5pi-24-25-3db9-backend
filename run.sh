@@ -1,0 +1,2 @@
+cd HealthcareApp
+dotnet run
