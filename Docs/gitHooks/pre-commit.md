@@ -1,10 +1,10 @@
 Steps to make a .git hook for pre-commit testing:
 
-1- Go to your .git/hook folder and check for a pre-commit file (.git/hooks/pre-commit).
+**1**- Go to your .git/hook folder and check for a pre-commit file (.git/hooks/pre-commit).
     1.1- If it does not exist, create it.
     1.2- If it exists but has a .sample extension, remove it.
 
-2- Delete its content and copy the following text to it:
+**2**- Delete its content and copy the following text to it:
 
 #!/bin/sh
 #
@@ -38,6 +38,6 @@ fi
 echo "All tests passed. Proceeding with commit."
 exit 0
 
-3- Make the new script executable with the command: chmod +x .git/hooks/pre-commit
+**3**- Make the new script executable with the command: chmod +x .git/hooks/pre-commit
 
 Now if you try to commit tests that fail, the commit will be cancelled.
