@@ -27,7 +27,7 @@ namespace HealthcareApp.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetGetById(Guid id)
+        public async Task<ActionResult<CategoryDto>> (Guid id)
         {
             var cat = await _service.GetByIdAsync(new CategoryId(id));
 
