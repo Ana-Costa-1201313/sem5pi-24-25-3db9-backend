@@ -6,7 +6,7 @@ Steps to make a .git hook for pre-commit testing:
 
 **2**- Delete its content and copy the following text to it:
 
-#!/bin/sh
+```#!/bin/sh
 #
 # An example hook script to verify what is about to be committed.
 # Called by "git commit" with no arguments.  The hook should
@@ -37,6 +37,7 @@ fi
 
 echo "Build sucess and all tests passed. Proceeding with commit."
 exit 0
+```
 
 **3**- Make the new script executable with the command: chmod +x .git/hooks/pre-commit
 
