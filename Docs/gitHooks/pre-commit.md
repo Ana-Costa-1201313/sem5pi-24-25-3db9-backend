@@ -24,18 +24,18 @@ else
 fi
 
 # Adiciona a execução dos testes .NET
-echo "Running tests before commit..."
+echo "Building project and running tests before commit..."
 
 # Executar os testes .NET
 dotnet test ./Tests
 
 # Verificar se os testes falharam
 if [ $? -ne 0 ]; then
-    echo "Tests failed. Commit aborted."
+    echo "Build or Tests failed. Commit aborted."
     exit 1
 fi
 
-echo "All tests passed. Proceeding with commit."
+echo "Build sucess and all tests passed. Proceeding with commit."
 exit 0
 
 **3**- Make the new script executable with the command: chmod +x .git/hooks/pre-commit
