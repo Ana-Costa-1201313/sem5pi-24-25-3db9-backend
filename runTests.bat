@@ -1,2 +1,2 @@
-cd Tests
+cd HealthcareApp
 dotnet test

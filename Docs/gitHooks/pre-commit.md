@@ -27,7 +27,7 @@ fi
 echo "Building project and running tests before commit..."
 
 # Executar os testes .NET
-dotnet test ./Tests
+dotnet test
 
 # Verificar se os testes falharam
 if [ $? -ne 0 ]; then

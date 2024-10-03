@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Tests
+namespace HealthcareApp.Tests
 {
     public class Test1
     {
