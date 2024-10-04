@@ -17,34 +17,37 @@ This project is part of the sem5pi-24-25-3db9-backend repository, belonging to t
 [Planning and Technical Documentation](docs/readme.md)
 
 
-## 3. How to Run
+## 3. How to Build
 
 Run one of the following scripts in the Terminal:
-- run script, that builds and runs the application, giving the HTTP/s URLs;
-- updateBD script, that drops the tables and the migrations and creates them again;
+- "build" script, that installs the necessary tools and husky for the pre-commit hook;
+- "updateBD" script, that drops the tables and the migrations and creates them again;
 
-*Example:* open the terminal and type ./run.bat
+*Example:* open the terminal and type ./build.bat
+
+*Note:* This project uses .NET version 8.0.
+
+To use the database, configure a Microsoft SQL Server database:
+- for a local database, simply run the "build" and the "updateDB" scripts. A .db file will be created in your user folder.
+- for the remote DEI database, install the SQL extension, create a new database and follow these steps:
+  - server name = vsgate-s1.dei.isep.ipp.pt,10513
+  - leave the name empty
+  - choose SQL login
+  - user ID and password put the ones in the Startup.cs ConfigureServices method
+  - name it as you like, like BD.
+
+*Note:* in the Startup.cs ConfigureServices method, comment the database configuration you are not using.
 
 
 ## 4. How to Execute Tests
 
-Run the runTests script, that builds and runs the tests, saying the number of tests and possible failures.
+Run the "runTests" script, that builds and runs the tests, saying the number of tests and possible failures.
 
 As an alternative, click with the mouse's right button and select "run tests". 
 
 
 ## 5. How to Run
 
-Run the following scripts:
-- run-app1
-- run-app2
+Run the "run" script, that builds and runs the application, giving the HTTP/s URLs;
 
-*Example:* open the terminal and type ./run-app1.bat
-
-*Note:* make sure you are using SDK 17 for plugins' consistency. Also, have java and maven on the PATH and environmental variables.
-To use the database, configure an H2 database with the respective drivers on version 2.2.220, and use embedded options.
-
-
-## 6. How to Install/Deploy into Another Machine (or Virtual Machine)
-
-*Not yet developed*
+*Example:* open the terminal and type ./run.bat
