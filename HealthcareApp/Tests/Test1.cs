@@ -13,7 +13,7 @@ namespace HealthcareApp.Tests
         [Fact]
         public void basicTest2()
         {
-            Assert.Equal(3, 3);
+            Assert.Equal(2, 3);
         }
     }
 }

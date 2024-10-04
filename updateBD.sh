@@ -1,3 +1,5 @@
+dotnet tool restore
+dotnet tool install --global dotnet-ef
 cd HealthcareApp
 dotnet ef database drop
 rm -rf Migrations
