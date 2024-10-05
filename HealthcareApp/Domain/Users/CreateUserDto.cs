@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace HealthcareApp.Domain.Users
 {
@@ -7,7 +6,7 @@ namespace HealthcareApp.Domain.Users
     {
         public string Username { get; set; }
         
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role Role { get; set; }
         
         public string Email { get; set; }
