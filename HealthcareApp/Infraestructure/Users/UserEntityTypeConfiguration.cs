@@ -10,6 +10,7 @@ namespace HealthcareApp.Infraestructure.Users
         {
             builder.ToTable("Users", SchemaNames.HealthcareApp);
             builder.HasKey(b => b.Id);
+            builder.OwnsOne(u => u.Password);
         }
     }
 }
