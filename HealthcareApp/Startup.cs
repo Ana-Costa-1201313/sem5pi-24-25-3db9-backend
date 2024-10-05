@@ -7,9 +7,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using HealthcareApp.Infraestructure;
 using HealthcareApp.Infraestructure.Categories;
+using HealthcareApp.Infraestructure.Users;
 using HealthcareApp.Infraestructure.Shared;
 using HealthcareApp.Domain.Shared;
 using HealthcareApp.Domain.Categories;
+using HealthcareApp.Domain.Users;
 
 namespace HealthcareApp
 {
@@ -38,13 +40,16 @@ namespace HealthcareApp
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-        
+
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +84,9 @@ namespace HealthcareApp
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<UserService>();
         }
     }
 }
