@@ -12,6 +12,7 @@ using HealthcareApp.Infraestructure.Shared;
 using HealthcareApp.Domain.Shared;
 using HealthcareApp.Domain.Categories;
 using HealthcareApp.Domain.Users;
+using System.Text.Json.Serialization;
 
 namespace HealthcareApp
 {
@@ -46,10 +47,8 @@ namespace HealthcareApp
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-        });
+            services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

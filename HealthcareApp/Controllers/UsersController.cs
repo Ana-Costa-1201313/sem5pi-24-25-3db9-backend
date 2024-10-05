@@ -33,6 +33,7 @@ namespace HealthcareApp.Controllers
             return user;
         }
 
+        [HttpPost]
         public async Task<ActionResult<UserDto>> Create(CreateUserDto dto)
         {
             var user = await _service.AddAsync(dto);
