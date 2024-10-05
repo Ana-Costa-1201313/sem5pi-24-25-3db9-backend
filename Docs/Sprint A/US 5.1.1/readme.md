@@ -34,6 +34,7 @@ Some relevant answers excerpts are here specified:
 The following **HTTP requests** will be implemented:
 - POST (to register the new user)
 - GET (to check the new users)
+- GET by ID (to find the new user)
 - PATCH (updating the password and active the account)
 
 
