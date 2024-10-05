@@ -10,14 +10,14 @@ namespace HealthcareApp.Domain.Users
 
         public string Email { get; private set; }
 
-        public string Password { get; private set; }
+        public Password Password { get; private set; }
 
         private User()
         {
 
         }
 
-        public User(string username, Role role, string email, string password)
+        public User(string username, Role role, string email, Password password)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Username = username;
