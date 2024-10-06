@@ -14,5 +14,7 @@ namespace HealthcareApp.Domain.Users
         public string Email { get; set; }
 
         public Password Password { get; set; }
+
+        public bool Active { get; set; }
     }
 }

@@ -12,18 +12,20 @@ namespace HealthcareApp.Domain.Users
 
         public Password Password { get; private set; }
 
+        public bool Active { get; private set; }
+
         private User()
         {
 
         }
 
-        public User(string username, Role role, string email, Password password)
+        public User(string username, Role role, string email)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Username = username;
             this.Role = role;
             this.Email = email;
-            this.Password = password;
+            this.Active = false;
         }
     }
 }
