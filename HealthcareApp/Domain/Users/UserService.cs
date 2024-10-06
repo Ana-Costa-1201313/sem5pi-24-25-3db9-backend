@@ -35,7 +35,7 @@ namespace HealthcareApp.Domain.Users
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
-            var user = new User(dto.Username, dto.Role, dto.Email, new Password(dto.Password));
+            var user = new User(dto.Username, dto.Role, dto.Email);
 
             await this._repo.AddAsync(user);
 

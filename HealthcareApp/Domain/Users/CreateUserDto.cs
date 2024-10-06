@@ -11,14 +11,12 @@ namespace HealthcareApp.Domain.Users
         
         public string Email { get; set; }
         
-        public string Password { get; set; }
 
-        public CreateUserDto(string username, Role role, string email, string password)
+        public CreateUserDto(string username, Role role, string email)
         {
             this.Username = username;
             this.Role = role;
             this.Email = email;
-            this.Password = password;
         }
     }
 }
