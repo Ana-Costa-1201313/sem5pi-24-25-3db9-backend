@@ -2,6 +2,6 @@ dotnet tool restore
 dotnet tool install --global dotnet-ef
 cd HealthcareApp
 dotnet ef database drop
-rmdir /s /q Migrations 
+rm -rf Migrations
 dotnet ef migrations add InitialCreate 
 dotnet ef database update
