@@ -7,9 +7,9 @@ namespace HealthcareApp.Domain.OperationTypes
     {
 
         public string Description { get; private set; }
-        public string Name {get; private set;}
+        public OperationTypeName Name {get; private set;}
         public string Duration {get; private set;}
-        public List<string> RequiredStaff {get; private set;}
+        public List<OperationTypeRequiredStaff> RequiredStaff {get; private set;}
 
         public bool Active { get; private set; }
 
@@ -18,7 +18,7 @@ namespace HealthcareApp.Domain.OperationTypes
             this.Active = true;
         }
 
-        public OperationType(string description, string name, string duration, List<string> requiredStaff)
+        public OperationType(string description, OperationTypeName name, string duration, List<OperationTypeRequiredStaff> requiredStaff)
         {
             this.Id = new OperationTypeId(Guid.NewGuid());
             this.Description = description;

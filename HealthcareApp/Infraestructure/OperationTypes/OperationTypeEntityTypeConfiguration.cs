@@ -11,9 +11,28 @@ namespace HealthcareApp.Infraestructure.OperationTypes
             builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
             builder.HasKey(b => b.Id);
             builder.Property(b => b.Description);
-            builder.Property(b => b.Name);
+            builder.OwnsOne(b => b.Name, n => 
+            {
+                n.Property( c => c.Name).HasColumnName("Name").IsRequired();
+            });
             builder.Property(b => b.Duration);
-            builder.Property(b => b.RequiredStaff);
+            builder.OwnsMany(b => b.RequiredStaff, rs =>
+            {
+                rs.ToTable("RequiredStaff");
+
+                rs.Property(staff => staff.Specialization)
+                .HasColumnName("Specialization")
+                .IsRequired();
+
+                rs.Property(staff => staff.Total)
+                .HasColumnName("Total")
+                .IsRequired();
+
+                rs.WithOwner()
+                .HasForeignKey("OperationTypeId");
+
+                rs.HasKey("OperationTypeId", "Specialization");
+            });
             builder.Property<bool>(b => b.Active);
         }
     }
