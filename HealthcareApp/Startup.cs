@@ -10,6 +10,7 @@ using HealthcareApp.Infraestructure.Categories;
 using HealthcareApp.Infraestructure.Shared;
 using HealthcareApp.Domain.Shared;
 using HealthcareApp.Domain.Categories;
+using HealthcareApp.Domain.OperationTypes;
 
 namespace HealthcareApp
 {
@@ -79,6 +80,9 @@ namespace HealthcareApp
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
+
+            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
+            services.AddTransient<OperationTypeService>();
         }
     }
 }
