@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using HealthcareApp.Domain.Users;
+using HealthcareApp.Domain.Shared;
 
 namespace HealthcareApp.Controllers
 {
@@ -39,6 +40,25 @@ namespace HealthcareApp.Controllers
             var user = await _service.AddAsync(dto);
 
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, [FromBody] string password)
+        {
+            try
+            {
+                var user = await _service.UpdatePassword(id, password);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
     }
 }

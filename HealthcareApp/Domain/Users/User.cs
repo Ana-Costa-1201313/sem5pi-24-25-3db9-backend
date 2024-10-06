@@ -27,5 +27,15 @@ namespace HealthcareApp.Domain.Users
             this.Email = email;
             this.Active = false;
         }
+
+        public void ActivateUser(string passwd)
+        {
+            if(this.Active) {
+                throw new BusinessRuleValidationException("Error: This user is already active!");
+            }
+            this.Password = new Password(passwd);
+
+            this.Active = true;
+        }
     }
 }

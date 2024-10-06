@@ -18,7 +18,14 @@ namespace HealthcareApp.Domain.Users
         {
             var list = await this._repo.GetAllAsync();
 
-            List<UserDto> listDto = list.ConvertAll<UserDto>(u => new UserDto { Id = u.Id.AsGuid(), Username = u.Username, Role = u.Role, Email = u.Email, Password = u.Password });
+            List<UserDto> listDto = list.ConvertAll<UserDto>(u => new UserDto
+            {
+                Id = u.Id.AsGuid(),
+                Username = u.Username,
+                Role = u.Role,
+                Email = u.Email,
+                Password = u.Password
+            });
 
             return listDto;
         }
@@ -30,7 +37,14 @@ namespace HealthcareApp.Domain.Users
             if (user == null)
                 return null;
 
-            return new UserDto { Id = user.Id.AsGuid(), Username = user.Username, Role = user.Role, Email = user.Email, Password = user.Password };
+            return new UserDto
+            {
+                Id = user.Id.AsGuid(),
+                Username = user.Username,
+                Role = user.Role,
+                Email = user.Email,
+                Password = user.Password
+            };
         }
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
@@ -41,7 +55,38 @@ namespace HealthcareApp.Domain.Users
 
             await this._unitOfWork.CommitAsync();
 
-            return new UserDto { Id = user.Id.AsGuid(), Username = user.Username, Role = user.Role, Email = user.Email, Password = user.Password };
+            return new UserDto
+            {
+                Id = user.Id.AsGuid(),
+                Username = user.Username,
+                Role = user.Role,
+                Email = user.Email,
+                Password = user.Password
+            };
+        }
+
+        public async Task<UserDto> UpdatePassword(Guid id, string password)
+        {
+            var user = await this._repo.GetByIdAsync(new UserId(id));
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.ActivateUser(password);
+
+            await this._unitOfWork.CommitAsync();
+
+            return new UserDto
+            {
+                Id = user.Id.AsGuid(),
+                Username = user.Username,
+                Role = user.Role,
+                Email = user.Email,
+                Password = user.Password,
+                Active = user.Active
+            };
         }
     }
 }
