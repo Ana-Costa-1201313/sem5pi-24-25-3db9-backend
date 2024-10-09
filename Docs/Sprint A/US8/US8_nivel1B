@@ -1,0 +1,16 @@
+@startuml US8_nivel1B
+autonumber
+
+participant "<<system>>\nSystem HealthcareApp" as sys
+
+[-> sys: POST /patients
+
+activate sys
+    alt patient profile not created
+        [<-- sys : 422: Unprocessable Content
+    else patient profile created successfully
+        [<-- sys : 201: Created
+    end
+deactivate sys
+
+@enduml
