@@ -1,0 +1,16 @@
+@startuml
+autonumber
+
+participant "BE" as be
+
+[-> be: POST /patients
+
+activate be
+    alt patient profile not created
+        [<-- be : 422: Unprocessable Content
+    else patient profile created successfully
+        [<-- be : 201: Created
+    end
+deactivate be
+
+@enduml
