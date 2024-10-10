@@ -47,6 +47,12 @@
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath14"
       ><path d="M0 0 L0 130 L658 130 L658 0 Z"
       /></clipPath
+      ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath15"
+      ><path d="M0 0 L104 0 L104 200 L0 200 L0 0 Z"
+      /></clipPath
+      ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath16"
+      ><path d="M0 0 L0 200 L104 200 L104 0 Z"
+      /></clipPath
     ></defs
     ><g fill="white" text-rendering="geometricPrecision" fill-opacity="1" stroke-opacity="1" stroke="white"
     ><rect x="0" width="806" height="423" y="0" stroke="none"
@@ -60,7 +66,7 @@
     /></g
     ><g font-size="11px" transform="translate(2,22)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
     ><text x="363" xml:space="preserve" y="12" clip-path="url(#clipPath2)" stroke="none"
-      >HealthcareApp</text
+      >Backoffice</text
     ></g
     ><g font-size="11px" transform="translate(57,261)" fill-opacity="0.3098" fill="rgb(122,207,245)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="rgb(122,207,245)" stroke-opacity="0.3098"
     ><rect x="0" width="27" height="20" y="0" clip-path="url(#clipPath3)" stroke="none"
@@ -70,8 +76,8 @@
     ><path fill="none" d="M0 20 L139 20 L139 99 L0 99 L0 0 L27 0 L27 20" clip-path="url(#clipPath3)"
     /></g
     ><g font-size="11px" transform="translate(57,281)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="48" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
-      >Backend</text
+    ><text x="44" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
+      >Backoffice</text
     ></g
     ><g font-size="11px" transform="translate(334,63)" fill-opacity="0.3098" fill="rgb(122,207,245)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="rgb(122,207,245)" stroke-opacity="0.3098"
     ><rect x="0" width="27" height="20" y="0" clip-path="url(#clipPath3)" stroke="none"
@@ -81,8 +87,8 @@
     ><path fill="none" d="M0 20 L139 20 L139 99 L0 99 L0 0 L27 0 L27 20" clip-path="url(#clipPath3)"
     /></g
     ><g font-size="11px" transform="translate(334,83)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="47" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
-      >Frontend</text
+    ><text x="58" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
+      >Web</text
     ></g
     ><g font-size="11px" transform="translate(334,261)" fill-opacity="0.3098" fill="rgb(122,207,245)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="rgb(122,207,245)" stroke-opacity="0.3098"
     ><rect x="0" width="27" height="20" y="0" clip-path="url(#clipPath3)" stroke="none"
@@ -105,6 +111,17 @@
     ><g font-size="11px" transform="translate(611,281)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
     ><text x="62" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
       >3D</text
+    ></g
+    ><g font-size="11px" transform="translate(57,63)" fill-opacity="0.3098" fill="rgb(122,207,245)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="rgb(122,207,245)" stroke-opacity="0.3098"
+    ><rect x="0" width="27" height="20" y="0" clip-path="url(#clipPath3)" stroke="none"
+      /><rect x="0" width="139" height="79" y="20" clip-path="url(#clipPath3)" stroke="none"
+    /></g
+    ><g stroke-linecap="butt" font-size="11px" transform="translate(57,63)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="black" stroke-opacity="1" stroke-miterlimit="0"
+    ><path fill="none" d="M0 20 L139 20 L139 99 L0 99 L0 0 L27 0 L27 20" clip-path="url(#clipPath3)"
+    /></g
+    ><g font-size="11px" transform="translate(57,83)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
+    ><text x="58" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
+      >Auth</text
     ></g
     ><g fill-opacity="1" text-rendering="geometricPrecision" stroke="black" stroke-linecap="butt" transform="translate(148,92)" stroke-opacity="1" fill="black" stroke-dasharray="5" font-family="sans-serif" stroke-linejoin="round" font-size="11px" stroke-dashoffset="1" image-rendering="optimizeQuality"
     ><line y2="50" fill="none" x1="185" clip-path="url(#clipPath6)" x2="106" y1="50"
@@ -137,6 +154,16 @@
       /><line y2="50" fill="none" x1="50" clip-path="url(#clipPath14)" x2="50" y1="76"
       /><line clip-path="url(#clipPath14)" stroke-dashoffset="0" fill="none" x1="50" x2="44" y1="50" y2="62" stroke-dasharray="none"
       /><line clip-path="url(#clipPath14)" stroke-dashoffset="0" fill="none" x1="50" x2="56" y1="50" y2="62" stroke-dasharray="none"
+    /></g
+    ><g fill-opacity="1" text-rendering="geometricPrecision" stroke="black" stroke-linecap="butt" transform="translate(148,66)" stroke-opacity="1" fill="black" stroke-dasharray="5" font-family="sans-serif" stroke-linejoin="round" font-size="11px" stroke-dashoffset="1" image-rendering="optimizeQuality"
+    ><line y2="50" fill="none" x1="185" clip-path="url(#clipPath12)" x2="50" y1="50"
+      /><line clip-path="url(#clipPath12)" stroke-dashoffset="0" fill="none" x1="50" x2="62" y1="50" y2="56" stroke-dasharray="none"
+      /><line clip-path="url(#clipPath12)" stroke-dashoffset="0" fill="none" x1="50" x2="62" y1="50" y2="44" stroke-dasharray="none"
+    /></g
+    ><g fill-opacity="1" text-rendering="geometricPrecision" stroke="black" stroke-linecap="butt" transform="translate(77,114)" stroke-opacity="1" fill="black" stroke-dasharray="5" font-family="sans-serif" stroke-linejoin="round" font-size="11px" stroke-dashoffset="1" image-rendering="optimizeQuality"
+    ><line y2="50" fill="none" x1="50" clip-path="url(#clipPath16)" x2="50" y1="146"
+      /><line clip-path="url(#clipPath16)" stroke-dashoffset="0" fill="none" x1="50" x2="44" y1="50" y2="62" stroke-dasharray="none"
+      /><line clip-path="url(#clipPath16)" stroke-dashoffset="0" fill="none" x1="50" x2="56" y1="50" y2="62" stroke-dasharray="none"
     /></g
     ><g font-size="8px" fill-opacity="1" fill="rgb(120,120,120)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" stroke="rgb(120,120,120)" stroke-opacity="1"
     ><text x="0" xml:space="preserve" y="10" stroke="none"
