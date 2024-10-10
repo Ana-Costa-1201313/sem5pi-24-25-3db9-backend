@@ -1,0 +1,51 @@
+@startuml
+autonumber
+
+participant "Route" as r
+participant "Controller" as ctrl
+participant "Service" as svc
+participant "Patient" as patient
+participant "Repository" as repo
+participant "DBDriver" as db
+participant "Mapper" as map
+participant "dto:\nPatientDTO" as dto
+
+[-> r : POST /patients
+activate r
+    r -> ctrl : createPatient(req)
+
+    activate ctrl
+        ctrl -> svc : createPatient(bodyDTO)
+        activate svc
+            svc --> patient ** : create()
+
+            alt patient profile not created
+                svc --> ctrl : error
+                ctrl --> r : error (422)
+                [<-- r : 422: Unprocessable Content
+            else patient profile created successfully
+                svc -> repo : save(patient)
+                activate repo
+                    repo -> db : save
+                    activate db
+                    deactivate db
+                deactivate repo
+
+                svc -> map : toDTO(patient)
+                activate map
+                    map --> dto **: create(patient)
+                    activate dto
+                        map --> svc : dto
+                    deactivate dto
+                deactivate map
+
+                svc --> ctrl : dto
+            deactivate svc
+
+            ctrl --> r : dto (201)
+        deactivate ctrl
+    [<-- r : 201: Created
+deactivate r
+end
+
+@enduml
