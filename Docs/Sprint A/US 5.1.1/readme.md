@@ -68,19 +68,27 @@ This diagram guides the realization of the functionality, for level 1 procecss v
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US1010-SSD.svg](US1010-SSD.svg)
+![US5.1.1 N2 SD](US5.1.1%20N2%20SD.svg)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
-This diagram guides the realization of the functionality, for level 3 procecss view.
+These diagrams guide the realization of the functionality, for level 3 process view.
+For organizational reasons this level was separated in two parts, each with a different actor and their respective actions.
 
-![US1010-SSD.svg](US1010-SSD.svg)
+Administrator :
+
+![US5.1.1 N3 SD](US5.1.1%20N3%20SD.svg)
+
+Backoffice user:
+
+![US5.1.1 N3 SD User](US5.1.1%20N3%20SD%20User.svg)
 
 
 ### 4.4. Class Diagram
 
 This diagram presents the classes that support the functionality.
+*To do*
 
 
 ### 4.5. Applied Design Patterns
