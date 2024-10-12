@@ -1,6 +1,7 @@
 using System;
 using HealthcareApp.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HealthcareApp.Domain.OperationTypes
 {
@@ -16,6 +17,11 @@ namespace HealthcareApp.Domain.OperationTypes
 
         public OperationTypeName(string name)
         {
+            
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new BusinessRuleValidationException("Error: The operation name can't be null, empty or consist in only white spaces.");
+            }
             this.Name = name;
         }
 
