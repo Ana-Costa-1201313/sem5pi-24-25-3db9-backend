@@ -5,6 +5,7 @@ namespace Backoffice.Domain.Users
        Admin,
        Doctor,
        Nurse,
-       Technician
+       Technician,
+       Patient
     }
 }

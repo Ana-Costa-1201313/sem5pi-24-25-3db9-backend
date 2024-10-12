@@ -6,12 +6,10 @@ namespace Backoffice.Domain.Users
     {
         public Guid Id { get; set; }
 
-        public string Username { get; set; }
-
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role Role { get; set; }
 
-        public string Email { get; set; }
+        public string Username { get; set; }
 
         public Password Password { get; set; }
 

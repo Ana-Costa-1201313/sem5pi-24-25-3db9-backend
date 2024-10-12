@@ -21,9 +21,8 @@ namespace Backoffice.Domain.Users
             List<UserDto> listDto = list.ConvertAll<UserDto>(u => new UserDto
             {
                 Id = u.Id.AsGuid(),
-                Username = u.Username,
                 Role = u.Role,
-                Email = u.Email,
+                Username = u.Username.ToString(),
                 Password = u.Password
             });
 
@@ -40,16 +39,22 @@ namespace Backoffice.Domain.Users
             return new UserDto
             {
                 Id = user.Id.AsGuid(),
-                Username = user.Username,
                 Role = user.Role,
-                Email = user.Email,
+                Username = user.Username.ToString(),
                 Password = user.Password
             };
         }
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
-            var user = new User(dto.Username, dto.Role, dto.Email);
+            int mechanographicNum = 0;
+            
+            if (dto.Role != Role.Patient)
+            {
+                mechanographicNum = await this._repo.GetLastMechanographicNumAsync() + 1;
+            }
+
+            var user = new User(dto.Role, dto.Username, mechanographicNum);
 
             await this._repo.AddAsync(user);
 
@@ -58,9 +63,8 @@ namespace Backoffice.Domain.Users
             return new UserDto
             {
                 Id = user.Id.AsGuid(),
-                Username = user.Username,
                 Role = user.Role,
-                Email = user.Email,
+                Username = user.Username.ToString(),
                 Password = user.Password
             };
         }
@@ -81,9 +85,8 @@ namespace Backoffice.Domain.Users
             return new UserDto
             {
                 Id = user.Id.AsGuid(),
-                Username = user.Username,
                 Role = user.Role,
-                Email = user.Email,
+                Username = user.Username.ToString(),
                 Password = user.Password,
                 Active = user.Active
             };

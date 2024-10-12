@@ -37,9 +37,18 @@ namespace Backoffice.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create(CreateUserDto dto)
         {
-            var user = await _service.AddAsync(dto);
+            try
+            {
+                var user = await _service.AddAsync(dto);
 
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+
+
         }
 
         [HttpPatch("{id}")]
