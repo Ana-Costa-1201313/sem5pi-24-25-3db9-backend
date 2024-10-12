@@ -10,6 +10,7 @@ namespace Backoffice.Domain.Staff
         public string Phone { get; private set; }
         public string Specialization { get; private set; }
         public int AvailabilitySlots { get; private set; }
+        public string StaffId { get; private set; }
 
         private Staff()
         {
@@ -21,8 +22,8 @@ namespace Backoffice.Domain.Staff
         string fullName,
         int licenseNum,
         string email,
-        string phone, 
-        string specialization, 
+        string phone,
+        string specialization,
         int availabilitySlots)
         {
             this.FirstName = firstName;
