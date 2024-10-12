@@ -43,9 +43,15 @@ namespace HealthcareApp.Controllers
         [HttpPost]
         public async Task<ActionResult<OperationTypeDto>> Create(CreatingOperationTypeDto dto)
         {
-            var opType = await _service.AddAsync(dto);
+            try
+            {
+                var opType = await _service.AddAsync(dto);
 
-            return CreatedAtAction(nameof(GetGetById), new { id = opType.Id }, opType);
-        }
+                return CreatedAtAction(nameof(GetGetById), new { id = opType.Id }, opType);
+
+            }catch(BusinessRuleValidationException e){
+                return BadRequest(new { Message = e.Message });
+            }
+            }
     }
 }
