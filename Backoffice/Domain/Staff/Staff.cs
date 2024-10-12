@@ -1,15 +1,25 @@
+using Backoffice.Domain.Shared;
+
 namespace Backoffice.Domain.Staff
 {
-    public class Staff
+    public class Staff : Entity<StaffId>, IAggregateRoot
     {
         public string FirstName { get; private set; }
+        
         public string LastName { get; private set; }
+        
         public string FullName { get; private set; }
+        
         public int LicenseNumber { get; private set; }
+        
         public string Email { get; private set; }
+        
         public string Phone { get; private set; }
+        
         public string Specialization { get; private set; }
+        
         public int AvailabilitySlots { get; private set; }
+        
         public string StaffId { get; private set; }
 
         private Staff()
@@ -17,23 +27,17 @@ namespace Backoffice.Domain.Staff
 
         }
 
-        public Staff(string firstName,
-        string lastName,
-        string fullName,
-        int licenseNum,
-        string email,
-        string phone,
-        string specialization,
-        int availabilitySlots)
+        public Staff(CreateStaffDto dto)
         {
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.FullName = fullName;
-            this.LicenseNumber = licenseNum;
-            this.Email = email;
-            this.Phone = phone;
-            this.Specialization = specialization;
-            this.AvailabilitySlots = availabilitySlots;
+            this.Id = new StaffId(Guid.NewGuid());
+            this.FirstName = dto.FirstName;
+            this.LastName = dto.LastName;
+            this.FullName = dto.FullName;
+            this.LicenseNumber = dto.LicenseNumber;
+            this.Email = dto.Email;
+            this.Phone = dto.Phone;
+            this.Specialization = dto.Specialization;
+            this.AvailabilitySlots = dto.AvailabilitySlots;
         }
     }
 }
