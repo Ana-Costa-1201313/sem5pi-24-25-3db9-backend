@@ -19,6 +19,8 @@ namespace Backoffice.Infraestructure
         {
             modelBuilder.ApplyConfiguration(new CategoryEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+            //modelBuilder.HasSequence<int>("MechanographicNumbers");
+            //modelBuilder.Entity<User>().Property(n => n.MechanographicNum).HasDefaultValueSql("NEXT VALUE FOR MechanographicNumbers");
         }
     }
 
