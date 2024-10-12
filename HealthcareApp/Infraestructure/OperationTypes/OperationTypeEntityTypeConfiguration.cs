@@ -10,12 +10,11 @@ namespace HealthcareApp.Infraestructure.OperationTypes
         {
             builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
             builder.HasKey(b => b.Id);
-            builder.Property(b => b.Description);
             builder.OwnsOne(b => b.Name, n => 
             {
                 n.Property( c => c.Name).HasColumnName("Name").IsRequired();
             });
-            builder.Property(b => b.Duration);
+            builder.OwnsOne(b => b.Duration);
             builder.OwnsMany(b => b.RequiredStaff, rs =>
             {
                 rs.ToTable("RequiredStaff");
