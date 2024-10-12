@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
 using Backoffice.Infraestructure.Categories;
 using Backoffice.Infraestructure.Users;
+using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
+using Backoffice.Domain.Staff;
 using System.Text.Json.Serialization;
 
 namespace Backoffice
@@ -86,6 +88,9 @@ namespace Backoffice
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
         }
     }
 }
