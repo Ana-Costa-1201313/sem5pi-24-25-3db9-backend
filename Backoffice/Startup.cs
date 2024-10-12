@@ -30,14 +30,14 @@ namespace Backoffice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             services.AddDbContext<BDContext>(opt =>
-                opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
-
-            //services.AddDbContext<BDContext>(opt =>
-              //  opt.UseSqlite($"Data Source={DbPath}")
+             //services.AddDbContext<BDContext>(opt =>
+               // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
                 //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+
+
+            services.AddDbContext<BDContext>(opt =>
+                opt.UseSqlite($"Data Source={DbPath}")
+                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
         
             ConfigureMyServices(services);
 
