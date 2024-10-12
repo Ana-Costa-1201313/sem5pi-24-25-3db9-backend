@@ -47,7 +47,14 @@ namespace Backoffice.Domain.Users
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
-            var user = new User(dto.Role, dto.Username);
+            int mechanographicNum = 0;
+            
+            if (dto.Role != Role.Patient)
+            {
+                mechanographicNum = await this._repo.GetLastMechanographicNumAsync() + 1;
+            }
+
+            var user = new User(dto.Role, dto.Username, mechanographicNum);
 
             await this._repo.AddAsync(user);
 

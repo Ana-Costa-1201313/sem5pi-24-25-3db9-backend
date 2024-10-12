@@ -12,23 +12,22 @@ namespace Backoffice.Domain.Users
 
         public bool Active { get; private set; }
 
-        //public int MechanographicNum;
+        public int MechanographicNum { get; private set; }
 
         private User()
         {
 
         }
 
-        public User(Role role, string username)
+        public User(Role role, string username, int mechanographicNum)
         {
-            //Console.Write("aaaaaaaaaaaaa" + MechanographicNum);
-
             this.Id = new UserId(Guid.NewGuid());
             this.Role = role;
+            this.MechanographicNum = mechanographicNum;
 
             if (role != Role.Patient)
             {
-                this.Username = new Username(role.ToString().Substring(0, 1) + "1" + "@healthcareapp.com");
+                this.Username = new Username(role.ToString().Substring(0, 1) + MechanographicNum  + "@healthcareapp.com");
             }
             else
             {
