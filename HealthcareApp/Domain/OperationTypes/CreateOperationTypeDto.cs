@@ -2,16 +2,19 @@ namespace HealthcareApp.Domain.OperationTypes
 {
     public class CreatingOperationTypeDto
     {
-        public string Description { get; set; }
-        public OperationTypeName Name { get; set; }
-        public string Duration { get; set; }
-        public List<OperationTypeRequiredStaff> RequiredStaff { get; set; }
+        public string Name { get; set; }
+        public int AnesthesiaPatientPreparationDuration { get; set; }
+        public int SurgeryDuration { get; set; }
+        public int CleaningDuration { get; set; }
+        public List<RequiredStaffDto> RequiredStaff { get; set; }
 
-        public CreatingOperationTypeDto(string description, OperationTypeName name, string duration, List<OperationTypeRequiredStaff> requiredStaff)
+        public CreatingOperationTypeDto(string name, int anesthesiaPatientPreparationDuration, 
+        int surgeryDuration, int cleaningDuration, List<RequiredStaffDto> requiredStaff)
         {
-            this.Description = description;
             this.Name = name;
-            this.Duration = duration;
+            this.AnesthesiaPatientPreparationDuration = anesthesiaPatientPreparationDuration;
+            this.SurgeryDuration = surgeryDuration;
+            this.CleaningDuration = cleaningDuration;
             this.RequiredStaff = requiredStaff;
         }
     }
