@@ -61,6 +61,7 @@ namespace HealthcareApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<SpecializationDto>> SoftDelete(Guid id)
         {
+            try{
             var spec = await _service.InactivateAsync(new SpecializationId(id));
 
             if (spec == null)
@@ -69,6 +70,12 @@ namespace HealthcareApp.Controllers
             }
 
             return Ok(spec);
+
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }

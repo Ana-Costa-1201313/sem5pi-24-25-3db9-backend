@@ -31,6 +31,11 @@ namespace HealthcareApp.Domain.Specializations
 
         public void MarkAsInative()
         {
+
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: This specialization is already inactive.");
+            }
             this.Active = false;
         }
     }
