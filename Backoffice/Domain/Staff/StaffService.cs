@@ -13,6 +13,26 @@ namespace Backoffice.Domain.Staff
             _repo = repo;
         }
 
+        public async Task<List<StaffDto>> GetAllAsync()
+        {
+            var list = await this._repo.GetAllAsync();
+
+            List<StaffDto> listDto = list.ConvertAll<StaffDto>(s => new StaffDto
+            {
+                Id = s.Id.AsGuid(),
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                FullName = s.FullName,
+                LicenseNumber = s.LicenseNumber,
+                Email = s.Email,
+                Phone = s.Phone,
+                Specialization = s.Specialization,
+                AvailabilitySlots = s.AvailabilitySlots
+            });
+
+            return listDto;
+        }
+
         public async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             var staff = new Staff(dto);

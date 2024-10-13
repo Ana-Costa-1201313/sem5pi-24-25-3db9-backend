@@ -14,6 +14,12 @@ namespace Backoffice.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll()
+        {
+            return await _service.GetAllAsync();
+        }
+
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create(CreateStaffDto dto)
         {
