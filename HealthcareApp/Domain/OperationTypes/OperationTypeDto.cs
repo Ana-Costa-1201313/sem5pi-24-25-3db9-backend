@@ -6,9 +6,9 @@ namespace HealthcareApp.Domain.OperationTypes
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public int AnesthesiaPatientPreparationDuration { get; set; }
-        public int SurgeryDuration { get; set; }
-        public int CleaningDuration { get; set; }
+        public int AnesthesiaPatientPreparationInMinutes { get; set; }
+        public int SurgeryInMinutes { get; set; }
+        public int CleaningInMinutes { get; set; }
         public List<RequiredStaffDto> RequiredStaff { get; set; }
     }
 }

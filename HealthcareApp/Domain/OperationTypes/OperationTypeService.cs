@@ -22,15 +22,15 @@ namespace HealthcareApp.Domain.OperationTypes
 
         public async Task<List<OperationTypeDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
+            var list = await this._repo.GetAllWithDetailsAsync();
 
             List<OperationTypeDto> listDto = list.ConvertAll<OperationTypeDto>(opType => new OperationTypeDto
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,
@@ -43,7 +43,7 @@ namespace HealthcareApp.Domain.OperationTypes
 
         public async Task<OperationTypeDto> GetByIdAsync(OperationTypeId id)
         {
-            var opType = await this._repo.GetByIdAsync(id);
+            var opType = await this._repo.GetByIdWithDetailsAsync(id);
 
             if (opType == null)
                 return null;
@@ -52,9 +52,9 @@ namespace HealthcareApp.Domain.OperationTypes
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,
@@ -67,11 +67,20 @@ namespace HealthcareApp.Domain.OperationTypes
         {
 
             var requiredStaffList = new List<OperationTypeRequiredStaff>();
+            var specializationNamesSet = new HashSet<string>();
+
 
             foreach (var staff in dto.RequiredStaff)
             {
-                if (!await this._repoSpecialization.SpecializationNameExists(staff.Specialization)){
-                    throw new BusinessRuleValidationException("There is no specialization with the name " + staff.Specialization + ".");
+                if (!await this._repoSpecialization.SpecializationNameExists(staff.Specialization))
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + staff.Specialization + ".");
+                }
+
+                // Check for duplicates in specialization names
+                if (!specializationNamesSet.Add(staff.Specialization))
+                {
+                    throw new BusinessRuleValidationException("Error: Can't have duplicate specializations -> " + staff.Specialization + ".");
                 }
                 var specialization = await _repoSpecialization.GetBySpecializationName(staff.Specialization);
                 var requiredStaff = new OperationTypeRequiredStaff(specialization, staff.Total);
@@ -86,9 +95,9 @@ namespace HealthcareApp.Domain.OperationTypes
                     ),
                 new OperationTypeDuration
                     (
-                        dto.AnesthesiaPatientPreparationDuration,
-                        dto.SurgeryDuration,
-                        dto.CleaningDuration
+                        dto.AnesthesiaPatientPreparationInMinutes,
+                        dto.SurgeryInMinutes,
+                        dto.CleaningInMinutes
                     ),
                     requiredStaffList
                 );
@@ -102,9 +111,9 @@ namespace HealthcareApp.Domain.OperationTypes
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,
@@ -129,9 +138,9 @@ namespace HealthcareApp.Domain.OperationTypes
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,
@@ -156,9 +165,9 @@ namespace HealthcareApp.Domain.OperationTypes
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,
@@ -184,9 +193,9 @@ namespace HealthcareApp.Domain.OperationTypes
             {
                 Id = opType.Id.AsGuid(),
                 Name = opType.Name.Name,
-                AnesthesiaPatientPreparationDuration = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryDuration = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
+                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
+                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
+                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
                     Specialization = staff.Specialization.Name.Name,

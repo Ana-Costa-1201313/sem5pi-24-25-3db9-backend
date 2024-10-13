@@ -7,35 +7,35 @@ namespace HealthcareApp.Infraestructure.OperationTypes
     internal class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
     {
         public void Configure(EntityTypeBuilder<OperationType> builder)
-    {
-        builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
-        builder.HasKey(b => b.Id);
-
-        builder.OwnsOne(b => b.Name, n =>
         {
-            n.Property(c => c.Name).HasColumnName("Name").IsRequired();
-        });
+            builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
+            builder.HasKey(b => b.Id);
 
-        builder.OwnsOne(b => b.Duration);
+            builder.OwnsOne(b => b.Name, n =>
+            {
+                n.Property(c => c.Name).HasColumnName("Name").IsRequired();
+            });
 
-        builder.OwnsMany(b => b.RequiredStaff, rs =>
-        {
-            rs.ToTable("RequiredStaff");
+            builder.OwnsOne(b => b.Duration);
 
-            rs.HasKey(rs => new { rs.SpecializationId, rs.Total }); 
+            builder.OwnsMany(b => b.RequiredStaff, rs =>
+            {
+                rs.ToTable("RequiredStaff");
 
-            rs.Property(rs => rs.SpecializationId)
-                .HasColumnName("SpecializationId")
-                .IsRequired();
+                rs.HasKey("SpecializationId", "OperationTypeId");
 
-            rs.Property(staff => staff.Total)
-                .HasColumnName("Total")
-                .IsRequired();
+                rs.Property(rs => rs.SpecializationId)
+                    .HasColumnName("SpecializationId")
+                    .IsRequired();
 
-            rs.WithOwner().HasForeignKey("OperationTypeId");  
-        });
+                rs.Property(staff => staff.Total)
+                    .HasColumnName("Total")
+                    .IsRequired();
 
-        builder.Property<bool>(b => b.Active);
+                rs.WithOwner().HasForeignKey("OperationTypeId");
+            });
+
+            builder.Property<bool>(b => b.Active);
+        }
     }
-}
 }
