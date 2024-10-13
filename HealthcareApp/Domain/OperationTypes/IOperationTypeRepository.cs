@@ -6,6 +6,8 @@ namespace HealthcareApp.Domain.OperationTypes
     {
         public Task<List<OperationType>> GetAllWithDetailsAsync();
         public Task<OperationType> GetByIdWithDetailsAsync(OperationTypeId id);
+        public Task<bool> OperationTypeNameExists(string name);
+
 
     }
 }

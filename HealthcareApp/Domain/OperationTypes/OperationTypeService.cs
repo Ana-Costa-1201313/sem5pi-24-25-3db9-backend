@@ -102,6 +102,11 @@ namespace HealthcareApp.Domain.OperationTypes
                     requiredStaffList
                 );
 
+            if (await this._repo.OperationTypeNameExists(opType.Name.Name))
+            {
+                throw new BusinessRuleValidationException("Error: This operation type name is already being used.");
+            }
+
 
             await this._repo.AddAsync(opType);
 

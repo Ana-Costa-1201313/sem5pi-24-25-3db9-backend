@@ -19,7 +19,7 @@ namespace HealthcareApp.Infraestructure.Categories
             return await _context.OperationTypes
             .Include(rs => rs.RequiredStaff)
             .ThenInclude(s => s.Specialization)
-            .ToListAsync();      
+            .ToListAsync();
         }
 
         public async Task<OperationType> GetByIdWithDetailsAsync(OperationTypeId id)
@@ -27,7 +27,18 @@ namespace HealthcareApp.Infraestructure.Categories
             return await _context.OperationTypes
             .Include(rs => rs.RequiredStaff)
             .ThenInclude(s => s.Specialization)
-            .FirstOrDefaultAsync(rs => rs.Id == id);      
+            .FirstOrDefaultAsync(rs => rs.Id == id);
         }
+        
+        public async Task<OperationType> GetByOperationTypeName(string name){
+            return await this._context.OperationTypes.Where(x => name.Equals(x.Name.Name)).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> OperationTypeNameExists(string name){
+            
+            OperationType operationType = await GetByOperationTypeName(name);
+            return operationType != null;
+        }
+
     }
 }
