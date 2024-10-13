@@ -2,6 +2,7 @@ namespace Backoffice.Domain.Staff
 {
     public class StaffDto
     {
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get; set; }
@@ -10,6 +11,6 @@ namespace Backoffice.Domain.Staff
         public string Phone { get; set; }
         public string Specialization { get; set; }
         public int AvailabilitySlots { get; set; }
-        public string StaffId { get; set; }
+        //public string StaffId { get; set; }
     }
 }
