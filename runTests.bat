@@ -1,2 +1,2 @@
-cd HealthcareApp
+cd Backoffice
 dotnet test
