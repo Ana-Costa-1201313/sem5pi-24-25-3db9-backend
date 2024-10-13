@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Backoffice.Domain.Shared;
 
 namespace Backoffice.Domain.Staff

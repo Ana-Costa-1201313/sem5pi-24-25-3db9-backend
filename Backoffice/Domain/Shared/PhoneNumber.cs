@@ -20,5 +20,10 @@ namespace Backoffice.Domain.Shared
 
             this.PhoneNum = phoneNum;
         }
+
+        public override string ToString()
+        {
+            return this.PhoneNum;
+        }
     }
 }

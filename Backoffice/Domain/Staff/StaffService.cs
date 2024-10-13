@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
+using Backoffice.Domain.Staff;
 using Backoffice.Domain.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backoffice.Domain.Staff
 {
@@ -58,9 +61,33 @@ namespace Backoffice.Domain.Staff
         {
             var staff = new Staff(dto);
 
-            await this._repo.AddAsync(staff);
+            try
+            {
+                await this._repo.AddAsync(staff);
 
-            await this._unitOfWork.CommitAsync();
+                await this._unitOfWork.CommitAsync();
+
+            }
+            catch (DbUpdateException e)
+            {
+
+                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Phone"))
+                {
+                    throw new BusinessRuleValidationException("Error: This phone number is already in use!");
+                }
+                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Email"))
+                {
+                    throw new BusinessRuleValidationException("Error: This email is already in use!");
+                }
+                else if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.LicenseNumber"))
+                {
+                    throw new BusinessRuleValidationException("Error: This License number is already in use!");
+                }
+                else
+                {
+                    throw new BusinessRuleValidationException("Error: Can't save this data!");
+                }
+            }
 
             return new StaffDto
             {
