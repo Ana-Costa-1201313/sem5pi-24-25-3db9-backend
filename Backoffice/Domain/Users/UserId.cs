@@ -1,12 +1,10 @@
 using System;
 using Backoffice.Domain.Shared;
-using Newtonsoft.Json;
 
 namespace Backoffice.Domain.Users
 {
     public class UserId : EntityId
     {
-        [JsonConstructor]
         public UserId(Guid value) : base(value)
         {
         }

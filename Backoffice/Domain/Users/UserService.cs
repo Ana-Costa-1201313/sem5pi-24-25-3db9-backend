@@ -22,16 +22,16 @@ namespace Backoffice.Domain.Users
             {
                 Id = u.Id.AsGuid(),
                 Role = u.Role,
-                Username = u.Username.ToString(),
+                Email = u.Email.ToString(),
                 Password = u.Password
             });
 
             return listDto;
         }
 
-        public async Task<UserDto> GetByIdAsync(UserId id)
+        public async Task<UserDto> GetByIdAsync(Guid id)
         {
-            var user = await this._repo.GetByIdAsync(id);
+            var user = await this._repo.GetByIdAsync(new UserId(id));
 
             if (user == null)
                 return null;
@@ -40,7 +40,7 @@ namespace Backoffice.Domain.Users
             {
                 Id = user.Id.AsGuid(),
                 Role = user.Role,
-                Username = user.Username.ToString(),
+                Email = user.Email.ToString(),
                 Password = user.Password
             };
         }
@@ -54,7 +54,7 @@ namespace Backoffice.Domain.Users
                 mechanographicNum = await this._repo.GetLastMechanographicNumAsync() + 1;
             }
 
-            var user = new User(dto.Role, dto.Username, mechanographicNum);
+            var user = new User(dto.Role, dto.Email, mechanographicNum);
 
             await this._repo.AddAsync(user);
 
@@ -64,7 +64,7 @@ namespace Backoffice.Domain.Users
             {
                 Id = user.Id.AsGuid(),
                 Role = user.Role,
-                Username = user.Username.ToString(),
+                Email = user.Email.ToString(),
                 Password = user.Password
             };
         }
@@ -86,7 +86,7 @@ namespace Backoffice.Domain.Users
             {
                 Id = user.Id.AsGuid(),
                 Role = user.Role,
-                Username = user.Username.ToString(),
+                Email = user.Email.ToString(),
                 Password = user.Password,
                 Active = user.Active
             };
