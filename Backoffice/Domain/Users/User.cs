@@ -6,7 +6,7 @@ namespace Backoffice.Domain.Users
     {
         public Role Role { get; private set; }
 
-        public Username Username { get; private set; }
+        public Email Email { get; private set; }
 
         public Password Password { get; private set; }
 
@@ -19,7 +19,7 @@ namespace Backoffice.Domain.Users
 
         }
 
-        public User(Role role, string username, int mechanographicNum)
+        public User(Role role, string email, int mechanographicNum)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Role = role;
@@ -27,11 +27,11 @@ namespace Backoffice.Domain.Users
 
             if (role != Role.Patient)
             {
-                this.Username = new Username(role.ToString().Substring(0, 1) + MechanographicNum  + "@healthcareapp.com");
+                this.Email = new Email(role.ToString().Substring(0, 1) + MechanographicNum  + "@healthcareapp.com");
             }
             else
             {
-                this.Username = new Username(username);
+                this.Email = new Email(email);
             }
             this.Active = false;
         }

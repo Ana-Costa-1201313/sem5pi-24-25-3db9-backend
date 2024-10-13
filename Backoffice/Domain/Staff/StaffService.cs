@@ -24,8 +24,8 @@ namespace Backoffice.Domain.Staff
                 LastName = s.LastName,
                 FullName = s.FullName,
                 LicenseNumber = s.LicenseNumber,
-                Email = s.Email,
-                Phone = s.Phone,
+                Email = s.Email._Email,
+                Phone = s.Phone.PhoneNum,
                 Specialization = s.Specialization,
                 AvailabilitySlots = s.AvailabilitySlots
             });
@@ -47,8 +47,8 @@ namespace Backoffice.Domain.Staff
                 LastName = staff.LastName,
                 FullName = staff.FullName,
                 LicenseNumber = staff.LicenseNumber,
-                Email = staff.Email,
-                Phone = staff.Phone,
+                Email = staff.Email._Email,
+                Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
                 AvailabilitySlots = staff.AvailabilitySlots
             };
@@ -69,8 +69,8 @@ namespace Backoffice.Domain.Staff
                 LastName = staff.LastName,
                 FullName = staff.FullName,
                 LicenseNumber = staff.LicenseNumber,
-                Email = staff.Email,
-                Phone = staff.Phone,
+                Email = staff.Email._Email,
+                Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
                 AvailabilitySlots = staff.AvailabilitySlots
             };

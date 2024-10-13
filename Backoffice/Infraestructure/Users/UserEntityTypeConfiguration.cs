@@ -11,7 +11,7 @@ namespace Backoffice.Infraestructure.Users
             builder.ToTable("Users", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
             builder.OwnsOne(u => u.Password);
-            builder.OwnsOne(v => v.Username);
+            builder.OwnsOne(v => v.Email);
         }
     }
 }

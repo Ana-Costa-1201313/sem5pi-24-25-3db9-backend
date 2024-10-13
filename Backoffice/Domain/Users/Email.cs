@@ -1,29 +1,29 @@
-using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Domain.Users
 {
     [Owned]
-    public class Username
+    public class Email
     {
-        public string Email { get; private set; }
+        public string _Email { get; private set;}
 
-        private Username()
+        private Email()
         {
 
         }
 
-        public Username(string email)
+        public Email(string email)
         {
-            if(string.IsNullOrEmpty(email) || !email.Contains("@")) {
+             if(string.IsNullOrEmpty(email) || !email.Contains("@")) {
                 throw new BusinessRuleValidationException("Error: The email is invalid!");
             }
-            this.Email = email;
+            this._Email = email;
         }
 
         public override string ToString()
         {
-            return this.Email;
+            return this._Email;
         }
     }
 }
