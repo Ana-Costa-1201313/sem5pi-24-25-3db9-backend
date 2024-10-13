@@ -6,7 +6,7 @@ namespace Backoffice.Infraestructure.Patients
 {
     public class PatientRepository : BaseRepository<Patient, PatientId>, IPatientRepository
     {
-        public PatientRepository(BDContext context) : base(context.Patient)
+        public PatientRepository(BDContext context) : base(context.Patients)
         {
         }
     }

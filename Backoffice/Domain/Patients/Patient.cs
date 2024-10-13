@@ -35,11 +35,12 @@ namespace Backoffice.Domain.Patients
             this.FirstName = dto.FirstName;
             this.LastName = dto.LastName;
             this.FullName = dto.FullName;
-            this.LicenseNumber = dto.LicenseNumber;
+            this.Gender = dto.Gender;
+            this.DateOfBirth = dto.DateOfBirth;
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Specialization = dto.Specialization;
-            this.AvailabilitySlots = dto.AvailabilitySlots;
+            this.Allergies = dto.Allergies;
+            this.MedicalRecordNumber = dto.MedicalRecordNumber;
         }
     }
 }
