@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using Backoffice.Domain.Shared;
 
 namespace Backoffice.Domain.Staff

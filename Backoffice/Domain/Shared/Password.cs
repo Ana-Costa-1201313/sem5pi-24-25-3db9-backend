@@ -1,8 +1,7 @@
-using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
-namespace Backoffice.Domain.Users
+namespace Backoffice.Domain.Shared
 {
     [Owned]
     public class Password

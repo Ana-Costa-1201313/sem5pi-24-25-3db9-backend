@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Domain.Users
 {

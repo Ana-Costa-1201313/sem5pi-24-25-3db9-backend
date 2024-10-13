@@ -1,7 +1,6 @@
-using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backoffice.Domain.Users
+namespace Backoffice.Domain.Shared
 {
     [Owned]
     public class PhoneNumber

@@ -1,4 +1,4 @@
-namespace Backoffice.Domain.Users
+namespace Backoffice.Domain.Shared
 {
     public enum Role
     {

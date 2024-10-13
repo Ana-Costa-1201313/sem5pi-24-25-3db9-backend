@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Backoffice.Domain.Shared;
 
-namespace Backoffice.Domain.Users
+namespace Backoffice.Domain.Shared
 {
     [Owned]
     public class Email

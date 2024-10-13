@@ -1,6 +1,5 @@
 using System;
 using Backoffice.Domain.Shared;
-using Newtonsoft.Json;
 
 namespace Backoffice.Domain.Users
 {

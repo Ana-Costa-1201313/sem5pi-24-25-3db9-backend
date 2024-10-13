@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using Backoffice.Domain.Shared;
-using Backoffice.Domain.Users;
 
 namespace Backoffice.Domain.Staff
 {
