@@ -7,9 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
 using Backoffice.Infraestructure.Categories;
+using Backoffice.Infraestructure.Users;
+using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
+using Backoffice.Domain.Users;
+using Backoffice.Domain.Staff;
+using System.Text.Json.Serialization;
 
 namespace Backoffice
 {
@@ -38,13 +43,14 @@ namespace Backoffice
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-        
+
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +85,12 @@ namespace Backoffice
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<UserService>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
         }
     }
 }
