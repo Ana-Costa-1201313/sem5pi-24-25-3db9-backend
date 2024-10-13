@@ -23,7 +23,7 @@ namespace Backoffice.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StaffDto>> GetById(Guid id)
         {
-            var staff = await _service.GetByIdAsync(new StaffId(id));
+            var staff = await _service.GetByIdAsync(id);
 
             if (staff == null)
             {

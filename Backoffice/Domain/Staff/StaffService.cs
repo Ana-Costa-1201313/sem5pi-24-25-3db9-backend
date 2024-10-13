@@ -33,9 +33,9 @@ namespace Backoffice.Domain.Staff
             return listDto;
         }
 
-        public async Task<StaffDto> GetByIdAsync(StaffId id)
+        public async Task<StaffDto> GetByIdAsync(Guid id)
         {
-            var staff = await this._repo.GetByIdAsync(id);
+            var staff = await this._repo.GetByIdAsync(new StaffId(id));
 
             if (staff == null)
                 return null;

@@ -29,9 +29,9 @@ namespace Backoffice.Domain.Users
             return listDto;
         }
 
-        public async Task<UserDto> GetByIdAsync(UserId id)
+        public async Task<UserDto> GetByIdAsync(Guid id)
         {
-            var user = await this._repo.GetByIdAsync(id);
+            var user = await this._repo.GetByIdAsync(new UserId(id));
 
             if (user == null)
                 return null;

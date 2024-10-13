@@ -24,7 +24,7 @@ namespace Backoffice.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(Guid id)
         {
-            var user = await _service.GetByIdAsync(new UserId(id));
+            var user = await _service.GetByIdAsync(id);
 
             if (user == null)
             {
