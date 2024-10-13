@@ -33,6 +33,27 @@ namespace Backoffice.Domain.Staff
             return listDto;
         }
 
+        public async Task<StaffDto> GetByIdAsync(StaffId id)
+        {
+            var staff = await this._repo.GetByIdAsync(id);
+
+            if (staff == null)
+                return null;
+
+            return new StaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                FirstName = staff.FirstName,
+                LastName = staff.LastName,
+                FullName = staff.FullName,
+                LicenseNumber = staff.LicenseNumber,
+                Email = staff.Email,
+                Phone = staff.Phone,
+                Specialization = staff.Specialization,
+                AvailabilitySlots = staff.AvailabilitySlots
+            };
+        }
+
         public async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             var staff = new Staff(dto);

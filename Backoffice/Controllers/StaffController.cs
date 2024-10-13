@@ -20,6 +20,19 @@ namespace Backoffice.Controllers
             return await _service.GetAllAsync();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<StaffDto>> GetById(Guid id)
+        {
+            var staff = await _service.GetByIdAsync(new StaffId(id));
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            return staff;
+        }
+
         [HttpPost]
         public async Task<ActionResult<StaffDto>> Create(CreateStaffDto dto)
         {
@@ -27,7 +40,7 @@ namespace Backoffice.Controllers
             {
                 var staff = await _service.AddAsync(dto);
 
-                return staff;
+                return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
             }
             catch (BusinessRuleValidationException e)
             {
