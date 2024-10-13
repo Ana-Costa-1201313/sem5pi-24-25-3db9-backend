@@ -52,7 +52,7 @@ namespace HealthcareApp.Domain.Specializations
                     )
                 );
 
-            if (this._repo.SpecializationNameExists(spec.Name.Name))
+            if (await this._repo.SpecializationNameExists(spec.Name.Name))
             {
                 throw new BusinessRuleValidationException("Error: This specialization name is already being used.");
             }

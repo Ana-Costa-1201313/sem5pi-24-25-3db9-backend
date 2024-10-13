@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using HealthcareApp.Domain.Shared;
+using HealthcareApp.Domain.Specializations;
 
 namespace HealthcareApp.Domain.OperationTypes
 {
@@ -10,10 +11,13 @@ namespace HealthcareApp.Domain.OperationTypes
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _repo;
 
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo)
+        private readonly ISpecializationRepository _repoSpecialization;
+
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo, ISpecializationRepository repoSpecification)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            this._repoSpecialization = repoSpecification;
         }
 
         public async Task<List<OperationTypeDto>> GetAllAsync()
@@ -29,7 +33,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             });
@@ -53,7 +57,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             };
@@ -61,6 +65,20 @@ namespace HealthcareApp.Domain.OperationTypes
 
         public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
         {
+
+            var requiredStaffList = new List<OperationTypeRequiredStaff>();
+
+            foreach (var staff in dto.RequiredStaff)
+            {
+                if (!await this._repoSpecialization.SpecializationNameExists(staff.Specialization)){
+                    throw new BusinessRuleValidationException("There is no specialization with the name " + staff.Specialization + ".");
+                }
+                var specialization = await _repoSpecialization.GetBySpecializationName(staff.Specialization);
+                var requiredStaff = new OperationTypeRequiredStaff(specialization, staff.Total);
+                requiredStaffList.Add(requiredStaff);
+            }
+
+
             var opType = new OperationType(
                 new OperationTypeName
                     (
@@ -72,12 +90,9 @@ namespace HealthcareApp.Domain.OperationTypes
                         dto.SurgeryDuration,
                         dto.CleaningDuration
                     ),
-                dto.RequiredStaff.ConvertAll(staff => new OperationTypeRequiredStaff
-                    (
-                        staff.Specialization,  
-                        staff.Total      
-                    ))
+                    requiredStaffList
                 );
+
 
             await this._repo.AddAsync(opType);
 
@@ -92,7 +107,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             };
@@ -119,7 +134,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             };
@@ -146,7 +161,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             };
@@ -174,7 +189,7 @@ namespace HealthcareApp.Domain.OperationTypes
                 CleaningDuration = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
                 RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
                 {
-                    Specialization = staff.Specialization,
+                    Specialization = staff.Specialization.Name.Name,
                     Total = staff.Total
                 })
             };

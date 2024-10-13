@@ -7,32 +7,35 @@ namespace HealthcareApp.Infraestructure.OperationTypes
     internal class OperationTypeEntityTypeConfiguration : IEntityTypeConfiguration<OperationType>
     {
         public void Configure(EntityTypeBuilder<OperationType> builder)
-        {
-            builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
-            builder.HasKey(b => b.Id);
-            builder.OwnsOne(b => b.Name, n => 
-            {
-                n.Property( c => c.Name).HasColumnName("Name").IsRequired();
-            });
-            builder.OwnsOne(b => b.Duration);
-            builder.OwnsMany(b => b.RequiredStaff, rs =>
-            {
-                rs.ToTable("RequiredStaff");
+    {
+        builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
+        builder.HasKey(b => b.Id);
 
-                rs.Property(staff => staff.Specialization)
-                .HasColumnName("Specialization")
+        builder.OwnsOne(b => b.Name, n =>
+        {
+            n.Property(c => c.Name).HasColumnName("Name").IsRequired();
+        });
+
+        builder.OwnsOne(b => b.Duration);
+
+        builder.OwnsMany(b => b.RequiredStaff, rs =>
+        {
+            rs.ToTable("RequiredStaff");
+
+            rs.HasKey(rs => new { rs.SpecializationId, rs.Total }); 
+
+            rs.Property(rs => rs.SpecializationId)
+                .HasColumnName("SpecializationId")
                 .IsRequired();
 
-                rs.Property(staff => staff.Total)
+            rs.Property(staff => staff.Total)
                 .HasColumnName("Total")
                 .IsRequired();
 
-                rs.WithOwner()
-                .HasForeignKey("OperationTypeId");
+            rs.WithOwner().HasForeignKey("OperationTypeId");  
+        });
 
-                rs.HasKey("OperationTypeId", "Specialization");
-            });
-            builder.Property<bool>(b => b.Active);
-        }
+        builder.Property<bool>(b => b.Active);
     }
+}
 }

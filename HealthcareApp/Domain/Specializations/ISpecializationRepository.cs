@@ -5,7 +5,8 @@ namespace HealthcareApp.Domain.Specializations
     public interface ISpecializationRepository : IRepository<Specialization, SpecializationId>
     {
 
-        public bool SpecializationNameExists(string name);
+        public Task<bool> SpecializationNameExists(string name);
+        public Task<Specialization> GetBySpecializationName(string name);
 
     }
 }
