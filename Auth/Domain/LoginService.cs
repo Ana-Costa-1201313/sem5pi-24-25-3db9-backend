@@ -8,36 +8,80 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 
 
-namespace Auth.Domain.Users {
-    public class LoginService{
+namespace Auth.Domain.Users
+{
+    public class LoginService
+    {
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _iconfig;
 
 
-        public LoginService(IConfiguration iConfig, IUnitOfWork unitOfWork, IUserRepository userRepository) {
+        public LoginService(IConfiguration iConfig, IUnitOfWork unitOfWork, IUserRepository userRepository)
+        {
             this._unitOfWork = unitOfWork;
             this._userRepository = userRepository;
             this._iconfig = iConfig;
         }
 
-        //public async Task<UserDTO> public Login(LoginDTO loginDto){
-        //    if (loginDto.userName != null && loginDto.password != null)
-        //        return Ok(await _service.login(loginDto.userName, loginDto.password));
-        //    return BadRequest(new {Message = "Body no formato errado." });
-        //}
+        public async Task<bool> validToken(String loginDTOJWT) {
+            if (string.IsNullOrEmpty(loginDTOJWT))
+            {
+                return false;
+            }
 
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = _iconfig["Jwt:Issuer"],
 
-        private String GenerateJWT(string userName, string permissoes)
-        {
-            //TODO Gerar JWT
-            return userName;
+                ValidateAudience = true,
+                ValidAudience = _iconfig["Jwt:Audience"],
+
+                ValidateLifetime = true,
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_iconfig["Jwt:Key"])),
+
+                ClockSkew = TimeSpan.Zero // Remove the default clock skew of 5 minutes
+            };
+
+            try
+            {
+                // Create a token handler
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+            // Validate the token
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(loginDTOJWT, tokenValidationParameters, out SecurityToken validatedToken);
+
+                // Check if the validated token is a JwtSecurityToken
+                if (validatedToken is JwtSecurityToken jwtToken && jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Token is valid
+                    return true;
+                }
+                else
+                {
+                    // Invalid token
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                // Token validation failed
+                return false;
+            }
         }
 
-        public SecurityToken CreateToken(User user)
+        public async Task<ActionResult<UserDTO>> login(String username, String password) {
+            return null;
+        }
+
+        public String CreateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
@@ -64,7 +108,7 @@ namespace Auth.Domain.Users {
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             //return tokenHandler.WriteToken(token);
-            return token;
+            return tokenHandler.WriteToken(token);
         }
     }
 }
