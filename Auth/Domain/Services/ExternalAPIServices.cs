@@ -35,18 +35,6 @@ public class ExternalApiService
         }
     }
 
-    //public async Task<bool> UserExistsAndAccountIsActive(UserDTO userDTO)
-    //{
-    //    try 
-    //    { 
-
-    //    } 
-    //    catch (Exception e) 
-    //    { 
-
-    //    }
-    //}
-
     public async Task<string> PostDataToExternalApiAsync(string apiUrl, object data)
     {
         try

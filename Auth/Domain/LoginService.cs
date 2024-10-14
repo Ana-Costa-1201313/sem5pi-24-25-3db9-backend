@@ -46,39 +46,36 @@ namespace Auth.Domain.Users
 
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_iconfig["Jwt:Key"])),
-
-                ClockSkew = TimeSpan.Zero // Remove the default clock skew of 5 minutes
             };
 
             try
             {
-                // Create a token handler
                 var tokenHandler = new JwtSecurityTokenHandler();
 
-            // Validate the token
-            ClaimsPrincipal principal = tokenHandler.ValidateToken(loginDTOJWT, tokenValidationParameters, out SecurityToken validatedToken);
+                ClaimsPrincipal principal = tokenHandler.ValidateToken(loginDTOJWT, tokenValidationParameters, out SecurityToken validatedToken);
 
-                // Check if the validated token is a JwtSecurityToken
                 if (validatedToken is JwtSecurityToken jwtToken && jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    // Token is valid
                     return true;
                 }
                 else
                 {
-                    // Invalid token
                     return false;
                 }
             }
             catch (Exception)
             {
-                // Token validation failed
                 return false;
             }
         }
 
-        public async Task<ActionResult<UserDTO>> login(String username, String password) {
-            return null;
+        public async Task<ActionResult<UserDTO>> login(String username, String password)
+        {
+            // make request to Backoffice api
+
+            //good requeste -> createToken() -> store Token?
+
+            //bad request -> return fail
         }
 
         public String CreateToken(User user)
@@ -107,7 +104,6 @@ namespace Auth.Domain.Users
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            //return tokenHandler.WriteToken(token);
             return tokenHandler.WriteToken(token);
         }
     }

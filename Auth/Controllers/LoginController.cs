@@ -18,11 +18,6 @@ namespace Auth.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public ActionResult<string> Login()
-        {
-            return Ok("boas");
-        }
 
         [HttpPost("{loginDto}")]
         public async Task<ActionResult<UserDTO>> login(LoginDTO loginDto)
@@ -34,11 +29,11 @@ namespace Auth.Controllers
                     if(await _service.validToken(loginDto.jwt))
                         return Ok(new UserDTO { jwt = loginDto.jwt});
                 }
-                    //    //else if (loginDto.googleCredentials != null)
-                    //    //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
+                //else if (loginDto.googleCredentials != null)
+                //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
                 else if (loginDto.username != null && loginDto.password != null)
                     return Ok(await _service.login(loginDto.username, loginDto.password));
-                //    return BadRequest(new { Message = "Body no formato errado." });
+                //  return BadRequest(new { Message = "Body no formato errado." });
             }
             catch (Exception ex)
             {
