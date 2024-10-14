@@ -28,36 +28,57 @@ namespace Auth.Controllers
         public async Task<ActionResult<UserDTO>> login(LoginDTO loginDto)
         {
 
-            //try
-            //{
-            //    if (loginDto.jwt != null)
-            //        return Ok(await _service.jwtValido(loginDto.jwt));
-            //    //else if (loginDto.googleCredentials != null)
-            //    //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
-            //    else if (loginDto.userName != null && loginDto.password != null)
-            //        return Ok(await _service.login(loginDto.userName, loginDto.password));
-            //    return BadRequest(new { Message = "Body no formato errado." });
-            //}
-            //catch (Exception ex)
-            //{
-            return BadRequest(new { Message = "mau boas" });
-            //}
+            try
+            {
+                if (loginDto.jwt != null) { 
+                    if(await _service.validToken(loginDto.jwt))
+                        return Ok(new UserDTO { jwt = loginDto.jwt});
+                }
+                    //    //else if (loginDto.googleCredentials != null)
+                    //    //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
+                else if (loginDto.username != null && loginDto.password != null)
+                    return Ok(await _service.login(loginDto.username, loginDto.password));
+                //    return BadRequest(new { Message = "Body no formato errado." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "mau boas" });
+            }
+
+            return null;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SecurityToken>> teste(string id) 
+        public async Task<ActionResult<LoginDTO>> teste(string id) 
         {
 
             var login = new LoginDTO
             {
-                //jwt = _service.CreateToken(new Domain.Users.User("ricardo")),
-                a = 5
+                jwt = _service.CreateToken(new Domain.Users.User("ricardo1"))
             };
 
-
-            //return Ok(login);
-            return _service.CreateToken(new Domain.Users.User("ricardo"));
+            return Ok(login);
         }
+
+        [HttpPost("validate")]
+        public async Task<ActionResult<LoginDTO>> validateToken(LoginDTO loginDTO) {
+
+            if (loginDTO == null || string.IsNullOrEmpty(loginDTO.jwt))
+            {
+                return BadRequest(new { Message = "Invalid token data." });
+            }
+
+            if (await _service.validToken(loginDTO.jwt))
+            {
+                return Ok(loginDTO);
+            }
+            else
+            {
+                return Unauthorized(new { Message = "Invalid or expired token." });
+            }
+        }
+
+
 
     }
 }
