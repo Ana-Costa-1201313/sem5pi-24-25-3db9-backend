@@ -11,6 +11,8 @@ namespace Auth.Domain.Users
 
         public Username username { get { return this._username; } }
 
+        public User() { }
+
         public User(string username) {
             _username = new Username(username);    
         }

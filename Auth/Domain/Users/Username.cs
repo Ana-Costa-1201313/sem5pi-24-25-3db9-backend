@@ -13,6 +13,8 @@ namespace Auth.Domain.Users
             set { this._username = value; }
         }
 
+        protected Username() { }
+
         public Username(string? id)
         {
             if (id == null || id == "")
