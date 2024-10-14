@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Auth.Domain.Users.DTO;
 
 public class ExternalApiService
 {
@@ -34,17 +35,17 @@ public class ExternalApiService
         }
     }
 
-    public async Task<bool> UserExistsAndAccountIsActive(UserDTO userDTO)
-    {
-        try 
-        { 
+    //public async Task<bool> UserExistsAndAccountIsActive(UserDTO userDTO)
+    //{
+    //    try 
+    //    { 
 
-        } 
-        catch (Exception e) 
-        { 
+    //    } 
+    //    catch (Exception e) 
+    //    { 
 
-        }
-    }
+    //    }
+    //}
 
     public async Task<string> PostDataToExternalApiAsync(string apiUrl, object data)
     {
