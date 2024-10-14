@@ -7,9 +7,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
 using Backoffice.Infraestructure.Categories;
+using Backoffice.Infraestructure.Users;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
+using Backoffice.Domain.Users;
+using System.Text.Json.Serialization;
 
 namespace Backoffice
 {
@@ -30,21 +33,22 @@ namespace Backoffice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             //services.AddDbContext<BDContext>(opt =>
-               // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-                //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            // services.AddDbContext<BDContext>(opt =>
+            //    opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
+            //    .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-        
+
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +83,9 @@ namespace Backoffice
 
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<CategoryService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<UserService>();
         }
     }
 }
