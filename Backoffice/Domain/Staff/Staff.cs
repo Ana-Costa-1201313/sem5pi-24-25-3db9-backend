@@ -1,4 +1,5 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Users;
 
 namespace Backoffice.Domain.Staff
 {
@@ -20,24 +21,29 @@ namespace Backoffice.Domain.Staff
 
         public int AvailabilitySlots { get; private set; }
 
-        public string StaffId { get; private set; }
+        public Role Role { get; private set; }
+
+        public int MechanographicNum { get; private set; }
 
         private Staff()
         {
 
         }
 
-        public Staff(CreateStaffDto dto)
+        public Staff(CreateStaffDto dto, int mecNum)
         {
             this.Id = new StaffId(Guid.NewGuid());
             this.FirstName = dto.FirstName;
             this.LastName = dto.LastName;
             this.FullName = dto.FullName;
             this.LicenseNumber = dto.LicenseNumber;
-            this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = dto.AvailabilitySlots;
+            this.Role = dto.Role;
+            this.MechanographicNum = mecNum;
+            this.Email = new Email(Role.ToString().Substring(0, 1) + MechanographicNum + "@healthcareapp.com");
+
         }
     }
 }

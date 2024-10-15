@@ -47,25 +47,21 @@ namespace Backoffice.Domain.Users
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
-            int mechanographicNum = 0;
-            
-            if (dto.Role != Role.Patient)
-            {
-                mechanographicNum = await this._repo.GetLastMechanographicNumAsync() + 1;
-            }
-
-            var user = new User(dto.Role, dto.Email, mechanographicNum);
+            User user = new User(dto.Role, dto.Email);
 
             await this._repo.AddAsync(user);
 
             await this._unitOfWork.CommitAsync();
+
+            //depois do user estar criado envia o link para o confirmation email do dto para o user definir a password
 
             return new UserDto
             {
                 Id = user.Id.AsGuid(),
                 Role = user.Role,
                 Email = user.Email.ToString(),
-                Password = user.Password
+                Password = user.Password,
+                Active = user.Active
             };
         }
 

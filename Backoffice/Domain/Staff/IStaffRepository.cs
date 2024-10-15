@@ -4,6 +4,6 @@ namespace Backoffice.Domain.Staff
 {
     public interface IStaffRepository : IRepository<Staff, StaffId>
     {
-
+        Task<int> GetLastMechanographicNumAsync();
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staff;
 using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
+using Backoffice.Domain.Users;
 
 namespace Backoffice.Domain.Staff
 {
@@ -59,7 +60,7 @@ namespace Backoffice.Domain.Staff
 
         public async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
-            var staff = new Staff(dto);
+            var staff = new Staff(dto, await this._repo.GetLastMechanographicNumAsync() + 1);
 
             try
             {
@@ -96,10 +97,11 @@ namespace Backoffice.Domain.Staff
                 LastName = staff.LastName,
                 FullName = staff.FullName,
                 LicenseNumber = staff.LicenseNumber,
-                Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
-                AvailabilitySlots = staff.AvailabilitySlots
+                AvailabilitySlots = staff.AvailabilitySlots,
+                Role = staff.Role,
+                Email = staff.Email._Email,
             };
         }
     }
