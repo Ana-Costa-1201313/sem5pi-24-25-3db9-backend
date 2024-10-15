@@ -73,9 +73,10 @@ namespace Auth.Domain.Users
         {
             // make request to Backoffice api
 
-            //good requeste -> createToken() -> store Token?
+            //good request -> createToken() -> return Token(username, password, role,....)
 
             //bad request -> return fail
+            return null;
         }
 
         public String CreateToken(User user)
@@ -89,6 +90,7 @@ namespace Auth.Domain.Users
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.username.username),
+                    new Claim(ClaimTypes.Role, user.role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
         
@@ -105,6 +107,18 @@ namespace Auth.Domain.Users
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public LoginDTO ExtractLoginDTOFromToken(LoginDTO loginDTO)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(loginDTO.jwt);
+
+            loginDTO.username = jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")?.Value;
+            loginDTO.role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+            loginDTO.jwt = loginDTO.jwt;
+
+            return loginDTO;
         }
     }
 }

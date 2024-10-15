@@ -10,8 +10,11 @@ namespace Auth.Domain.Users.DTO {
 
         public string? jwt {get;set;}
 
-        public int? a {get;set;}
+        public string? role { get; set; }
 
         public DateTime? tokenCreated {get;set;}
+
+        public int? a {get;set;}
+
     }   
 }
