@@ -49,7 +49,7 @@ namespace Auth.Controllers
 
             var login = new LoginDTO
             {
-                jwt = _service.CreateToken(new Domain.Users.User("ricardo1"))
+                jwt = _service.CreateToken(new Domain.Users.User("ricardo1", "student"))
             };
 
             return Ok(login);
@@ -58,18 +58,35 @@ namespace Auth.Controllers
         [HttpPost("validate")]
         public async Task<ActionResult<LoginDTO>> validateToken(LoginDTO loginDTO) {
 
-            if (loginDTO == null || string.IsNullOrEmpty(loginDTO.jwt))
+            try
             {
-                return BadRequest(new { Message = "Invalid token data." });
-            }
+                // Read the token from the request header
+                if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
+                {
+                    return BadRequest("Authorization header is missing");
+                }
 
-            if (await _service.validToken(loginDTO.jwt))
-            {
-                return Ok(loginDTO);
+                // Remove the 'Bearer ' prefix from the token
+                var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
+
+                // Use the validateToken method to check the token's validity
+                bool valid = await _service.validToken(loginDTO.jwt);
+
+                // Call the isTokenGood() method to further validate the token (assuming this method is available)
+                if (valid)
+                {
+                    loginDTO = _service.ExtractLoginDTOFromToken(loginDTO);
+                    return Ok(loginDTO);
+                }
+                else
+                {
+                    return Unauthorized("Invalid token");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Unauthorized(new { Message = "Invalid or expired token." });
+                // Return a generic error message for any exception
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
