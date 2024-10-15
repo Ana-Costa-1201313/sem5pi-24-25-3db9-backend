@@ -19,13 +19,15 @@ namespace Auth.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _iconfig;
+        private readonly ExternalApiService _externalApiService;
 
 
-        public LoginService(IConfiguration iConfig, IUnitOfWork unitOfWork, IUserRepository userRepository)
+        public LoginService(IConfiguration iConfig, IUnitOfWork unitOfWork, IUserRepository userRepository, ExternalApiService externalApiService)
         {
             this._unitOfWork = unitOfWork;
             this._userRepository = userRepository;
             this._iconfig = iConfig;
+            _externalApiService = externalApiService;
         }
 
         public async Task<bool> validToken(String loginDTOJWT) {
@@ -69,14 +71,23 @@ namespace Auth.Domain.Users
             }
         }
 
-        public async Task<ActionResult<UserDTO>> login(String username, String password)
+        public async Task<ActionResult<LoginDTO>> login(String email, String password)
         {
             // make request to Backoffice api
-
+            LoginDTO loginDTO = null;
+            string token = null;
+            try 
+            { 
+            loginDTO = await _externalApiService.UserExists(email, password);
+            }
+            catch (Exception ex) {
+                return null;
+            }
             //good request -> createToken() -> return Token(username, password, role,....)
+            if (loginDTO != null) token = CreateToken(loginDTO);
+            loginDTO.jwt = token;
 
-            //bad request -> return fail
-            return null;
+            return loginDTO;
         }
 
         public String CreateToken(User user)
@@ -91,6 +102,36 @@ namespace Auth.Domain.Users
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.username.username),
                     new Claim(ClaimTypes.Role, user.role),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
+        
+                    //new Claim(ClaimTypes.Role, user.Role.ToString()),
+                    // Add more claims as needed
+                }),
+                Expires = DateTime.UtcNow.AddHours(72),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256),
+                Issuer = _iconfig["Jwt:Issuer"],
+                Audience = _iconfig["Jwt:Audience"]
+            };
+
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        public String CreateToken(LoginDTO loginDTO)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
+            var jwtSettings = _iconfig.GetSection("Jwt");
+            var key = _iconfig["Jwt:Key"];
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, loginDTO.username),
+                    new Claim(ClaimTypes.Role, loginDTO.role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
         

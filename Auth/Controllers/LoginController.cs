@@ -33,7 +33,7 @@ namespace Auth.Controllers
                 //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
                 else if (loginDto.username != null && loginDto.password != null)
                     return Ok(await _service.login(loginDto.username, loginDto.password));
-                //  return BadRequest(new { Message = "Body no formato errado." });
+                    //return BadRequest(new { Message = "mau boas." });
             }
             catch (Exception ex)
             {
