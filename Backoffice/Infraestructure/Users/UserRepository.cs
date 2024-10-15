@@ -20,5 +20,10 @@ namespace Backoffice.Infraestructure.Users
                 .Select(u => u.MechanographicNum)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<User> getUserByEmail(string email)
+        {
+            return await this._context.Users.Where(x => email.Equals(x.Email.ToString)).FirstOrDefaultAsync();
+        }
     }
 }
