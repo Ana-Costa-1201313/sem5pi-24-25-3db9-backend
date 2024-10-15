@@ -28,5 +28,19 @@ namespace Backoffice.Services
             if (password.Equals(user.Password.Passwd)) return false;
             return true;
         }
+
+        public async Task<LoginDTO> getLoginDTO(string email)
+        {
+            LoginDTO loginDTO = new LoginDTO();
+
+            User user = await _userRepository.getUserByEmail(email);
+            if (user == null) return null;
+
+            loginDTO.username = user.Email.ToString();
+            loginDTO.password = user.Password.Passwd;
+            loginDTO.role = user.Role.ToString();
+
+            return loginDTO;
+        }
     }
 }
