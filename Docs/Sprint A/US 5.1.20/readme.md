@@ -58,8 +58,6 @@ A: Yes
 
 The following **HTTP requests** will be implemented:
 - POST (to create a new operation type)
-- GET (to check the new operation types)
-- GET by ID (to find the new operation type)
 
 
 ## 4. Design
@@ -88,19 +86,34 @@ This diagram presents the classes that support the functionality.
 
 ### 4.5. Applied Design Patterns
 
+- **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
+- **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
+- **Model View Controller (MVC):** allows the re-usability of components and promotes a more modular approach to the code, making it easier to manage and maintain.
+- **Repository pattern:** allows access to data without sharing the details of data storing, like the database connection.
+- **Service pattern:** helps keeping high cohesion and low coupling in the code by separating complex business logic from the rest of the system. They also promote reuse, as multiple parts of the system can use the same service to perform common operations.
+- **Test Driven Development (TDD):** planning the tests previously to the code gives orientation lines to the development process.
+- **Onion Architecture:** concentric layers structure that puts the Domin Model as the core. Promotes modularity, flexibility and testability.
+- **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
+- **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
+
 
 ### 4.6. Tests
 
-#### 4.6.1. Unit Tests
+#### 4.6.1. Unit and Integration Tests
 
-- Null Duration
-- Negative Duration
-- Null required staff
-- Negative total of staff with specialization
-- Null total of staff with specialization
+- Tests for Operation Type entity with valid inputs
+- Tests for Operation Type entity with invalid inputs
+
+- Tests for value objects with valid inputs
+- Tests for value objects with invalid inputs
+
+- Isolation tests for the controller
+- Isolation tests for the service
+- Isolation tests for the repository
+- InMemory tests for the repository
 
 
-#### 4.6.2. Integration Tests
+#### 4.6.2. Postman Tests
 
 - Status code test
 - Response time test
@@ -125,7 +138,7 @@ It was implemented in the branch feature/20-backend-admin-add-new-operation-type
 
 ## 6. Integration/Demonstration
 
-
+To create a new Operation Type, run the Backoffice app and send a POST HTTP request with the new operation type data.
 
 ## 7. Observations
 
