@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Auth.Domain.Users.DTO;
+using System.Text;
 
 public class ExternalApiService
 {
