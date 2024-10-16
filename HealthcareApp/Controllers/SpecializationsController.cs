@@ -55,27 +55,5 @@ namespace HealthcareApp.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
-
-
-        // Inactivate: api/Specializations/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<SpecializationDto>> SoftDelete(Guid id)
-        {
-            try{
-            var spec = await _service.InactivateAsync(new SpecializationId(id));
-
-            if (spec == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(spec);
-
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
     }
 }

@@ -67,43 +67,5 @@ namespace HealthcareApp.Domain.Specializations
                 Name = spec.Name.Name
             };
         }
-
-        public async Task<SpecializationDto> UpdateAsync(SpecializationDto dto)
-        {
-            var spec = await this._repo.GetByIdAsync(new SpecializationId(dto.Id));
-
-            if (spec == null)
-                return null;
-
-            // change all field
-            spec.ChangeName(spec.Name);
-
-            await this._unitOfWork.CommitAsync();
-
-            return new SpecializationDto
-            {
-                Id = spec.Id.AsGuid(),
-                Name = spec.Name.Name
-            };
-        }
-
-        public async Task<SpecializationDto> InactivateAsync(SpecializationId id)
-        {
-            var spec = await this._repo.GetByIdAsync(id);
-
-            if (spec == null)
-                return null;
-
-            // change all fields
-            spec.MarkAsInative();
-
-            await this._unitOfWork.CommitAsync();
-
-            return new SpecializationDto
-            {
-                Id = spec.Id.AsGuid(),
-                Name = spec.Name.Name
-            };
-        }
     }
 }
