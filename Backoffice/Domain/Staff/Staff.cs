@@ -1,5 +1,4 @@
 using Backoffice.Domain.Shared;
-using Backoffice.Domain.Users;
 
 namespace Backoffice.Domain.Staff
 {
@@ -23,14 +22,18 @@ namespace Backoffice.Domain.Staff
 
         public Role Role { get; private set; }
 
-        public int MechanographicNum { get; private set; }
+        public int RecruitmentYear { get; private set; }
+
+        public int MecNumSequence { get; private set; }
+
+        public MechanographicNumber MechanographicNum { get; private set; }
 
         private Staff()
         {
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNum)
+        public Staff(CreateStaffDto dto, int mecNumSeq)
         {
             this.Id = new StaffId(Guid.NewGuid());
             this.FirstName = dto.FirstName;
@@ -41,9 +44,10 @@ namespace Backoffice.Domain.Staff
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = dto.AvailabilitySlots;
             this.Role = dto.Role;
-            this.MechanographicNum = mecNum;
-            this.Email = new Email(Role.ToString().Substring(0, 1) + MechanographicNum + "@healthcareapp.com");
-
+            this.RecruitmentYear = dto.RecruitmentYear;
+            this.MecNumSequence = mecNumSeq;
+            this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
+            this.Email = new Email(MechanographicNum + "@healthcareapp.com");
         }
     }
 }

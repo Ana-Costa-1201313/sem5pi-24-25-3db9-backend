@@ -15,6 +15,8 @@ namespace Backoffice.Domain.Staff
 
         public int LicenseNumber { get; set; }
 
+        public string Email { get; set; }
+
         public string Phone { get; set; }
 
         public string Specialization { get; set; }
@@ -24,6 +26,8 @@ namespace Backoffice.Domain.Staff
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role Role { get; set; }
 
-        public string Email { get; set; }
+        public int RecruitmentYear { get; set; }
+
+        public string MechanographicNum { get; set; }
     }
 }

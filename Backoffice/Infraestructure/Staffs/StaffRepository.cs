@@ -16,8 +16,8 @@ namespace Backoffice.Infraestructure.Staffs
         public async Task<int> GetLastMechanographicNumAsync()
         {
             return await _context.Staff
-                .OrderByDescending(u => u.MechanographicNum)
-                .Select(u => u.MechanographicNum)
+                .OrderByDescending(u => u.MecNumSequence)
+                .Select(u => u.MecNumSequence)
                 .FirstOrDefaultAsync();
         }
     }
