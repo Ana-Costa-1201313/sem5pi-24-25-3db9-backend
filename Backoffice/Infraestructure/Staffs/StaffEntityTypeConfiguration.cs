@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using Backoffice.Infraestructure.Shared;
 
 namespace Backoffice.Infraestructure.Staffs

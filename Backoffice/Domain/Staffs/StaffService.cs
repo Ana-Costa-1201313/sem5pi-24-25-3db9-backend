@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Users;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
     public class StaffService
     {
@@ -104,7 +104,6 @@ namespace Backoffice.Domain.Staff
                 Specialization = staff.Specialization,
                 AvailabilitySlots = staff.AvailabilitySlots,
                 Role = staff.Role,
-                RecruitmentYear = staff.RecruitmentYear,
                 MechanographicNum = staff.MechanographicNum.ToString()
             };
         }

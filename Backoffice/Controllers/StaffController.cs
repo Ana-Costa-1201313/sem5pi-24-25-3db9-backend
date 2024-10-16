@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers

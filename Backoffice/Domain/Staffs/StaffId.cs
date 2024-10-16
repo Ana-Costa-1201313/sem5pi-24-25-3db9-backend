@@ -1,6 +1,6 @@
 using Backoffice.Domain.Shared;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
     public class StaffId : EntityId
     {

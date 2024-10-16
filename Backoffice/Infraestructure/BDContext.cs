@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using Backoffice.Infraestructure.Categories;
 using Backoffice.Infraestructure.Users;
 using Backoffice.Infraestructure.Staffs;

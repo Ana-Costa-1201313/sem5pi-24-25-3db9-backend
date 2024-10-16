@@ -1,6 +1,6 @@
 using Backoffice.Domain.Shared;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
@@ -22,8 +22,6 @@ namespace Backoffice.Domain.Staff
 
         public Role Role { get; private set; }
 
-        public int RecruitmentYear { get; private set; }
-
         public int MecNumSequence { get; private set; }
 
         public MechanographicNumber MechanographicNum { get; private set; }
@@ -44,7 +42,6 @@ namespace Backoffice.Domain.Staff
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = dto.AvailabilitySlots;
             this.Role = dto.Role;
-            this.RecruitmentYear = dto.RecruitmentYear;
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
             this.Email = new Email(MechanographicNum + "@healthcareapp.com");

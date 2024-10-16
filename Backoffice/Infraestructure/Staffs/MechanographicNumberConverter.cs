@@ -1,4 +1,4 @@
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backoffice.Infraestructure.Staffs

@@ -1,17 +1,19 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Staffs;
 
 namespace Backoffice.Domain.Users
 {
     public class UserService
     {
         private readonly IUnitOfWork _unitOfWork;
-
         private readonly IUserRepository _repo;
+        private readonly IStaffRepository _staffRepo;
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IStaffRepository staffRepo)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            this._staffRepo = staffRepo;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -47,6 +49,23 @@ namespace Backoffice.Domain.Users
 
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
+            Staff staff = await _staffRepo.GetStaffByEmailAsync(new Email(dto.Email));
+
+            if (dto.Role == Role.Patient || dto.Role == Role.Admin)
+            {
+                if (staff != null)
+                {
+                    throw new BusinessRuleValidationException("Error: That email is being used by a staff member!");
+                }
+            }
+            else
+            {
+                if (staff == null || staff.Role != dto.Role)
+                {
+                    throw new BusinessRuleValidationException("Error: The user role doesn't match the email!");
+                }
+            }
+
             User user = new User(dto.Role, dto.Email);
 
             await this._repo.AddAsync(user);

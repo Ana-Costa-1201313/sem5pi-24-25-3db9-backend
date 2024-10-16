@@ -13,7 +13,7 @@ using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using System.Text.Json.Serialization;
 
 namespace Backoffice

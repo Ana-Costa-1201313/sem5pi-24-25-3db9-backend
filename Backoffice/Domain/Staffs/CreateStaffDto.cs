@@ -1,12 +1,10 @@
 using Backoffice.Domain.Shared;
 using System.Text.Json.Serialization;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
-    public class StaffDto
+    public class CreateStaffDto
     {
-        public Guid Id { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -14,8 +12,6 @@ namespace Backoffice.Domain.Staff
         public string FullName { get; set; }
 
         public int LicenseNumber { get; set; }
-
-        public string Email { get; set; }
 
         public string Phone { get; set; }
 
@@ -27,7 +23,5 @@ namespace Backoffice.Domain.Staff
         public Role Role { get; set; }
 
         public int RecruitmentYear { get; set; }
-
-        public string MechanographicNum { get; set; }
     }
 }

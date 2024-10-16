@@ -2,7 +2,7 @@ using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
     [Owned]
     public class MechanographicNumber
