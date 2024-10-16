@@ -1,5 +1,3 @@
-# Project HealthcareApp
-
 ## 1. Description of the Project
 
 This application is a prototype system for cirurgic requests, appointment,and resource management. 
