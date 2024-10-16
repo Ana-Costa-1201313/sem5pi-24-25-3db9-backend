@@ -10,6 +10,8 @@ namespace HealthcareApp.Infraestructure.OperationTypes
         {
             builder.ToTable("OperationTypes", SchemaNames.HealthcareApp);
             builder.HasKey(b => b.Id);
+            builder.Property(b => b.Id)
+                .HasConversion(id => id.Value, value => new OperationTypeId(value));
 
             builder.OwnsOne(b => b.Name, n =>
             {
