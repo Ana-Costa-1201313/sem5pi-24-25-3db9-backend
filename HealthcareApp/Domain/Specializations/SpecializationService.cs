@@ -29,9 +29,9 @@ namespace HealthcareApp.Domain.Specializations
             return listDto;
         }
 
-        public async Task<SpecializationDto> GetByIdAsync(SpecializationId id)
+        public async Task<SpecializationDto> GetByIdAsync(Guid id)
         {
-            var opType = await this._repo.GetByIdAsync(id);
+            var opType = await this._repo.GetByIdAsync(new SpecializationId(id));
 
             if (opType == null)
                 return null;

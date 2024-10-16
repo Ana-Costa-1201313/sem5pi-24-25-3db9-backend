@@ -41,9 +41,9 @@ namespace HealthcareApp.Domain.OperationTypes
             return listDto;
         }
 
-        public async Task<OperationTypeDto> GetByIdAsync(OperationTypeId id)
+        public async Task<OperationTypeDto> GetByIdAsync(Guid id)
         {
-            var opType = await this._repo.GetByIdWithDetailsAsync(id);
+            var opType = await this._repo.GetByIdWithDetailsAsync(new OperationTypeId(id));
 
             if (opType == null)
                 return null;

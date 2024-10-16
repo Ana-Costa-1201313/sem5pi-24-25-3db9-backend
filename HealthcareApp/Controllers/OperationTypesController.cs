@@ -29,7 +29,7 @@ namespace HealthcareApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OperationTypeDto>> GetGetById(Guid id)
         {
-            var opType = await _service.GetByIdAsync(new OperationTypeId(id));
+            var opType = await _service.GetByIdAsync(id);
 
             if (opType == null)
             {
