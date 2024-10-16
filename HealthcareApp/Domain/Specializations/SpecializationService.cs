@@ -20,37 +20,24 @@ namespace HealthcareApp.Domain.Specializations
         {
             var list = await this._repo.GetAllAsync();
 
-            List<SpecializationDto> listDto = list.ConvertAll<SpecializationDto>(specialization => new SpecializationDto
-            {
-                Id = specialization.Id.AsGuid(),
-                Name = specialization.Name.Name
-            });
+            List<SpecializationDto> listDto = list.ConvertAll<SpecializationDto>(specialization => SpecializationMapper.ToDto(specialization)).ToList();
 
             return listDto;
         }
 
         public async Task<SpecializationDto> GetByIdAsync(Guid id)
         {
-            var opType = await this._repo.GetByIdAsync(new SpecializationId(id));
+            var spec = await this._repo.GetByIdAsync(new SpecializationId(id));
 
-            if (opType == null)
+            if (spec == null)
                 return null;
 
-            return new SpecializationDto
-            {
-                Id = opType.Id.AsGuid(),
-                Name = opType.Name.Name
-            };
+            return SpecializationMapper.ToDto(spec);
         }
 
         public async Task<SpecializationDto> AddAsync(CreatingSpecializationDto dto)
         {
-            var spec = new Specialization(
-                new SpecializationName
-                    (
-                        dto.Name
-                    )
-                );
+            var spec = SpecializationMapper.ToDomain(dto);
 
             if (await this._repo.SpecializationNameExists(spec.Name.Name))
             {
@@ -61,11 +48,7 @@ namespace HealthcareApp.Domain.Specializations
 
             await this._unitOfWork.CommitAsync();
 
-            return new SpecializationDto
-            {
-                Id = spec.Id.AsGuid(),
-                Name = spec.Name.Name
-            };
+            return SpecializationMapper.ToDto(spec);
         }
     }
 }
