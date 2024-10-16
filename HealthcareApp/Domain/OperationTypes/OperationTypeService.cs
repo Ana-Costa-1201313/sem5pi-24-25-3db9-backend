@@ -24,19 +24,7 @@ namespace HealthcareApp.Domain.OperationTypes
         {
             var list = await this._repo.GetAllWithDetailsAsync();
 
-            List<OperationTypeDto> listDto = list.ConvertAll<OperationTypeDto>(opType => new OperationTypeDto
-            {
-                Id = opType.Id.AsGuid(),
-                Name = opType.Name.Name,
-                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
-                RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
-                {
-                    Specialization = staff.Specialization.Name.Name,
-                    Total = staff.Total
-                })
-            });
+            List<OperationTypeDto> listDto = list.Select(opType => OperationTypeMapper.ToDto(opType)).ToList();
 
             return listDto;
         }
@@ -48,19 +36,7 @@ namespace HealthcareApp.Domain.OperationTypes
             if (opType == null)
                 return null;
 
-            return new OperationTypeDto
-            {
-                Id = opType.Id.AsGuid(),
-                Name = opType.Name.Name,
-                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
-                RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
-                {
-                    Specialization = staff.Specialization.Name.Name,
-                    Total = staff.Total
-                })
-            };
+            return OperationTypeMapper.ToDto(opType);
         }
 
         public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
@@ -68,7 +44,6 @@ namespace HealthcareApp.Domain.OperationTypes
 
             var requiredStaffList = new List<OperationTypeRequiredStaff>();
             var specializationNamesSet = new HashSet<string>();
-
 
             foreach (var staff in dto.RequiredStaff)
             {
@@ -87,44 +62,18 @@ namespace HealthcareApp.Domain.OperationTypes
                 requiredStaffList.Add(requiredStaff);
             }
 
-
-            var opType = new OperationType(
-                new OperationTypeName
-                    (
-                        dto.Name
-                    ),
-                new OperationTypeDuration
-                    (
-                        dto.AnesthesiaPatientPreparationInMinutes,
-                        dto.SurgeryInMinutes,
-                        dto.CleaningInMinutes
-                    ),
-                    requiredStaffList
-                );
+            var opType = OperationTypeMapper.ToDomain(dto);
 
             if (await this._repo.OperationTypeNameExists(opType.Name.Name))
             {
                 throw new BusinessRuleValidationException("Error: This operation type name is already being used.");
             }
 
-
             await this._repo.AddAsync(opType);
 
             await this._unitOfWork.CommitAsync();
 
-            return new OperationTypeDto
-            {
-                Id = opType.Id.AsGuid(),
-                Name = opType.Name.Name,
-                AnesthesiaPatientPreparationInMinutes = (int)opType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
-                SurgeryInMinutes = (int)opType.Duration.SurgeryInMinutes.TotalMinutes,
-                CleaningInMinutes = (int)opType.Duration.CleaningInMinutes.TotalMinutes,
-                RequiredStaff = opType.RequiredStaff.ConvertAll<RequiredStaffDto>(staff => new RequiredStaffDto
-                {
-                    Specialization = staff.Specialization.Name.Name,
-                    Total = staff.Total
-                })
-            };
+            return OperationTypeMapper.ToDto(opType);
         }
 
     }
