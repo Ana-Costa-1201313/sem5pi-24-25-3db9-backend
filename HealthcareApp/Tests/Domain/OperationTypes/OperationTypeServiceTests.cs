@@ -123,7 +123,7 @@ namespace HealthcareApp.Tests
             operationTypesDatabase.Add(operationType);
             operationTypesDatabase.Add(operationType2);
 
-            var result = await service.GetByIdAsync(operationType2.Id);
+            var result = await service.GetByIdAsync(operationType2.Id.AsGuid());
 
             Assert.NotNull(result);
             Assert.Equal("Embolectomy", result.Name);
@@ -162,7 +162,7 @@ namespace HealthcareApp.Tests
 
             operationTypesDatabase.Add(operationType);
 
-            var result = await service.GetByIdAsync(operationType2.Id);
+            var result = await service.GetByIdAsync(operationType2.Id.AsGuid());
 
             Assert.Null(result);
         }

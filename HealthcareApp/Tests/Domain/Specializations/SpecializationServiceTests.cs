@@ -64,7 +64,7 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(specializationDatabase);
 
-            var specialization = await service.GetByIdAsync(specializationDatabase[1].Id);
+            var specialization = await service.GetByIdAsync(specializationDatabase[1].Id.AsGuid());
 
             Assert.NotNull(specialization);
             Assert.Equal("Cardio", specialization.Name);
@@ -79,7 +79,7 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(specializationDatabase);
 
-            var result = await service.GetByIdAsync(new SpecializationId(Guid.NewGuid()));
+            var result = await service.GetByIdAsync(Guid.NewGuid());
 
             Assert.Null(result);
         }
