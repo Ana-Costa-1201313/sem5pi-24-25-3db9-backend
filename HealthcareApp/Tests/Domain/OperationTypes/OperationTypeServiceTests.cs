@@ -53,24 +53,21 @@ namespace HealthcareApp.Tests
             var specializationsDatabase = new List<Specialization>();
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var operationType = new OperationType(
-                new OperationTypeName("Surgery"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
-                });
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
-            var operationType2 = new OperationType(
-            new OperationTypeName("Embolectomy"),
-            new OperationTypeDuration(30, 60, 15),
-            new List<OperationTypeRequiredStaff>
-            {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2),
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Cardio")), 3)
-            });
+            var requiredStaff2 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 2),
+                    ("Cardio", 3)
+                };
+            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
-            operationTypesDatabase.Add(operationType);
+
+            operationTypesDatabase.Add(operationType1);
             operationTypesDatabase.Add(operationType2);
 
             var result = await service.GetAllAsync();
@@ -103,24 +100,20 @@ namespace HealthcareApp.Tests
             var specializationsDatabase = new List<Specialization>();
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var operationType = new OperationType(
-                new OperationTypeName("Surgery"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
-                });
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
-            var operationType2 = new OperationType(
-            new OperationTypeName("Embolectomy"),
-            new OperationTypeDuration(30, 60, 15),
-            new List<OperationTypeRequiredStaff>
-            {
-                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2),
-                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Cardio")), 3)
-            });
+            var requiredStaff2 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 2),
+                    ("Cardio", 3)
+                };
+            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
-            operationTypesDatabase.Add(operationType);
+            operationTypesDatabase.Add(operationType1);
             operationTypesDatabase.Add(operationType2);
 
             var result = await service.GetByIdAsync(operationType2.Id.AsGuid());
@@ -143,24 +136,20 @@ namespace HealthcareApp.Tests
             var specializationsDatabase = new List<Specialization>();
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var operationType = new OperationType(
-                new OperationTypeName("Surgery"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
-                });
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
-            var operationType2 = new OperationType(
-            new OperationTypeName("Embolectomy"),
-            new OperationTypeDuration(30, 60, 15),
-            new List<OperationTypeRequiredStaff>
-            {
-                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2),
-                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Cardio")), 3)
-            });
+            var requiredStaff2 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 2),
+                    ("Cardio", 3)
+                };
+            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
-            operationTypesDatabase.Add(operationType);
+            operationTypesDatabase.Add(operationType1);
 
             var result = await service.GetByIdAsync(operationType2.Id.AsGuid());
 
@@ -178,16 +167,13 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var dto = new CreatingOperationTypeDto(
-                "Surgery",
-                30,
-                60,
-                15,
-                new List<RequiredStaffDto>
+
+            var requiredStaff = new List<(string SpecializationName, int Total)>
                 {
-                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
-                }
-            );
+                    ("Surgeon", 2)
+                };
+            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
+
 
             var result = await service.AddAsync(dto);
 
@@ -212,16 +198,13 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var dto = new CreatingOperationTypeDto(
-                "Surgery",
-                30,
-                60,
-                15,
-                new List<RequiredStaffDto>
+
+            var requiredStaff = new List<(string SpecializationName, int Total)>
                 {
-                    new RequiredStaffDto { Specialization = "Cardio", Total = 2 }
-                }
-            );
+                    ("Cardio", 2)
+                };
+            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
+
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
 
@@ -240,17 +223,12 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var dto = new CreatingOperationTypeDto(
-                "Surgery",
-                30,
-                60,
-                15,
-                new List<RequiredStaffDto>
+            var requiredStaff = new List<(string SpecializationName, int Total)>
                 {
-                    new RequiredStaffDto { Specialization = "Cardio", Total = 2 },
-                    new RequiredStaffDto { Specialization = "Cardio", Total = 2 }
-                }
-            );
+                    ("Cardio", 2),
+                    ("Cardio", 2)
+                };
+            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
 
@@ -269,29 +247,21 @@ namespace HealthcareApp.Tests
             };
             var service = Setup(operationTypesDatabase, specializationsDatabase);
 
-            var dto = new CreatingOperationTypeDto(
-                "Surgery",
-                30,
-                60,
-                15,
-                new List<RequiredStaffDto>
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
-                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
-                }
-            );
+                    ("Surgeon", 2)
+                };
+            var dto1 = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff1);
 
-            var dto2 = new CreatingOperationTypeDto(
-                "Surgery",
-                30,
-                60,
-                15,
-                new List<RequiredStaffDto>
+
+            var requiredStaff2 = new List<(string SpecializationName, int Total)>
                 {
-                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
-                }
-            );
+                    ("Surgeon", 2)
+                };
+            var dto2 = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff2);
 
-            await service.AddAsync(dto);
+
+            await service.AddAsync(dto1);
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto2));
 
             Assert.Equal("Error: This operation type name is already being used.", exception.Message);

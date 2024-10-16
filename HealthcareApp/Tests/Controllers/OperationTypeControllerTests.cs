@@ -34,19 +34,16 @@ namespace HealthcareApp.Tests.Controllers
             _controller = new OperationTypesController(_service);
         }
 
-
-
         [Fact]
         public async Task GetById_ReturnsOkResult_WithOperationType()
         {
 
-            var operationType = new OperationType(
-                new OperationTypeName("Surgery"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
+            var requiredStaff = new List<(string SpecializationName, int Total)>
                 {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
-                });
+                    ("Surgeon", 5)
+                };
+
+            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
 
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
@@ -66,26 +63,24 @@ namespace HealthcareApp.Tests.Controllers
             Assert.Equal(5, returnValue.RequiredStaff[0].Total);
         }
 
-
         [Fact]
         public async Task GetAll_ReturnsOkResult_WithOperationTypes()
         {
-            var operationType1 = new OperationType(
-                new OperationTypeName("Surgery"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
-                {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
-                });
 
-            var operationType2 = new OperationType(
-                new OperationTypeName("Embolectomy"),
-                new OperationTypeDuration(30, 60, 15),
-                new List<OperationTypeRequiredStaff>
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2),
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Cardio")), 3)
-                });
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery",30,60,15, requiredStaff1);
+
+
+            var requiredStaff2 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 2),
+                    ("Cardio", 3)
+                };
+            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy",30,60,15, requiredStaff2);
+
 
             var listOp = new List<OperationType> { operationType1, operationType2 };
 
@@ -141,9 +136,9 @@ namespace HealthcareApp.Tests.Controllers
         [Fact]
         public async Task GetAll_ReturnsOkResult_WithEmptyList_WhenNoOperationTypesExist()
         {
-            var emptyList = new List<OperationType>(); 
+            var emptyList = new List<OperationType>();
             _mockRepo.Setup(repo => repo.GetAllWithDetailsAsync())
-                     .ReturnsAsync(emptyList); 
+                     .ReturnsAsync(emptyList);
 
             var result = await _controller.GetAll();
 
