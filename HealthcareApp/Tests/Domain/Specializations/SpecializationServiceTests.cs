@@ -40,8 +40,8 @@ namespace HealthcareApp.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                new Specialization(new SpecializationName("Surgeon")),
-                new Specialization(new SpecializationName("Cardio"))
+                SpecializationMapper.ToDomainForTests("Surgeon"),
+                SpecializationMapper.ToDomainForTests("Cardio")
             };
             var service = Setup(specializationDatabase);
 
@@ -59,8 +59,8 @@ namespace HealthcareApp.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                new Specialization(new SpecializationName("Surgeon")),
-                new Specialization(new SpecializationName("Cardio"))
+                SpecializationMapper.ToDomainForTests("Surgeon"),
+                SpecializationMapper.ToDomainForTests("Cardio")
             };
             var service = Setup(specializationDatabase);
 
@@ -75,7 +75,7 @@ namespace HealthcareApp.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                new Specialization(new SpecializationName("Surgeon"))
+                SpecializationMapper.ToDomainForTests("Surgeon")
             };
             var service = Setup(specializationDatabase);
 
@@ -90,7 +90,7 @@ namespace HealthcareApp.Tests
             var specializationDatabase = new List<Specialization>();
             var service = Setup(specializationDatabase);
 
-            var dto = new CreatingSpecializationDto("Surgeon");
+            var dto = SpecializationMapper.ToCreateDtoForTests("Surgeon");
 
             var result = await service.AddAsync(dto);
 
@@ -104,11 +104,11 @@ namespace HealthcareApp.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                new Specialization(new SpecializationName("Surgeon"))
+                SpecializationMapper.ToDomainForTests("Surgeon")
             };
             var service = Setup(specializationDatabase);
 
-            var dto = new CreatingSpecializationDto("Surgeon");
+            var dto = SpecializationMapper.ToCreateDtoForTests("Surgeon");
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
 

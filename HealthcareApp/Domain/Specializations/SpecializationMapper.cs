@@ -28,4 +28,17 @@ public static class SpecializationMapper
         );
     }
 
+    //Only for tests
+    public static Specialization ToDomainForTests(string specName)
+    {
+        return new Specialization(
+                new SpecializationName(specName));
+    }
+
+    //Only for tests
+    public static CreatingSpecializationDto ToCreateDtoForTests(string specName)
+    {
+        return new CreatingSpecializationDto(specName);
+    }
+
 }

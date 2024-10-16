@@ -37,7 +37,7 @@ namespace HealthcareApp.Tests.Controllers
         public async Task GetById_ReturnsOkResult_WithSpecialization()
         {
 
-            var spec = new Specialization(new SpecializationName("Surgeon"));
+            var spec = SpecializationMapper.ToDomainForTests("Surgeon");
 
 
             _mockRepo.Setup(repo => repo.GetByIdAsync(It.IsAny<SpecializationId>()))
@@ -55,11 +55,8 @@ namespace HealthcareApp.Tests.Controllers
         [Fact]
         public async Task GetAll_ReturnsOkResult_WithSpecializations()
         {
-            var spec = new Specialization(new SpecializationName("Surgeon"));
-            var spec2 = new Specialization(new SpecializationName("Cardio"));
-
-
-
+            var spec = SpecializationMapper.ToDomainForTests("Surgeon");
+            var spec2 = SpecializationMapper.ToDomainForTests("Cardio");
 
             var listSpec = new List<Specialization> { spec, spec2 };
 
