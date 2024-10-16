@@ -49,9 +49,11 @@ namespace HealthcareApp.Controllers
 
                 return CreatedAtAction(nameof(GetGetById), new { id = opType.Id }, opType);
 
-            }catch(BusinessRuleValidationException e){
+            }
+            catch (BusinessRuleValidationException e)
+            {
                 return BadRequest(new { Message = e.Message });
             }
-            }
+        }
     }
 }
