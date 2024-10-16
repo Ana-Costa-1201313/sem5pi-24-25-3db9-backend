@@ -20,18 +20,21 @@ namespace HealthcareApp.Domain.OperationTypes
         public OperationType(OperationTypeName name, OperationTypeDuration duration, List<OperationTypeRequiredStaff> requiredStaff)
         {
             this.Id = new OperationTypeId(Guid.NewGuid());
+            if (name == null){
+                throw new BusinessRuleValidationException("Error: The operation type name can't be null.");
+            }
             this.Name = name;
+            if (duration == null){
+                throw new BusinessRuleValidationException("Error: The operation type duration can't be null.");
+            }
             this.Duration = duration;
+            if (!requiredStaff.Any()){
+                throw new BusinessRuleValidationException("Error: The operation type must have at least one required staff.");
+            }
             this.RequiredStaff = requiredStaff;
             this.Active = true;
         }
-
-        public void ChangeDescription(OperationTypeDuration duration)
-        {
-            if (!this.Active)
-                throw new BusinessRuleValidationException("It is not possible to change the description to an inactive operation type.");
-            this.Duration = duration;
-        }
+        
         public void MarkAsInative()
         {
             this.Active = false;

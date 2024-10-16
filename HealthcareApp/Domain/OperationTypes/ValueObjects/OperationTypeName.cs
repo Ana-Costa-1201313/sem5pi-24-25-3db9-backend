@@ -20,15 +20,9 @@ namespace HealthcareApp.Domain.OperationTypes
             
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new BusinessRuleValidationException("Error: The operation name can't be null, empty or consist in only white spaces.");
+                throw new BusinessRuleValidationException("Error: The operation type name can't be null, empty or consist in only white spaces.");
             }
             this.Name = name;
         }
-
-        public void ChangeName(string name)
-        {
-            this.Name = name;
-        }
-
     }
 }
