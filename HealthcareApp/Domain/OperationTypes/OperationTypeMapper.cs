@@ -40,4 +40,47 @@ public static class OperationTypeMapper
                 new Specialization(new SpecializationName(staffDto.Specialization)), staffDto.Total)).ToList()
         );
     }
+
+    //Only for tests
+    public static OperationType ToDomainForTests(string OpTypeName,
+                                            int OpTypeDurationPhase1,
+                                            int OpTypeDurationPhase2,
+                                            int OpTypeDurationPhase3,
+                                            List<(string SpecializationName, int Total)> requiredStaff)
+    {
+
+        var staffList = requiredStaff
+        .Select(staff => new OperationTypeRequiredStaff(
+            new Specialization(new SpecializationName(staff.SpecializationName)), staff.Total))
+        .ToList();
+
+
+        return new OperationType(
+                new OperationTypeName(OpTypeName),
+                new OperationTypeDuration(OpTypeDurationPhase1, OpTypeDurationPhase2, OpTypeDurationPhase3),
+                staffList);
+    }
+
+    //Only for tests
+    public static CreatingOperationTypeDto ToCreateDtoForTests(string opTypeName,
+                                                    int opTypeDurationPhase1,
+                                                    int opTypeDurationPhase2,
+                                                    int opTypeDurationPhase3,
+                                                    List<(string SpecializationName, int Total)> requiredStaff)
+    {
+        var staffList = requiredStaff
+            .Select(staff => new RequiredStaffDto
+            {
+                Specialization = staff.SpecializationName,
+                Total = staff.Total
+            })
+            .ToList();
+
+        return new CreatingOperationTypeDto(
+            opTypeName,
+            opTypeDurationPhase1,
+            opTypeDurationPhase2,
+            opTypeDurationPhase3,
+            staffList);
+    }
 }
