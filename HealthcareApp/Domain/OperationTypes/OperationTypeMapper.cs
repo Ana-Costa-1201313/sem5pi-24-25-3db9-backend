@@ -9,6 +9,7 @@ public static class OperationTypeMapper
     {
         return new OperationTypeDto
         {
+            Id = operationType.Id.AsGuid(),
             Name = operationType.Name.Name,
             AnesthesiaPatientPreparationInMinutes = (int)operationType.Duration.AnesthesiaPatientPreparationInMinutes.TotalMinutes,
             SurgeryInMinutes = (int)operationType.Duration.SurgeryInMinutes.TotalMinutes,
