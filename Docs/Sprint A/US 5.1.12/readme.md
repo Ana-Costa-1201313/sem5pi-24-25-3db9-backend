@@ -26,7 +26,10 @@ It is also required that the user is registered and logged in as an admin.
 For this US were considered the requirements specified in the project's description and the client's answers. 
 Some relevant answers excerpts are here specified:
 
-- *"When it comes to patients and healthcare staff ... So the email is the identifying attribute, right? For users, or is it the username? It's the username, okay? But typically, as you know, nowadays, most of the usernames that you have in all the systems are your email, okay? So they hack, kind of, instead of you allowing to create a specific username, you use your own email as the username ... you should use the email as the username."*
+*"Can the same user have both a patient and a healthcare profile? No..."*
+
+
+*"When it comes to patients and healthcare staff ... So the email is the identifying attribute, right? For users, or is it the username? It's the username, okay? But typically, as you know, nowadays, most of the usernames that you have in all the systems are your email, okay? So they hack, kind of, instead of you allowing to create a specific username, you use your own email as the username ... you should use the email as the username."*
 
 - **Question:** How should the specialization be assigned to a staff? Should the admin write it like a first name? Or should the admin select the specialization?
   - **Answer:** The system has a list of specializations. staff is assigned a specialization from that list.
@@ -44,20 +47,45 @@ Some relevant answers excerpts are here specified:
   - **Answer:** They share the same set of specializations.
 
 
-- **Question:**  How are duplicate patient profiles handled when registered by both the patient and admin?
-  - **Answer:** The system checks the email for uniqueness. The admin must first create the patient record, and then the patient can register using the same email.
-
-"When we are registering users to the platform, do we immediately need to give them a profile? Like when we register a user, do we immediately need to create their patient or healthcare professional staff profile? Or can we just leave them as a user to log in? Because there's some user stories that reference the creation of users with roles, but not necessarily their profile. I think that's up to you, honestly.
-It will boil down to a design decision. From the functional perspective, it's not something important. Okay, so I think it will be more a question of does it make more sense for you from the technical perspective to do it immediately or do it afterwards?"
+*"When we are registering users to the platform, do we immediately need to give them a profile? Like when we register a user, do we immediately need to create their patient or healthcare professional staff profile? Or can we just leave them as a user to log in? Because there's some user stories that reference the creation of users with roles, but not necessarily their profile. I think that's up to you, honestly.
+It will boil down to a design decision. From the functional perspective, it's not something important. Okay, so I think it will be more a question of does it make more sense for you from the technical perspective to do it immediately or do it afterwards?"*
 
 - **Question:** Are healthcare staff IDs unique across roles?
   - **Answer:** Yes, staff IDs are unique and not role-specific (e.g., a doctor and nurse can share the same ID format).
 
-"... regarding healthcare staff, we want to understand if the staff ID is unique or if it is, for example, if it is unique in the sense that, for example, doctor is 1, nurse is 2, or if, for example, the doctor has ID 1, there is a nurse ID 1? Okay, I understand what the issue is. Employees are identified by a mechanical number, basically. And it doesn't matter if this typing number is for a doctor, a nurse, or an assistant. It's a number of employees ..."
+*"... regarding healthcare staff, we want to understand if the staff ID is unique or if it is, for example, if it is unique in the sense that, for example, doctor is 1, nurse is 2, or if, for example, the doctor has ID 1, there is a nurse ID 1? Okay, I understand what the issue is. Employees are identified by a mechanical number, basically. And it doesn't matter if this typing number is for a doctor, a nurse, or an assistant. It's a number of employees ..."*
+
+
+
+- **Question:** Can you clarify the difference between mechanographic number, staff id and license number?
+  - **Answer:** The staff id and mechanographic number is the same concept. the license number is the number assigned by the professional guild (ex., "ordem dos enfermeiros", "ordem dos médicos") to the doctor or nurse attesting they legally can perform the medical acts of their profession.
+
+
+- **Question:** I have one question related to the staff license number. Since it will be generated, would you like it to be generated in any particular format or algorithm of your choice?
+  - **Answer:** There is a misinformation in the RFP. staff id are unique and generated by the system. License numbers are unique but are not generated by the system. Staff id follow the format "(N | D | O)yyyynnnnn", for instance, N202401234, N is for nurse, D is for doctor, O is for other. yyyy is the year of recruitment. nnnnn is a sequential number. License numbers are assigned by the professional guild. the admin will enter the license number and the system records it
+  
+
+- **Question:** There are 2 separate use cases regarding backoffice users: One for the creation of the user account and another one for the creation of the staff's profile. Is there a fixed order for these operations to take place? Does the admin always create the profile first or can he create the user first aswell? If the profile is created first, for example, should the user be created automaticaly or should the admin create the user afterwards, having to do 2 distinct operations?
+  - **Answer:** Recommended Flow: Order of operations: The system should support profile first. The admin should then create the user account. the account and user profile are linked by the professional email address or username (depending on the IAM provider).
+ Distinct Operations: The operations should remain distinct, even if they are performed in quick succession. This ensures that each step (creating user credentials and creating a staff profile) is carefully tracked and managed. Validation: The system should ensure that a staff profile and user account are both created and linked before the staff member can access the system. 
+  
+
+- **Question:** Can you clarify the username and email requirements?
+  - **Answer:** The username is the "official" email address of the user. for backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "D180023@myhospital.com". The system must allow for an easy configuration of the DNS domain (e.g., environment variable). For patients, the username is the email address provided in the patient record and used as identity in the external IAM. for instance patient Carlos Silva has provided his email csilva98@gmail.com the first time he entered the hospital. That email address will be his username when he self-registers in the system
+  
+
+After these client's clarifications, the following flow will be implemented:
+
+1- First it's created the staff profile, with the staff personal data (US 5.1.12);
+2- Then the staff mechanographical number is generated, and with that their professional email (US 5.1.12);
+3- After that, a user may be created, using the staff professional email as the username, but also requesting a personal email just to be used once, to send the confirmation link (US 5.1.1);
+4 - Finally, the new staff member can insert the password and the user account will become active (US 5.1.1).
 
 
 The following **HTTP requests** will be implemented:
 - POST (to register the new staff profile)
+- GET (to check the new staff profile)
+- Get by ID (to see the staff ID in the URL)
 
 ## 4. Design
 
@@ -84,13 +112,7 @@ This diagram guides the realization of the functionality, for level 3 process vi
 ![US5.1.12 N3 SD](US5.1.12%20N3%20SD.svg)
 
 
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-*To do*
-
-
-### 4.5. Applied Design Patterns
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -103,7 +125,7 @@ This diagram presents the classes that support the functionality.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
 The following tests are to be developed:
 - The ID must be unique
