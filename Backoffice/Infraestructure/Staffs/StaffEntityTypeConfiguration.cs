@@ -12,6 +12,8 @@ namespace Backoffice.Infraestructure.Staffs
             builder.ToTable("Staff", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
 
+            builder.Property(r => r.Role).HasConversion(new RoleConverter());
+
             builder.Property(s => s.Phone).HasConversion(new PhoneNumberConverter());
             builder.HasIndex(s => s.Phone).IsUnique();
 
