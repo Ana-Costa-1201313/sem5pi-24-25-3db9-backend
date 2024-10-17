@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Backoffice.Domain.Staffs
 {
     [Owned]
-    public class MechanographicNumber
+    public class MechanographicNumber : IValueObject
     {
         public string MechanographicNum { get; private set; }
 

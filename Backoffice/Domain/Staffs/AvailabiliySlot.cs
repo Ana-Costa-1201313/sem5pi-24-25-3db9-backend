@@ -4,7 +4,7 @@ using Backoffice.Domain.Shared;
 namespace Backoffice.Domain.Staffs
 {
     [Owned]
-    public class AvailabilitySlot
+    public class AvailabilitySlot : IValueObject
     {
         public string StartTime { get; private set; }
         public string EndTime { get; private set; }

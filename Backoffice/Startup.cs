@@ -91,6 +91,9 @@ namespace Backoffice
 
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
+
+            services.AddTransient<StaffMapper>();
+
         }
     }
 }

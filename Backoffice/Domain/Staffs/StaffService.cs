@@ -10,38 +10,25 @@ namespace Backoffice.Domain.Staffs
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStaffRepository _repo;
+        private readonly StaffMapper _staffMapper;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
+            _staffMapper = staffMapper;
         }
 
         public async Task<List<StaffDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(s =>
-            {
-                var stringAvailabilitySlots = new List<string>();
+            List<StaffDto> listDto = new List<StaffDto>();
 
-                foreach (var availabilitySlot in s.AvailabilitySlots)
-                {
-                    stringAvailabilitySlots.Add(availabilitySlot.ToString());
-                }
-                return new StaffDto
-                {
-                    Id = s.Id.AsGuid(),
-                    FirstName = s.FirstName,
-                    LastName = s.LastName,
-                    FullName = s.FullName,
-                    LicenseNumber = s.LicenseNumber,
-                    Email = s.Email._Email,
-                    Phone = s.Phone.PhoneNum,
-                    Specialization = s.Specialization,
-                    AvailabilitySlots = stringAvailabilitySlots
-                };
-            });
+            foreach (var staff in list)
+            {
+                listDto.Add(_staffMapper.ToStaffDto(staff));
+            }
 
             return listDto;
         }
@@ -53,32 +40,14 @@ namespace Backoffice.Domain.Staffs
             if (staff == null)
                 return null;
 
-            var stringAvailabilitySlots = new List<string>();
-
-            foreach (var availabilitySlot in staff.AvailabilitySlots)
-            {
-                stringAvailabilitySlots.Add(availabilitySlot.ToString());
-            }
-
-            return new StaffDto
-            {
-                Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber,
-                Email = staff.Email._Email,
-                Phone = staff.Phone.PhoneNum,
-                Specialization = staff.Specialization,
-                AvailabilitySlots = stringAvailabilitySlots
-            };
+            return _staffMapper.ToStaffDto(staff);
         }
 
         public async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
-            var staff = new Staff(dto, mechanographicNumSeq);
+            var staff = _staffMapper.ToStaff(dto, mechanographicNumSeq);
 
             try
             {
@@ -108,27 +77,7 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
-            var stringAvailabilitySlots = new List<string>();
-
-            foreach (var availabilitySlot in staff.AvailabilitySlots)
-            {
-                stringAvailabilitySlots.Add(availabilitySlot.ToString());
-            }
-
-            return new StaffDto
-            {
-                Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber,
-                Email = staff.Email._Email,
-                Phone = staff.Phone.PhoneNum,
-                Specialization = staff.Specialization,
-                AvailabilitySlots = stringAvailabilitySlots,
-                Role = staff.Role,
-                MechanographicNum = staff.MechanographicNum.ToString()
-            };
+            return _staffMapper.ToStaffDto(staff);
         }
     }
 }
