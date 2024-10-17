@@ -21,17 +21,26 @@ namespace Backoffice.Domain.Staffs
         {
             var list = await this._repo.GetAllAsync();
 
-            List<StaffDto> listDto = list.ConvertAll<StaffDto>(s => new StaffDto
+            List<StaffDto> listDto = list.ConvertAll<StaffDto>(s =>
             {
-                Id = s.Id.AsGuid(),
-                FirstName = s.FirstName,
-                LastName = s.LastName,
-                FullName = s.FullName,
-                LicenseNumber = s.LicenseNumber,
-                Email = s.Email._Email,
-                Phone = s.Phone.PhoneNum,
-                Specialization = s.Specialization,
-                AvailabilitySlots = s.AvailabilitySlots
+                var stringAvailabilitySlots = new List<string>();
+
+                // foreach (var availabilitySlot in s.AvailabilitySlots)
+                // {
+                //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                // }
+                return new StaffDto
+                {
+                    Id = s.Id.AsGuid(),
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    FullName = s.FullName,
+                    LicenseNumber = s.LicenseNumber,
+                    Email = s.Email._Email,
+                    Phone = s.Phone.PhoneNum,
+                    Specialization = s.Specialization,
+                    //AvailabilitySlots = stringAvailabilitySlots
+                };
             });
 
             return listDto;
@@ -44,6 +53,13 @@ namespace Backoffice.Domain.Staffs
             if (staff == null)
                 return null;
 
+            // var stringAvailabilitySlots = new List<string>();
+
+            // foreach (var availabilitySlot in staff.AvailabilitySlots)
+            // {
+            //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
+            // }
+
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
@@ -54,7 +70,7 @@ namespace Backoffice.Domain.Staffs
                 Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
-                AvailabilitySlots = staff.AvailabilitySlots
+                //AvailabilitySlots = stringAvailabilitySlots
             };
         }
 
@@ -92,6 +108,13 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
+            var stringAvailabilitySlots = new List<string>();
+
+            // foreach (var availabilitySlot in staff.AvailabilitySlots)
+            // {
+            //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
+            // }
+
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
@@ -102,7 +125,7 @@ namespace Backoffice.Domain.Staffs
                 Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
-                AvailabilitySlots = staff.AvailabilitySlots,
+               // AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString()
             };

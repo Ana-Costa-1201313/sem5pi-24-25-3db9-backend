@@ -18,7 +18,7 @@ namespace Backoffice.Domain.Staffs
 
         public string Specialization { get; private set; }
 
-        public int AvailabilitySlots { get; private set; }
+        public List<AvailabilitySlot> AvailabilitySlots { get; private set; }
 
         public Role Role { get; private set; }
 
@@ -40,7 +40,24 @@ namespace Backoffice.Domain.Staffs
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
-            this.AvailabilitySlots = dto.AvailabilitySlots;
+            this.AvailabilitySlots = new List<AvailabilitySlot>();
+
+            // foreach (var slotString in dto.AvailabilitySlots)
+            // {
+            //     var times = slotString.Split('/');
+            //     if (times.Length == 2)
+            //     {
+            //         var startTime = times[0];
+            //         var endTime = times[1];
+
+            //         this.AvailabilitySlots.Add(new AvailabilitySlot(startTime, endTime));
+            //     }
+            //     else
+            //     {
+            //         throw new BusinessRuleValidationException("Error: Invalid Availability slot format!");
+            //     }
+            // }
+
             this.Role = dto.Role;
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);

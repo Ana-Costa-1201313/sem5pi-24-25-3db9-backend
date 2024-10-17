@@ -1,6 +1,5 @@
 using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Backoffice.Domain.Staffs
 {
