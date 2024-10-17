@@ -21,7 +21,7 @@ namespace Backoffice.Domain.Staffs
 
         public string Specialization { get; set; }
 
-        //public List<string> AvailabilitySlots { get; set; }
+        public List<string> AvailabilitySlots { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role Role { get; set; }

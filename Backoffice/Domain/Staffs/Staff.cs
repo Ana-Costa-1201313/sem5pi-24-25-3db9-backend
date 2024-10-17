@@ -42,21 +42,21 @@ namespace Backoffice.Domain.Staffs
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
-            // foreach (var slotString in dto.AvailabilitySlots)
-            // {
-            //     var times = slotString.Split('/');
-            //     if (times.Length == 2)
-            //     {
-            //         var startTime = times[0];
-            //         var endTime = times[1];
+            foreach (var slotString in dto.AvailabilitySlots)
+            {
+                var times = slotString.Split('/');
+                if (times.Length == 2)
+                {
+                    var startTime = times[0];
+                    var endTime = times[1];
 
-            //         this.AvailabilitySlots.Add(new AvailabilitySlot(startTime, endTime));
-            //     }
-            //     else
-            //     {
-            //         throw new BusinessRuleValidationException("Error: Invalid Availability slot format!");
-            //     }
-            // }
+                    this.AvailabilitySlots.Add(new AvailabilitySlot(startTime, endTime));
+                }
+                else
+                {
+                    throw new BusinessRuleValidationException("Error: Invalid Availability slot format!");
+                }
+            }
 
             this.Role = dto.Role;
             this.MecNumSequence = mecNumSeq;

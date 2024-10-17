@@ -31,7 +31,7 @@ namespace Backoffice.Domain.Staffs
             {
                 throw new BusinessRuleValidationException("Error: The end time must be after the start time!");
             }
-            
+
             this.StartTime = startTime;
             this.EndTime = endTime;
         }

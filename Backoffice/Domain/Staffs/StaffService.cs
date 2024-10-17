@@ -25,10 +25,10 @@ namespace Backoffice.Domain.Staffs
             {
                 var stringAvailabilitySlots = new List<string>();
 
-                // foreach (var availabilitySlot in s.AvailabilitySlots)
-                // {
-                //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
-                // }
+                foreach (var availabilitySlot in s.AvailabilitySlots)
+                {
+                    stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                }
                 return new StaffDto
                 {
                     Id = s.Id.AsGuid(),
@@ -39,7 +39,7 @@ namespace Backoffice.Domain.Staffs
                     Email = s.Email._Email,
                     Phone = s.Phone.PhoneNum,
                     Specialization = s.Specialization,
-                    //AvailabilitySlots = stringAvailabilitySlots
+                    AvailabilitySlots = stringAvailabilitySlots
                 };
             });
 
@@ -53,12 +53,12 @@ namespace Backoffice.Domain.Staffs
             if (staff == null)
                 return null;
 
-            // var stringAvailabilitySlots = new List<string>();
+            var stringAvailabilitySlots = new List<string>();
 
-            // foreach (var availabilitySlot in staff.AvailabilitySlots)
-            // {
-            //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
-            // }
+            foreach (var availabilitySlot in staff.AvailabilitySlots)
+            {
+                stringAvailabilitySlots.Add(availabilitySlot.ToString());
+            }
 
             return new StaffDto
             {
@@ -70,7 +70,7 @@ namespace Backoffice.Domain.Staffs
                 Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
-                //AvailabilitySlots = stringAvailabilitySlots
+                AvailabilitySlots = stringAvailabilitySlots
             };
         }
 
@@ -110,10 +110,10 @@ namespace Backoffice.Domain.Staffs
 
             var stringAvailabilitySlots = new List<string>();
 
-            // foreach (var availabilitySlot in staff.AvailabilitySlots)
-            // {
-            //     stringAvailabilitySlots.Add(availabilitySlot.ToString());
-            // }
+            foreach (var availabilitySlot in staff.AvailabilitySlots)
+            {
+                stringAvailabilitySlots.Add(availabilitySlot.ToString());
+            }
 
             return new StaffDto
             {
@@ -125,7 +125,7 @@ namespace Backoffice.Domain.Staffs
                 Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
                 Specialization = staff.Specialization,
-               // AvailabilitySlots = stringAvailabilitySlots,
+                AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString()
             };
