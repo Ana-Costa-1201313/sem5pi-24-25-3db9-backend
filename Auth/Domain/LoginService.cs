@@ -90,7 +90,37 @@ namespace Auth.Domain.Users
             return loginDTO;
         }
 
-        public String CreateToken(User user)
+        //public String CreateToken(User user)
+        //{
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
+        //    var jwtSettings = _iconfig.GetSection("Jwt");
+        //    var key = _iconfig["Jwt:Key"];
+        //    var tokenDescriptor = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new Claim[]
+        //        {
+        //            new Claim(ClaimTypes.NameIdentifier, user.username.username),
+        //            //new Claim(ClaimTypes.Role, user.role),
+        //            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
+        //            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
+
+        //            //new Claim(ClaimTypes.Role, user.Role.ToString()),
+        //            // Add more claims as needed
+        //        }),
+        //        Expires = DateTime.UtcNow.AddHours(72),
+        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256),
+        //        Issuer = _iconfig["Jwt:Issuer"],
+        //        Audience = _iconfig["Jwt:Audience"]
+        //    };
+
+
+        //    var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        //    return tokenHandler.WriteToken(token);
+        //}
+
+        public String CreateToken(LoginDTO loginDTO)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
@@ -100,8 +130,8 @@ namespace Auth.Domain.Users
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.username.username),
-                    new Claim(ClaimTypes.Role, user.role),
+                    new Claim(ClaimTypes.NameIdentifier, loginDTO.username),
+                    new Claim(ClaimTypes.Role, loginDTO.role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
         
@@ -120,7 +150,7 @@ namespace Auth.Domain.Users
             return tokenHandler.WriteToken(token);
         }
 
-        public String CreateToken(LoginDTO loginDTO)
+        public String CreateToken1(LoginDTO loginDTO)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
@@ -131,7 +161,7 @@ namespace Auth.Domain.Users
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, loginDTO.username),
-                    new Claim(ClaimTypes.Role, loginDTO.role),
+                    //new Claim(ClaimTypes.Role, loginDTO.role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
         

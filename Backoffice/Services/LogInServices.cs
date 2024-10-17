@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Backoffice.Domain.Users;
+using Backoffice.Domain.Shared;
+using Backoffice.Infraestructure.Users;
 using System.Text;
 
 namespace Backoffice.Services
@@ -70,7 +72,7 @@ namespace Backoffice.Services
             }
             catch(Exception e)
             {
-                throw new 
+                return null;
             }
         }
     }

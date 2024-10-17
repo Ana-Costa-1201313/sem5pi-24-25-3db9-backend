@@ -46,10 +46,16 @@ namespace Auth.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LoginDTO>> teste(string id) 
         {
+            var l = new LoginDTO
+            {
+                username = "ricardo",
+                role = "student"
+            };
 
             var login = new LoginDTO
             {
-                jwt = _service.CreateToken(new Domain.Users.User("ricardo1", "student"))
+                //jwt = _service.CreateToken(new Domain.Users.User("ricardo1", "student"))
+                jwt = _service.CreateToken(l)
             };
 
             return Ok(login);

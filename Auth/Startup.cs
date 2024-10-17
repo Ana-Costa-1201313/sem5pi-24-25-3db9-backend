@@ -82,6 +82,11 @@ namespace Auth
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<LoginService>();
+
+            services.AddHttpClient<ExternalApiService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["Backoffice:uri"]);
+            });
         }
     }
 }

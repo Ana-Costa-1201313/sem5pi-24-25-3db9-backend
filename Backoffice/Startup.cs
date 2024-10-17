@@ -13,6 +13,8 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
 using System.Text.Json.Serialization;
+using Backoffice.Services;
+
 
 namespace Backoffice
 {
@@ -86,6 +88,9 @@ namespace Backoffice
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<LogInServices>();
+            services.AddHttpClient();
         }
     }
 }

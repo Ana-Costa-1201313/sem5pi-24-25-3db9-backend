@@ -3,7 +3,6 @@ using System.Text;
 using Backoffice.Domain.Users;
 using Microsoft.IdentityModel.Tokens;
 using Backoffice.Services;
-using Backoffice.Domain.Users;
 
 namespace Backoffice.Controllers
 {
@@ -20,7 +19,7 @@ namespace Backoffice.Controllers
             _service = service;
         }
 
-        [HttpGet("userExists")]
+        [HttpPost("userExists")]
         public async Task<IActionResult> UserExists()
         {
             if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))

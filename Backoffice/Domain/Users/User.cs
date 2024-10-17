@@ -38,7 +38,6 @@ namespace Backoffice.Domain.Users
             this.Active = false;
         }
 
-
         public void ActivateUser(string passwd)
         {
             if (this.Active)

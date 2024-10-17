@@ -1,3 +1,4 @@
+#nullable enable
 
 namespace Backoffice.Domain.Users {
 
