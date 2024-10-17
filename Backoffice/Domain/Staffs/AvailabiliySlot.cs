@@ -6,8 +6,8 @@ namespace Backoffice.Domain.Staffs
     [Owned]
     public class AvailabilitySlot : IValueObject
     {
-        public string StartTime { get; private set; }
-        public string EndTime { get; private set; }
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
 
         private AvailabilitySlot()
         {
@@ -32,13 +32,13 @@ namespace Backoffice.Domain.Staffs
                 throw new BusinessRuleValidationException("Error: The end time must be after the start time!");
             }
 
-            this.StartTime = startTime;
-            this.EndTime = endTime;
+            this.StartTime = parsedStartTime;
+            this.EndTime = parsedEndTime;
         }
 
         public override string ToString()
         {
-            return StartTime + " - " + EndTime;
+            return StartTime.ToString("g") + " - " + EndTime.ToString("g");
         }
     }
 }
