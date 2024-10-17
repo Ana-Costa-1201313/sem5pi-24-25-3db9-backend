@@ -13,6 +13,8 @@ using Backoffice.Domain.Categories;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Specializations;
 using Backoffice.Infraestructure.Specializations;
+using Backoffice.Domain.Logs;
+using Backoffice.Infraestructure.Logs;
 
 namespace Backoffice
 {
@@ -88,6 +90,8 @@ namespace Backoffice
 
             services.AddTransient<ISpecializationRepository, SpecializationRepository>();
             services.AddTransient<SpecializationService>();
+
+            services.AddTransient<ILogRepository, LogRepository>();
         }
     }
 }

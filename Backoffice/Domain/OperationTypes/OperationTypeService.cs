@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
+using Backoffice.Domain.Logs;
 
 namespace Backoffice.Domain.OperationTypes
 {
@@ -10,14 +11,16 @@ namespace Backoffice.Domain.OperationTypes
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _repo;
-
         private readonly ISpecializationRepository _repoSpecialization;
+        private readonly ILogRepository _repoLog;
 
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo, ISpecializationRepository repoSpecification)
+
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo, ISpecializationRepository repoSpecification, ILogRepository repoLog)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._repoSpecialization = repoSpecification;
+            this._repoLog = repoLog;
         }
 
         public async Task<List<OperationTypeDto>> GetAllAsync()
@@ -70,6 +73,8 @@ namespace Backoffice.Domain.OperationTypes
             }
 
             await this._repo.AddAsync(opType);
+
+            await this._repoLog.AddAsync(new Log(opType.ToJSON(), LogType.Create, LogEntity.OperationType));
 
             await this._unitOfWork.CommitAsync();
 

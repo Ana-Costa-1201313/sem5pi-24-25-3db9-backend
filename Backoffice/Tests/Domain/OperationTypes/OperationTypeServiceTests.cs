@@ -6,6 +6,7 @@ using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
 using Xunit;
+using Backoffice.Domain.Logs;
 
 namespace Backoffice.Tests
 {
@@ -15,6 +16,7 @@ namespace Backoffice.Tests
         {
             var operationTypeRepository = new Mock<IOperationTypeRepository>();
             var specializationRepository = new Mock<ISpecializationRepository>();
+            var logRepository = new Mock<ILogRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
 
             // Mock GetAllWithDetailsAsync
@@ -43,7 +45,7 @@ namespace Backoffice.Tests
 
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            return new OperationTypeService(unitOfWork.Object, operationTypeRepository.Object, specializationRepository.Object);
+            return new OperationTypeService(unitOfWork.Object, operationTypeRepository.Object, specializationRepository.Object, logRepository.Object);
         }
 
         [Fact]

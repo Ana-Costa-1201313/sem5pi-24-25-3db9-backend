@@ -10,6 +10,7 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
+using Backoffice.Domain.Logs;
 
 namespace Backoffice.Tests.Controllers
 {
@@ -29,7 +30,8 @@ namespace Backoffice.Tests.Controllers
             _service = new OperationTypeService(
                 _mockUnitOfWork.Object,
                 _mockRepo.Object,
-                _mockSpecializationRepo.Object
+                _mockSpecializationRepo.Object,
+                null
             );
             _controller = new OperationTypesController(_service);
         }
