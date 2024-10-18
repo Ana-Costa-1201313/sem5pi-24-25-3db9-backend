@@ -6,6 +6,7 @@ using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Backoffice.Tests
 {
@@ -130,7 +131,7 @@ namespace Backoffice.Tests
             Assert.Equal(staff.Role, actualStaff.Role);
         }
 
-[Fact]
+        [Fact]
         public async Task GetByIdEmpty()
         {
             var staffId = Guid.NewGuid();
@@ -140,6 +141,116 @@ namespace Backoffice.Tests
             var result = await _controller.GetById(staffId);
 
             Assert.IsType<NotFoundResult>(result.Result);
-           }
+        }
+
+        [Fact]
+        public async Task CreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            StaffDto createdStaff = new StaffDto
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(createdAtActionResult.Value);
+            Assert.Equal(201, createdAtActionResult.StatusCode);
+
+            Assert.Equal(createdStaff.FirstName, returnValue.FirstName);
+            Assert.Equal(createdStaff.LastName, returnValue.LastName);
+            Assert.Equal(createdStaff.FullName, returnValue.FullName);
+            Assert.Equal(createdStaff.Phone, returnValue.Phone);
+            Assert.Equal(createdStaff.LicenseNumber, returnValue.LicenseNumber);
+            Assert.Equal(createdStaff.Specialization, returnValue.Specialization);
+            Assert.Equal(createdStaff.Role, returnValue.Role);
+        }
+
+        [Fact]
+        public async Task InvalidPhoneCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+            
+            Assert.Equal("Error: The phone number is invalid!", errorMessage);
+        }
+
+        [Fact]
+        public async Task InvalidRecYearCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = -1
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+            
+            Assert.Equal("Error: The year must be bigger than zero!", errorMessage);
+        }
     }
 }

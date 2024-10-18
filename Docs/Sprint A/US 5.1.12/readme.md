@@ -123,7 +123,7 @@ This diagram guides the realization of the functionality, for level 3 process vi
 - **Onion Architecture:** concentric layers structure that puts the Domin Model as the core. Promotes modularity, flexibility and testability.
 - **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
-
+- **Single Responsability Principle (SRP):** 
 
 ### 4.5. Tests
 
@@ -131,7 +131,19 @@ The following tests are to be developed:
 - The ID must be unique
 - The email must be unique.
 - The phone number must be unique.
-- The staff member only has one specialization.
+- The staff profile must be valid.
+- The staff phone number must be valid.
+- The staff availability slots must be valid.
+- The staff mechanographic number be valid.
+- The staff recruitment year must be valid.
+
+All Value Objects will be tested in Unitary Tests, to check if they fullfill their requirements.
+
+The Staff Service will be tested to see if the created Staff is correct.
+
+The Staff Controller will be tested to see if the created Staff and responses are correct.
+
+Postman Tests will also check the created Staff data and the responses, for both success and failure cases.
 
 
 ## 5. Implementation

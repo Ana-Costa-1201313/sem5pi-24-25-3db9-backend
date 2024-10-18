@@ -84,7 +84,7 @@ namespace Backoffice.Tests
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
 
-           
+
             Assert.Equal("ana", result[0].FirstName);
             Assert.Equal("costa", result[0].LastName);
             Assert.Equal("ana costa", result[0].FullName);
