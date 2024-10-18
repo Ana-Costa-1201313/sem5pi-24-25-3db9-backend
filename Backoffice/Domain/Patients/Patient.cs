@@ -42,5 +42,19 @@ namespace Backoffice.Domain.Patients
             this.Allergies = dto.Allergies;
             this.MedicalRecordNumber = dto.MedicalRecordNumber;
         }
+
+        public void UpdateDetails(string firstName, string lastName, string fullName, string gender, DateTime dateOfBirth,
+         string email, string phoneNumber, string[] allergies, int medicalRecordNumber)
+         {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.FullName = fullName;
+            this.Gender = gender;
+            this.DateOfBirth = dateOfBirth;
+            this.Email = new Email(email);
+            this.Phone = new PhoneNumber(phoneNumber);
+            this.Allergies = allergies;
+            this.MedicalRecordNumber = medicalRecordNumber;
+         }
     }
 }
