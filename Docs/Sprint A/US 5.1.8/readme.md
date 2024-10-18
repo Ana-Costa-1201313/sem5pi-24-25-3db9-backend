@@ -36,12 +36,21 @@ Additionally, does the medical history that the admin inputs refer to the patien
   - **Answer:** the admin can not input medical history nor allergies. they can however input gender and emergency contact
 
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** When an Admin creates a patient profile, should he already register them in the system, as users that can login, or should the registration always be responsibility of the patient?
+If the latter is intended, should the patient's user credentials be linked to the existing profile?
+  - **Answer:** this was already clarified in a previous meeting.
+
+registering a patient record is a separate action from the patient self-registering as a user
 
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** That's right, it was clarified in a previous meeting, but I'm still not 100% clarified about my question.
+I understand that the Admin can create the Pacient profile and leave the User as inactive, but how does the activation happen? If that pacient eventualy wants to register himself, should there be an option to activate an existing profile? For example, associate the e-mail from registration input with the existing profile's e-mail?
+The feature 5.1.3 asks for the full registration, but doesn't say anything about profiles that already exist
+  - **Answer:** the admin register the patient (this does not create a user for that patient)
+optionally, the patient self-registers in the system by providing the same email that is currently recorded in their patient record and the system associates the user and the patient
+there is no option for someone who is not a patient of the system to register as a user
+
+hope this is the clarification you were missing. if not, let me know.
 
 
 - **Question:** 
