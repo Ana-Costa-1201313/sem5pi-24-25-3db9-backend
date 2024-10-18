@@ -29,8 +29,11 @@ Some relevant answers excerpts are here specified:
 
 - **
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** It is specified that the admin can input some of the patient's information (name, date of birth, contact information, and medical history).
+
+Do they also input the omitted information (gender, emergency contact and allergies/medical condition)?
+Additionally, does the medical history that the admin inputs refer to the patient's medical record, or is it referring to the appointment history?
+  - **Answer:** the admin can not input medical history nor allergies. they can however input gender and emergency contact
 
 
 - **Question:** 
