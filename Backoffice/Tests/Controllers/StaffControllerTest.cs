@@ -2,6 +2,10 @@ using Backoffice.Controllers;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
 using Moq;
+using Xunit;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backoffice.Tests
 {
@@ -20,6 +24,122 @@ namespace Backoffice.Tests
             _controller = new StaffController(_service);
         }
 
+        [Fact]
+        public async Task GetAllStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
 
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                FirstName = "maria",
+                LastName = "silva",
+                FullName = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+            var staff2 = new Staff(dto2, 2);
+
+            var expectedList = new List<Staff> { staff1, staff2 };
+
+            _repo.Setup(repo => repo.GetAllAsync()).ReturnsAsync(expectedList);
+
+            var result = await _controller.GetAll();
+
+            var okResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<IEnumerable<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
+        }
+
+        [Fact]
+        public async Task GetAllEmpty()
+        {
+            var expectedList = new List<Staff>();
+
+            _repo.Setup(repo => repo.GetAllAsync())
+            .ReturnsAsync(expectedList);
+
+            var result = await _controller.GetAll();
+
+            var noContentResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
+
+            Assert.IsType<NoContentResult>(noContentResult.Result);
+        }
+
+        [Fact]
+        public async Task GetByIdStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.GetById(staff.Id.AsGuid());
+
+            var okResult = Assert.IsType<ActionResult<StaffDto>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualStaff = Assert.IsType<StaffDto>(objectResult.Value);
+
+            Assert.Equal(staff.FirstName, actualStaff.FirstName);
+            Assert.Equal(staff.LastName, actualStaff.LastName);
+            Assert.Equal(staff.FullName, actualStaff.FullName);
+            Assert.Equal(staff.LicenseNumber, actualStaff.LicenseNumber);
+            Assert.Equal(staff.Specialization, actualStaff.Specialization);
+            Assert.Equal(staff.Role, actualStaff.Role);
+        }
+
+[Fact]
+        public async Task GetByIdEmpty()
+        {
+            var staffId = Guid.NewGuid();
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            var result = await _controller.GetById(staffId);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+           }
     }
 }

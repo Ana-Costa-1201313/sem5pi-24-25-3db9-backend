@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backoffice.Controllers
 {
@@ -17,7 +18,14 @@ namespace Backoffice.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll()
         {
-            return await _service.GetAllAsync();
+            var staffList = await _service.GetAllAsync();
+
+            if (staffList == null || staffList.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(staffList);
         }
 
         [HttpGet("{id}")]
@@ -30,7 +38,7 @@ namespace Backoffice.Controllers
                 return NotFound();
             }
 
-            return staff;
+            return Ok(staff);
         }
 
         [HttpPost]
