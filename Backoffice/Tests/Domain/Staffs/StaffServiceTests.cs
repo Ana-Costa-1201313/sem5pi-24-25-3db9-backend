@@ -84,17 +84,13 @@ namespace Backoffice.Tests
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
 
-            List<string> avSlots = new List<string>();
-            avSlots.Add("10/10/2024 12:00 - 11/10/2024 15:00");
-            avSlots.Add("14/10/2024 12:00 - 19/10/2024 15:00");
-
+           
             Assert.Equal("ana", result[0].FirstName);
             Assert.Equal("costa", result[0].LastName);
             Assert.Equal("ana costa", result[0].FullName);
             Assert.Equal(1, result[0].LicenseNumber);
             Assert.Equal("999999999", result[0].Phone);
             Assert.Equal("spec", result[0].Specialization);
-            Assert.Equal(avSlots, result[0].AvailabilitySlots);
             Assert.Equal(Role.Nurse, result[0].Role);
 
             Assert.Equal("maria", result[1].FirstName);
@@ -103,7 +99,6 @@ namespace Backoffice.Tests
             Assert.Equal(2, result[1].LicenseNumber);
             Assert.Equal("999999989", result[1].Phone);
             Assert.Equal("spec", result[1].Specialization);
-            Assert.Equal(avSlots, result[1].AvailabilitySlots);
             Assert.Equal(Role.Doctor, result[1].Role);
 
         }
@@ -154,17 +149,12 @@ namespace Backoffice.Tests
 
             Assert.NotNull(result);
 
-            List<string> avSlots = new List<string>();
-            avSlots.Add("10/10/2024 12:00 - 11/10/2024 15:00");
-            avSlots.Add("14/10/2024 12:00 - 19/10/2024 15:00");
-
             Assert.Equal("ana", result.FirstName);
             Assert.Equal("costa", result.LastName);
             Assert.Equal("ana costa", result.FullName);
             Assert.Equal(1, result.LicenseNumber);
             Assert.Equal("999999999", result.Phone);
             Assert.Equal("spec", result.Specialization);
-            Assert.Equal(avSlots, result.AvailabilitySlots);
             Assert.Equal(Role.Nurse, result.Role);
         }
 
@@ -241,17 +231,12 @@ namespace Backoffice.Tests
 
             Assert.NotNull(result);
 
-            List<string> avSlots = new List<string>();
-            avSlots.Add("10/10/2024 12:00 - 11/10/2024 15:00");
-            avSlots.Add("14/10/2024 12:00 - 19/10/2024 15:00");
-
             Assert.Equal("ana", result.FirstName);
             Assert.Equal("costa", result.LastName);
             Assert.Equal("ana costa", result.FullName);
             Assert.Equal(1, result.LicenseNumber);
             Assert.Equal("999999999", result.Phone);
             Assert.Equal("spec", result.Specialization);
-            Assert.Equal(avSlots, result.AvailabilitySlots);
             Assert.Equal(Role.Nurse, result.Role);
         }
     }

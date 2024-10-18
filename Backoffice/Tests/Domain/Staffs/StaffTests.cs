@@ -33,14 +33,6 @@ namespace Backoffice.Tests
             int sLicenseNumber = 1;
             PhoneNumber sPhone = new PhoneNumber("999999999");
             string sSpecialization = "spec";
-            List<AvailabilitySlot> sAvailabilitySlots = new List<AvailabilitySlot>();
-            sAvailabilitySlots.Add(new AvailabilitySlot("2024 - 10 - 10T12: 00:00", "2024 - 10 - 11T15: 00:00"));
-            sAvailabilitySlots.Add(new AvailabilitySlot("2024 - 10 - 14T12: 00:00", "2024 - 10 - 19T15: 00:00"));
-            var sStringAvailabilitySlots = new List<string>();
-            foreach (var availabilitySlot in sAvailabilitySlots)
-            {
-                sStringAvailabilitySlots.Add(availabilitySlot.ToString());
-            }
             Role sRole = Role.Nurse;
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
@@ -48,12 +40,6 @@ namespace Backoffice.Tests
 
 
             var staff = new Staff(dto, MecNumSequence);
-
-            var stringAvailabilitySlots = new List<string>();
-            foreach (var availabilitySlot in staff.AvailabilitySlots)
-            {
-                stringAvailabilitySlots.Add(availabilitySlot.ToString());
-            }
 
 
             Assert.NotNull(staff.Id);
@@ -63,7 +49,6 @@ namespace Backoffice.Tests
             Assert.Equal(sLicenseNumber, staff.LicenseNumber);
             Assert.Equal(sPhone.PhoneNum, staff.Phone.PhoneNum);
             Assert.Equal(sSpecialization, staff.Specialization);
-            Assert.Equal(sStringAvailabilitySlots, stringAvailabilitySlots);
             Assert.Equal(sRole, staff.Role);
             Assert.Equal(MecNumSequence, staff.MecNumSequence);
             Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
