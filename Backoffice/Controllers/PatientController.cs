@@ -22,6 +22,18 @@ namespace Backoffice.Controllers
             return await _service.GetAllAsync();  
         }
 
-        
+        //Obter patient por Id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PatientDto>> GetById(Guid id)
+        {
+            var patient = await _service.GetByIdAsync(id);
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            return patient;
+        }
     }
 }
