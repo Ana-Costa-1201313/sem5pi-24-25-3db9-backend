@@ -10,5 +10,7 @@ namespace Backoffice.Domain.OperationTypes
         public int SurgeryInMinutes { get; set; }
         public int CleaningInMinutes { get; set; }
         public List<RequiredStaffDto> RequiredStaff { get; set; }
+        public bool Active { get; set; }
+        
     }
 }
