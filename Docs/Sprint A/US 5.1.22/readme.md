@@ -83,12 +83,6 @@ This section presents the design adopted to solve the requirement.
 
 ![SSD_Lvl1.png](SD3.svg) 
 
-
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-
-
 ### 4.5. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
