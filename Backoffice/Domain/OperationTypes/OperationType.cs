@@ -41,6 +41,10 @@ namespace Backoffice.Domain.OperationTypes
 
         public void MarkAsInative()
         {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: The operation type is already inactive.");
+            }
             this.Active = false;
         }
 
@@ -49,7 +53,7 @@ namespace Backoffice.Domain.OperationTypes
             var jsonRepresentation = new
             {
                 Id = this.Id.Value,
-                Name = new { this.Name.Name },  // Pass the name object directly
+                Name = new { this.Name.Name },
                 Duration = new
                 {
                     AnesthesiaPatientPreparationInMinutes = this.Duration.AnesthesiaPatientPreparationInMinutes,
@@ -58,7 +62,7 @@ namespace Backoffice.Domain.OperationTypes
                 },
                 RequiredStaff = this.RequiredStaff.Select(rs => new
                 {
-                    Specialization = new { rs.Specialization.Name.Name },  // Ensure correct nesting of specialization name
+                    Specialization = new { rs.Specialization.Name.Name },
                     Total = rs.Total
                 }).ToList(),
                 Active = this.Active
