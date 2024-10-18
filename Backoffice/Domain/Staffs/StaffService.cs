@@ -79,5 +79,21 @@ namespace Backoffice.Domain.Staffs
 
             return _staffMapper.ToStaffDto(staff);
         }
+
+        public async Task<StaffDto> Deactivate(Guid id)
+        {
+            var staff = await this._repo.GetByIdAsync(new StaffId(id));
+
+            if (staff == null)
+            {
+                return null;
+            }
+
+            staff.Deactivate();
+
+            await this._unitOfWork.CommitAsync();
+
+            return _staffMapper.ToStaffDto(staff);
+        }
     }
 }

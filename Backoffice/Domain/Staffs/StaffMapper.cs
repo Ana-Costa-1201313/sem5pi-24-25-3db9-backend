@@ -23,7 +23,8 @@ namespace Backoffice.Domain.Staffs
                 Specialization = staff.Specialization,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
-                MechanographicNum = staff.MechanographicNum.ToString()
+                MechanographicNum = staff.MechanographicNum.ToString(),
+                Active = staff.Active
             };
         }
 

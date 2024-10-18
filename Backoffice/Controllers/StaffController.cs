@@ -55,5 +55,18 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<StaffDto>> Deactivate(Guid id)
+        {
+            var staff = await _service.Deactivate(id);
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(staff);
+        }
     }
 }

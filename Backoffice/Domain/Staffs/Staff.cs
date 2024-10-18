@@ -26,6 +26,8 @@ namespace Backoffice.Domain.Staffs
 
         public MechanographicNumber MechanographicNum { get; private set; }
 
+        public bool Active { get; private set; }
+
         private Staff()
         {
 
@@ -62,6 +64,12 @@ namespace Backoffice.Domain.Staffs
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
             this.Email = new Email(MechanographicNum + "@healthcareapp.com");
+            this.Active = true;
+        }
+
+        public void Deactivate()
+        {
+            this.Active = false;
         }
     }
 }
