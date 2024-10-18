@@ -37,6 +37,7 @@ namespace Backoffice.Controllers
 
             return patient;
         }
+        //Criar um patient profile
         [HttpPost]
         public async Task<ActionResult<PatientDto>> Create(CreatePatientDto dto)
         {
@@ -48,5 +49,7 @@ namespace Backoffice.Controllers
                     return BadRequest(new {Message = e.Message});
             }
         }
+        //Dar Delete a um patient profile
+        
     }
 }
