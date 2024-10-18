@@ -73,6 +73,18 @@ namespace Backoffice.Domain.Patients{
             return _patientMapper.ToPatientDto(patient);
         }
 
+        //Dar delete de um Patient
+        public async Task DeleteAsync(Guid id)
+        {
+            var patient = await _repo.GetByIdAsync(new PatientId(id));
+
+            if(patient == null)
+                throw new BusinessRuleValidationException("Error: Patient doesn't exist !!!");
+                
+            _repo.Remove(patient);
+            await _unitOfWork.CommitAsync();
+        }
+
     }
 }
 
