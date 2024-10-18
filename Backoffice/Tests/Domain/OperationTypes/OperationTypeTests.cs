@@ -102,6 +102,30 @@ namespace Backoffice.Tests
             Assert.Single(operationType.RequiredStaff);
         }
 
-        
+/*
+        [Fact]
+        public void WhenTryingToMarkAsInativeWhileAlreadyActive_ThenException()
+        {
+            Mock<OperationTypeName> nameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> durationDouble = new Mock<OperationTypeDuration>();
+            var specializationMock = new Mock<Specialization>(new Mock<SpecializationName>());
+            var totalMock = 5;
+
+            var requiredStaffMock = new Mock<OperationTypeRequiredStaff>(specializationMock.Object, totalMock);
+
+            var requiredStaffList = new List<OperationTypeRequiredStaff>
+            {
+                requiredStaffMock.Object
+            };
+
+            OperationType opType = new OperationType(nameDouble.Object, durationDouble.Object, requiredStaffList); // SUT/OUT
+
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => opType.MarkAsInative());
+            Assert.Equal("Error: The operation type is already inactive.", ex.Message);
+
+        }
+
+*/
     }
 }
