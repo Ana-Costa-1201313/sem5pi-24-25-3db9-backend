@@ -1,6 +1,8 @@
 using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
+using Backoffice.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace Backoffice.Controllers
 {
@@ -34,6 +36,17 @@ namespace Backoffice.Controllers
             }
 
             return patient;
+        }
+        [HttpPost]
+        public async Task<ActionResult<PatientDto>> Create(CreatePatientDto dto)
+        {
+            try {
+                var patient = await _service.AddAsync(dto);
+                return CreatedAtAction(nameof(GetById),new {id = patient.Id},patient);
+            
+            } catch(BusinessRuleValidationException e) {
+                    return BadRequest(new {Message = e.Message});
+            }
         }
     }
 }
