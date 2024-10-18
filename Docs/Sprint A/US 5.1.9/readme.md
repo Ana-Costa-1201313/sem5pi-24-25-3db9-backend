@@ -29,12 +29,13 @@ Some relevant answers excerpts are here specified:
 
 - **
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** In this US an admin can edit a user profile. Does the system display a list of all users or the admin searchs by ID? Or both?
+  - **Answer:** this requirement is for the editing of the user profile. from a usability point of view, the user should be able to start this feature either by searching for a specific user or listing all users and selecting one.
+note that we are not doing the user interface of the system in this sprint.
 
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** Regarding the editing of patient information, is contact information the only sensitive data? Is it the only data that triggers an email notification?
+  - **Answer:** faz parte das vossas responsabilidades no âmbito do módulo de proteçãod e dados e de acordo com a politica que venham a definir
 
 
 - **Question:** 
