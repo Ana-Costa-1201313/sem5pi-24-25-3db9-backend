@@ -1,6 +1,6 @@
 dotnet tool restore
 dotnet tool install --global dotnet-ef
-cd HealthcareApp
+cd Backoffice
 dotnet ef database drop
 rm -rf Migrations
 dotnet ef migrations add InitialCreate 
