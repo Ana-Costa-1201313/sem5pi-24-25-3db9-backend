@@ -5,85 +5,89 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Auth.Domain.Users.DTO;
 using System.Text;
+using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 public class ExternalApiService
 {
     private readonly HttpClient _httpClient;
+    private readonly HttpClient httpClient;
     private readonly ILogger<ExternalApiService> _logger;
     private readonly IConfiguration _iconfig;
 
-    private readonly string _url_loginVerification = "Backoffice/Login/userExists";
+    private readonly string _url_loginVerificationEmailPassword = "Backoffice/Login/userExists";
+    //private readonly string _url_loginVerificationEmailPassword = "Backoffice/Login/userExists";
 
     public ExternalApiService(HttpClient httpClient, ILogger<ExternalApiService> logger, IConfiguration iconfig)
     {
         _httpClient = httpClient;
         _logger = logger;
         _iconfig = iconfig;
+        //httpClient = new HttpClient();
     }
 
     public async Task<LoginDTO> UserExists(string email, string password)
     {
-        LoginDTO loginDTO = new LoginDTO 
+        // Set the base URL for the HTTP client
+        HttpClient httpClient = new HttpClient();
+
+        // Create the Basic Authentication token
+        var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{email}:{password}"));
+
+        var a = string.Concat(_iconfig["BackOffice:Uri"], _url_loginVerificationEmailPassword);
+
+        using (var request = new HttpRequestMessage(HttpMethod.Post, a))
         {
-            username = email, password = password
-        };
-        try
-        {
-            // Send a GET request to the specified API
-
-            var request = new HttpRequestMessage(HttpMethod.Get, _iconfig["Backoffice:uri"] + _url_loginVerification);
-
-            // Add the email,password to the headers
-            string credentials = $"{email}:{password}";
-
-            byte[] credentialsBytes = Encoding.UTF8.GetBytes(credentials);
-
-            request.Headers.Add("Authorization", $"Basic {Convert.ToBase64String(credentialsBytes)}");
-
-            //  Send
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-            response.EnsureSuccessStatusCode(); // Throw an exception if the response status code is not successful
-
-            // Read the response content as a string
-            string responseBody = await response.Content.ReadAsStringAsync();
-            LoginDTO resultLoginDTO = JsonSerializer.Deserialize<LoginDTO>(responseBody);
-
-       
-            return resultLoginDTO;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+            var response = await httpClient.SendAsync(request);
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to authenticate user:+ {ex.Message} + {a} + {authToken}+ {email}+,+{password}");
+            }
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var loginDto = JsonSerializer.Deserialize<LoginDTO>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = false
+            });
+            return loginDto;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error calling external API: {ex.Message}");
-            throw;
-        }
+        return null;
     }
 
-    public async Task<string> PostDataToExternalApiAsync(string apiUrl, object data)
+    public async Task<LoginDTO> UserExists(string email)
     {
-        try
+        // Set the base URL for the HTTP client
+        HttpClient httpClient = new HttpClient();
+
+        // Create the Basic Authentication token
+        var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{email}"));
+
+        var a = string.Concat(_iconfig["BackOffice:Uri"], _url_loginVerificationEmailPassword);
+
+        using (var request = new HttpRequestMessage(HttpMethod.Post, a))
         {
-            // Convert the data object to JSON
-            var jsonContent = new StringContent(
-                System.Text.Json.JsonSerializer.Serialize(data),
-                System.Text.Encoding.UTF8,
-                "application/json"
-            );
-
-            // Send a POST request to the specified API with the JSON data
-            HttpResponseMessage response = await _httpClient.PostAsync(apiUrl, jsonContent);
-
-            response.EnsureSuccessStatusCode(); // Throw an exception if the response status code is not successful
-
-            // Read the response content as a string
-            string responseData = await response.Content.ReadAsStringAsync();
-
-            return responseData;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+            var response = await httpClient.SendAsync(request);
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to authenticate user:+ {ex.Message} + {a} + {authToken}+ {email}");
+            }
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var loginDto = JsonSerializer.Deserialize<LoginDTO>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = false
+            });
+            return loginDto;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error posting to external API: {ex.Message}");
-            throw;
-        }
+        return null;
     }
+
 }

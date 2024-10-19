@@ -13,6 +13,10 @@ using Auth.Domain.Shared;
 using Auth.Domain.Users;
 using Auth.Domain;
 using Auth.Infrastructure.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+
 
 namespace Auth
 {
@@ -46,6 +50,22 @@ namespace Auth
 
             services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+
+            // redirecionar utilizadores para a pagina de autenticação da google  --  https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
+            })
+                .AddCookie()
+                .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+                {
+                    options.ClientId = this.Configuration.GetSection("GoogleKeys:ClientID").Value;
+                    options.ClientSecret = this.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,11 +83,12 @@ namespace Auth
             }
 
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
@@ -85,7 +106,7 @@ namespace Auth
 
             services.AddHttpClient<ExternalApiService>(client =>
             {
-                client.BaseAddress = new Uri(Configuration["Backoffice:uri"]);
+                client.BaseAddress = new Uri(Configuration["Backoffice:Uri"]);
             });
         }
     }

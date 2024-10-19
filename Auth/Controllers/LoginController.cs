@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Auth.Domain.Users;
 using Auth.Domain.Users.DTO;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Auth.Controllers
 {
@@ -19,47 +21,66 @@ namespace Auth.Controllers
         }
 
 
-        [HttpPost("{loginDto}")]
-        public async Task<ActionResult<UserDTO>> login(LoginDTO loginDto)
+        [HttpPost("loginDto")]
+        public async Task<ActionResult<LoginDTO>> login( [FromBody] LoginDTO loginDto)
         {
 
             try
             {
-                if (loginDto.jwt != null) { 
-                    if(await _service.validToken(loginDto.jwt))
-                        return Ok(new UserDTO { jwt = loginDto.jwt});
+                if (loginDto.jwt != null)
+                {
+                    if (await _service.validToken(loginDto.jwt))
+                        return Ok(loginDto);
                 }
-                //else if (loginDto.googleCredentials != null)
-                //    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
+                else if (loginDto.googleCredentials != null)
+                    return Ok(await _service.loginGoogle(loginDto.googleCredentials));
                 else if (loginDto.username != null && loginDto.password != null)
-                    return Ok(await _service.login(loginDto.username, loginDto.password));
+                {
+                    var result = await _service.login(loginDto.username, loginDto.password);
+                    if (result == null) return BadRequest(new { Message = "LoginController - loginDto é null" });
+                    return Ok(result);
+                }
+                //}else if (loginDto.username != null && loginDto.password != null)
+                //{
+                //    var result = await _service.login(loginDto.username, loginDto.password);
+                //    return Ok(result);
+                //}
                     //return BadRequest(new { Message = "mau boas." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = "mau boas" });
+                return BadRequest(ex.Message);
             }
 
-            return null;
+            return BadRequest(new { Message = "An error occurred during login." }); 
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LoginDTO>> teste(string id) 
+        [Authorize]
+        public async Task<String> loginGoogle(int num)
         {
-            var l = new LoginDTO
-            {
-                username = "ricardo",
-                role = "student"
-            };
+            var user = this.User;
 
-            var login = new LoginDTO
-            {
-                //jwt = _service.CreateToken(new Domain.Users.User("ricardo1", "student"))
-                jwt = _service.CreateToken(l)
-            };
-
-            return Ok(login);
+            return "value";
         }
+
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<LoginDTO>> teste(string id) 
+        //{
+        //    var l = new LoginDTO
+        //    {
+        //        username = "ricardo",
+        //        role = "student"
+        //    };
+
+        //    var login = new LoginDTO
+        //    {
+        //        //jwt = _service.CreateToken(new Domain.Users.User("ricardo1", "student"))
+        //        jwt = _service.CreateToken(l)
+        //    };
+
+        //    return Ok(login);
+        //}
 
         [HttpPost("validate")]
         public async Task<ActionResult<LoginDTO>> validateToken(LoginDTO loginDTO) {

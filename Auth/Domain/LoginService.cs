@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Google.Apis.Auth;
 
 
 namespace Auth.Domain.Users
@@ -81,7 +82,7 @@ namespace Auth.Domain.Users
             loginDTO = await _externalApiService.UserExists(email, password);
             }
             catch (Exception ex) {
-                return null;
+                throw new NullReferenceException(ex.Message );
             }
             //good request -> createToken() -> return Token(username, password, role,....)
             if (loginDTO != null) token = CreateToken(loginDTO);
@@ -90,35 +91,23 @@ namespace Auth.Domain.Users
             return loginDTO;
         }
 
-        //public String CreateToken(User user)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    //var key = Encoding.ASCII.GetBytes(_iconfig["Jwt:Key"]);
-        //    var jwtSettings = _iconfig.GetSection("Jwt");
-        //    var key = _iconfig["Jwt:Key"];
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new Claim[]
-        //        {
-        //            new Claim(ClaimTypes.NameIdentifier, user.username.username),
-        //            //new Claim(ClaimTypes.Role, user.role),
-        //            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
-        //            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
+        public async Task<LoginDTO> loginGoogle(String credential)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { this._iconfig.GetValue<string>("GoogleCIientId") }
+            };
 
-        //            //new Claim(ClaimTypes.Role, user.Role.ToString()),
-        //            // Add more claims as needed
-        //        }),
-        //        Expires = DateTime.UtcNow.AddHours(72),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256),
-        //        Issuer = _iconfig["Jwt:Issuer"],
-        //        Audience = _iconfig["Jwt:Audience"]
-        //    };
+            var payload = await GoogleJsonWebSignature.ValidateAsync(credential, settings);
 
+            String email = payload.Email;
 
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
+            LoginDTO loginDTO = await _externalApiService.UserExists(email);
 
-        //    return tokenHandler.WriteToken(token);
-        //}
+            if (loginDTO != null) return null;
+            //return UtilizadorMapper.toDTO(user, GerarJWT(user.userName.id, user.PermissaoString));
+            throw new Exception("Erro: Não existe Utilizador");
+        }
 
         public String CreateToken(LoginDTO loginDTO)
         {
@@ -161,7 +150,7 @@ namespace Auth.Domain.Users
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, loginDTO.username),
-                    //new Claim(ClaimTypes.Role, loginDTO.role),
+                    new Claim(ClaimTypes.Role, loginDTO.role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Ensures a unique token identifier
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(), ClaimValueTypes.Integer64)
         
@@ -179,6 +168,8 @@ namespace Auth.Domain.Users
 
             return tokenHandler.WriteToken(token);
         }
+
+        
 
         public LoginDTO ExtractLoginDTOFromToken(LoginDTO loginDTO)
         {
