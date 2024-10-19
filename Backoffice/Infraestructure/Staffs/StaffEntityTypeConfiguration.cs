@@ -10,6 +10,9 @@ namespace Backoffice.Infraestructure.Staffs
         {
             builder.ToTable("Staff", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
+
+            builder.Property(b => b.Id)
+                .HasConversion(id => id.Value, value => new StaffId(value));
         }
     }
 }

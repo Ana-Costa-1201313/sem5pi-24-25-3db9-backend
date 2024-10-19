@@ -10,7 +10,7 @@ namespace Backoffice.Domain.OperationRequests
         public Int32 Priority { get; private set; }
         public string PatientId { get; private set; }
         public string DoctorId { get; private set; }
-        public string OperationRequestId { get; private set; }
+        // public string OperationRequestId { get; private set; }
 
         private OperationRequest(){}
 

@@ -10,6 +10,8 @@ namespace Backoffice.Infraestructure.Patients
         {
             builder.ToTable("Patient", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
+            builder.Property(b => b.Id)
+                .HasConversion(id => id.Value, value => new PatientId(value));
         }
     }
 }
