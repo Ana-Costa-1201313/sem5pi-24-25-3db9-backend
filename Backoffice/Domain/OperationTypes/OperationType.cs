@@ -48,6 +48,33 @@ namespace Backoffice.Domain.OperationTypes
             this.Active = false;
         }
 
+        public void ChangeName(OperationTypeName name)
+        {
+            this.Name = name;
+        }
+
+        public void ChangeAnesthesiaPatientPreparationDuration(int duration)
+        {
+            this.Duration.AnesthesiaPatientPreparationInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeSurgeryDuration(int duration)
+        {
+            this.Duration.SurgeryInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeCleaningDuration(int duration)
+        {
+            this.Duration.CleaningInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeRequiredStaff(List<OperationTypeRequiredStaff> requiredStaff)
+        {
+            this.RequiredStaff = requiredStaff;
+        }
+
+
+
         public string ToJSON()
         {
             var jsonRepresentation = new
