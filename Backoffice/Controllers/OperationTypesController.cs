@@ -77,5 +77,21 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchOperationType(Guid id, [FromBody] PatchOperationTypeDto operationTypeDto)
+        {
+            var updatedOperationType = await _service.Patch(id, operationTypeDto);
+
+            if (updatedOperationType == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedOperationType);
+        }
+
+
+
     }
 }

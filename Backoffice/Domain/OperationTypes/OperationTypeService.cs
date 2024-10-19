@@ -95,5 +95,50 @@ namespace Backoffice.Domain.OperationTypes
             return OperationTypeMapper.ToDto(opType);
         }
 
+
+        public async Task<OperationTypeDto> Patch(Guid id, PatchOperationTypeDto operationTypeDto)
+        {
+            var operationType = await _repo.GetByIdAsync(new OperationTypeId(id));
+
+            if (operationType == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(operationTypeDto.Name))
+            {
+                operationType.ChangeName(new OperationTypeName(operationTypeDto.Name));
+            }
+
+            if (operationTypeDto.AnesthesiaPatientPreparationInMinutes.HasValue)
+            {
+                operationType.ChangeAnesthesiaPatientPreparationDuration(operationTypeDto.AnesthesiaPatientPreparationInMinutes.Value);
+            }
+
+            if (operationTypeDto.SurgeryInMinutes.HasValue)
+            {
+                operationType.ChangeSurgeryDuration(operationTypeDto.SurgeryInMinutes.Value);
+            }
+
+            if (operationTypeDto.CleaningInMinutes.HasValue)
+            {
+                operationType.ChangeCleaningDuration(operationTypeDto.CleaningInMinutes.Value);
+            }
+
+            if (operationTypeDto.RequiredStaff != null)
+            {
+                var updatedStaff = operationTypeDto.RequiredStaff.Select(rsDto =>
+                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName(rsDto.Specialization)), rsDto.Total)
+                ).ToList();
+
+                operationType.ChangeRequiredStaff(updatedStaff);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return OperationTypeMapper.ToDto(operationType);
+        }
+
+
     }
 }
