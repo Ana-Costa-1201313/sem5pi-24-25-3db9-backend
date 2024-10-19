@@ -9,7 +9,7 @@ namespace Backoffice.Domain.Logs
     public class Log : Entity<LogId>
     {
 
-        public int Id {get; private set;}
+        public new int Id {get; private set;}
         public DateTime DateTime {get; private set;}
         public string Description {get; private set;}
         public LogType LogType {get; private set;}
