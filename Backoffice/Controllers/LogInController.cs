@@ -31,8 +31,27 @@ namespace Backoffice.Controllers
             var token = tokenHeader.ToString().Replace("Basic ", string.Empty);
             byte[] credentialsBytes = Convert.FromBase64String(token);
             string credentials = Encoding.UTF8.GetString(credentialsBytes);
+            (string email, string password) = (null, null);
+            try
+            {
+                (email, password) = SeparateCredentials(credentials);
+            }
+            catch (FormatException ex) 
+            {
+                if (credentials.Contains("@"))
+                {
+                    LoginDTO loginDTOShort = await getLoginDTO(email);
 
-            var (email, password) = SeparateCredentials(credentials);
+                    if (loginDTOShort != null)
+                    {
+                        return Ok(loginDTOShort);
+                    }
+                    else
+                    {
+                        return Unauthorized("Invalid email");
+                    }
+                }
+            }
             // Validate parameters  present
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {

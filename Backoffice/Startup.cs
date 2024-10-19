@@ -16,6 +16,7 @@ using System.Text.Json.Serialization;
 using Backoffice.Services;
 
 
+
 namespace Backoffice
 {
     public class Startup
@@ -51,6 +52,8 @@ namespace Backoffice
 
             services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,7 +70,7 @@ namespace Backoffice
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -91,6 +94,7 @@ namespace Backoffice
 
             services.AddTransient<LogInServices>();
             services.AddHttpClient();
+            services.AddHttpLogging(o => { });
         }
     }
 }

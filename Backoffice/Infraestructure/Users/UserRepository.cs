@@ -24,15 +24,8 @@ namespace Backoffice.Infraestructure.Users
 
         public async Task<User> getUserByEmail(string email)
         {
-            return await this._context.Users.Where(x => email.Equals(x.Email.ToString())).FirstOrDefaultAsync();
-            //return await this._context.Users.FirstOrDefaultAsync(x => email.Equals(x.Email.ToString()));
-            //return await this._context.Users
-            //    .Where(x => x.Email.ToString() == email) // Ensure the comparison is valid
-            //    .FirstOrDefaultAsync();
-            //return await this._context.Users.Single(x => email.Equals(x.Email.ToString())); 
-            //return await _context.Users.Where(u => u.Email.ToString() == email).ToList();
-
-
+            Email em = new Email(email);
+            return await this._context.Users.Where(x => x.Email.Equals(em)).Select(x => x).FirstOrDefaultAsync();
         }
     }
 }

@@ -30,8 +30,8 @@ namespace Backoffice.Services
         {
             User user = await _userRepository.getUserByEmail(username);
             if (user == null) return false;
-            if (password.Equals(user.Password.Passwd)) return false;
-            return true;
+            if (password.Equals(user.Password.Passwd)) return true;
+            return false;
         }
 
         public async Task<LoginDTO> getLoginDTO(string email)
