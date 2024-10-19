@@ -6,9 +6,16 @@ namespace Backoffice.Domain.Staffs
         {
             var stringAvailabilitySlots = new List<string>();
 
-            foreach (var availabilitySlot in staff.AvailabilitySlots)
+            if (staff.AvailabilitySlots == null)
             {
-                stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                stringAvailabilitySlots = null;
+            }
+            else
+            {
+                foreach (var availabilitySlot in staff.AvailabilitySlots)
+                {
+                    stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                }
             }
 
             return new StaffDto
@@ -19,7 +26,7 @@ namespace Backoffice.Domain.Staffs
                 FullName = staff.FullName,
                 LicenseNumber = staff.LicenseNumber,
                 Email = staff.Email._Email,
-                Phone = staff.Phone.PhoneNum,
+                Phone = staff.Phone?.PhoneNum,
                 Specialization = staff.Specialization,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
@@ -28,10 +35,11 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq) {
+        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq)
+        {
             return new Staff(dto, mecNumSeq);
         }
 
-        
+
     }
 }

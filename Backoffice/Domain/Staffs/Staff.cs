@@ -69,11 +69,18 @@ namespace Backoffice.Domain.Staffs
 
         public void Deactivate()
         {
-            if (this.Active == false)
+            if (!this.Active)
             {
                 throw new BusinessRuleValidationException("Error: This Staff profile is already deactivated!");
             }
 
+            this.FirstName = "Deactivated Staff";
+            this.LastName = "Deactivated Staff";
+            this.FullName = "Deactivated Staff";
+            this.LicenseNumber = this.Id.GetHashCode();
+            this.Phone = null;
+            this.Specialization = "Deactivated Staff";
+            this.AvailabilitySlots = null;
             this.Active = false;
         }
     }
