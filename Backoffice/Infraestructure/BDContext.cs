@@ -9,6 +9,12 @@ using Backoffice.Infraestructure.Users;
 using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure.Patients;
 using Backoffice.Infraestructure.OperationRequests;
+using Backoffice.Domain.OperationTypes;
+using Backoffice.Infraestructure.OperationTypes;
+using Backoffice.Domain.Specializations;
+using Backoffice.Infraestructure.Specializations;
+using Backoffice.Domain.Logs;
+using Backoffice.Infraestructure.Logs;
 
 namespace Backoffice.Infraestructure
 {
@@ -19,6 +25,9 @@ namespace Backoffice.Infraestructure
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<OperationRequest> OperationRequests { get; set; }
+        public DbSet<OperationType> OperationTypes { get; set; }
+        public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<Log> Logs { get; set; }
 
         public BDContext(DbContextOptions options) : base(options)
         {
@@ -31,6 +40,9 @@ namespace Backoffice.Infraestructure
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new LogEntityTypeConfiguration());
         }
     }
 

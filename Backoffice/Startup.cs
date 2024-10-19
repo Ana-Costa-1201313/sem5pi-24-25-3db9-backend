@@ -15,6 +15,11 @@ using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
 using Backoffice.Domain.Staff;
 using System.Text.Json.Serialization;
+using Backoffice.Domain.OperationTypes;
+using Backoffice.Domain.Specializations;
+using Backoffice.Infraestructure.Specializations;
+using Backoffice.Domain.Logs;
+using Backoffice.Infraestructure.Logs;
 
 namespace Backoffice
 {
@@ -35,15 +40,15 @@ namespace Backoffice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             //services.AddDbContext<BDContext>(opt =>
-               // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-                //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            //services.AddDbContext<BDContext>(opt =>
+            // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
+            //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
+        
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
@@ -91,6 +96,14 @@ namespace Backoffice
 
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
+
+            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
+            services.AddTransient<OperationTypeService>();
+
+            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
+            services.AddTransient<SpecializationService>();
+
+            services.AddTransient<ILogRepository, LogRepository>();
         }
     }
 }
