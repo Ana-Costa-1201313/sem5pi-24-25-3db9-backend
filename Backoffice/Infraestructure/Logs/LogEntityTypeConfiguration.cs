@@ -14,22 +14,22 @@ namespace Backoffice.Infraestructure.Logs
 
 
             builder.Property(b => b.Id)
-                .HasConversion(id => id.Value, value => new LogId(value));
+                   .ValueGeneratedOnAdd();
 
-  
+
             builder.Property(b => b.LogType)
                 .HasConversion(
-                    v => v.ToString(),  
-                    v => (LogType)Enum.Parse(typeof(LogType), v)  
+                    v => v.ToString(),
+                    v => (LogType)Enum.Parse(typeof(LogType), v)
                 )
                 .IsRequired();
 
-                builder.Property(b => b.LogEntity)
-                .HasConversion(
-                    v => v.ToString(),  
-                    v => (LogEntity)Enum.Parse(typeof(LogEntity), v)  
-                )
-                .IsRequired();
+            builder.Property(b => b.LogEntity)
+            .HasConversion(
+                v => v.ToString(),
+                v => (LogEntity)Enum.Parse(typeof(LogEntity), v)
+            )
+            .IsRequired();
 
             builder.Property(b => b.Description)
                 .IsRequired();
