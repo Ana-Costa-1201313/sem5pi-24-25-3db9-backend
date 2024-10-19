@@ -59,14 +59,21 @@ namespace Backoffice.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<StaffDto>> Deactivate(Guid id)
         {
-            var staff = await _service.Deactivate(id);
-
-            if (staff == null)
+            try
             {
-                return NotFound();
-            }
+                var staff = await _service.Deactivate(id);
 
-            return Ok(staff);
+                if (staff == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(staff);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
     }
 }

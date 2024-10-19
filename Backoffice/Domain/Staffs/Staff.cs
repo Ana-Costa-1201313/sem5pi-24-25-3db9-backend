@@ -69,6 +69,11 @@ namespace Backoffice.Domain.Staffs
 
         public void Deactivate()
         {
+            if (this.Active == false)
+            {
+                throw new BusinessRuleValidationException("Error: This Staff profile is already deactivated!");
+            }
+
             this.Active = false;
         }
     }
