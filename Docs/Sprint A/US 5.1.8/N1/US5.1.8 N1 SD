@@ -1,9 +1,10 @@
-@startuml US8_nivel1B
+@startuml US8_nivel1
 autonumber
 
+participant "<<Admin>>\nAdmin" as admin
 participant "<<system>>\nSystem HealthcareApp" as sys
-
-[-> sys: POST /patients
+activate admin
+admin -> sys: POST /patients
 
 activate sys
     alt patient profile not created
@@ -12,5 +13,5 @@ activate sys
         [<-- sys : 201: Created
     end
 deactivate sys
-
+deactivate admin
 @enduml

@@ -1,6 +1,7 @@
 @startuml
 autonumber
 
+participant "<<Admin>>\nAdmin" as admin
 participant "Route" as r
 participant "Controller" as ctrl
 participant "Service" as svc
@@ -9,8 +10,8 @@ participant "Repository" as repo
 participant "DBDriver" as db
 participant "Mapper" as map
 participant "dto:\nPatientDTO" as dto
-
-[-> r : POST /patients
+activate admin
+admin -> r : POST /patients
 activate r
     r -> ctrl : createPatient(req)
 
@@ -46,6 +47,7 @@ activate r
         deactivate ctrl
     [<-- r : 201: Created
 deactivate r
+deactivate admin
 end
 
 @enduml

@@ -1,10 +1,11 @@
 @startuml
 autonumber
 
+participant "<<Admin>>\nAdmin" as admin
 participant "BE" as be
 
-[-> be: POST /patients
-
+admin -> be: POST /patients
+activate admin
 activate be
     alt patient profile not created
         [<-- be : 422: Unprocessable Content
@@ -12,5 +13,5 @@ activate be
         [<-- be : 201: Created
     end
 deactivate be
-
+deactivate admin
 @enduml
