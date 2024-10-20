@@ -18,12 +18,13 @@ namespace Backoffice.Domain.Patients
         public Email Email { get; private set; }
 
         public PhoneNumber Phone { get; private set; }
+        public string EmergencyContact {get; private set;}
 
         public string[] Allergies { get; private set; }
 
         public int MedicalRecordNumber { get; private set; }
 
-        //public Appointment[] AppointmentHistory { get; private set; }
+        //public List<Appointment> AppointmentHistory { get; private set; }
 
         public string PatientId { get; private set; }
 
@@ -39,8 +40,9 @@ namespace Backoffice.Domain.Patients
             this.DateOfBirth = dto.DateOfBirth;
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Allergies = dto.Allergies;
+            this.EmergencyContact = dto.EmergencyContact;
             this.MedicalRecordNumber = dto.MedicalRecordNumber;
+
         }
 
         public void UpdateDetails(string firstName, string lastName, string fullName, string gender, DateTime dateOfBirth,
