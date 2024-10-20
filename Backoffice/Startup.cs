@@ -85,7 +85,9 @@ namespace Backoffice
             services.AddTransient<CategoryService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<EmailService>();
             services.AddTransient<UserService>();
+            
         }
     }
 }
