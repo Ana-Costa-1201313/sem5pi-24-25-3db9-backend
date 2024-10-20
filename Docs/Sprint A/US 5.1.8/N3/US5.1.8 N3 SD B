@@ -24,7 +24,7 @@ activate admin
                     svc --> ctrl : error
                     
                     ctrl --> r : informs error
-                    [<-- r : 422: Unprocessable Content
+                    admin <-- r : 422: Unprocessable Content
                 else patient profile created successfully
                     svc -> repo : save(patient)
                     activate repo
@@ -42,7 +42,7 @@ activate admin
             deactivate svc
             ctrl --> r : dto
         deactivate ctrl
-    [<-- r : 201: Created
+    admin <-- r : 201: Created
     deactivate r
 end
 deactivate admin
