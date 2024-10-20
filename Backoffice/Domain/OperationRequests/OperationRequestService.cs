@@ -20,11 +20,11 @@ namespace Backoffice.Domain.OperationRequests
             List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(or => new OperationRequestDto
             {
                 Id = or.Id.AsGuid(),
-                OperationType = or.OperationType,
+                OpType = or.OpType,
                 DeadlineDate = or.DeadlineDate,
                 Priority = or.Priority,
-                PatientId = or.PatientId,
-                DoctorId = or.DoctorId
+                Patient = or.Patient,
+                Doctor = or.Doctor
             });
 
             return listDto;
@@ -40,11 +40,11 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequestDto
             {
                 Id = opReq.Id.AsGuid(),
-                OperationType = opReq.OperationType,
+                OpType = opReq.OpType,
                 DeadlineDate = opReq.DeadlineDate,
                 Priority = opReq.Priority,
-                PatientId = opReq.PatientId,
-                DoctorId = opReq.DoctorId
+                Patient = opReq.Patient,
+                Doctor = opReq.Doctor
             };
         }
 
@@ -59,11 +59,11 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequestDto
             {
                 Id = OperationRequest.Id.AsGuid(),
-                OperationType = OperationRequest.OperationType,
+                OpType = OperationRequest.OpType,
                 DeadlineDate = OperationRequest.DeadlineDate,
                 Priority = OperationRequest.Priority,
-                PatientId = OperationRequest.PatientId,
-                DoctorId = OperationRequest.DoctorId
+                Patient = OperationRequest.Patient,
+                Doctor = OperationRequest.Doctor
             };
         }
     }
