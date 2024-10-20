@@ -1,4 +1,5 @@
 using Backoffice.Domain.Shared;
+using System.Net.Mail;
 
 namespace Backoffice.Domain.Users
 {
@@ -63,10 +64,14 @@ namespace Backoffice.Domain.Users
 
             await this._unitOfWork.CommitAsync();
 
-            string messageBodyParameters = $"{user.Id.AsGuid()}&password=changeMeToYourNewPassword";
-
-            await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, "change your password");
-
+            string messageBodyParameters = $"{user.Id.AsGuid()}?password=changeMeToYourNewPassword";
+            try
+            {
+                await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, "change your password");
+            }
+            catch (SmtpException ex) { 
+                Console.WriteLine(ex.Message);
+            }
             return new UserDto
             {
                 Id = user.Id.AsGuid(),

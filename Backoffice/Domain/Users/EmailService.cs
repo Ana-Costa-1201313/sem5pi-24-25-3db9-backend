@@ -123,17 +123,17 @@ namespace Backoffice.Domain.Users
                 try
                 {
                     await smtpClient.SendMailAsync(mailMessage);
-                    return true ;
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error sending email: {ex.Message}");
-                    return false;
+                    throw new SmtpException(ex.Message);
                 }
             }
-            catch
+            catch (Exception e)
             {
-                return false;
+                throw new SmtpException(e.Message);
             }
         }
     }
