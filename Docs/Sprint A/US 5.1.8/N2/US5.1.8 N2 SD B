@@ -1,7 +1,7 @@
-@startuml US8_Nivel1
+@startuml US8_Nivel2
 autonumber
 
-actor "<<Admin>>\nAdmin" as admin
+actor "Admin" as admin
 participant "<<Component>>\nWeb" as web
 participant "BE" as be
 
@@ -12,10 +12,10 @@ activate admin
         admin -> web : provides patient data
         web -> be : POST /patients
         activate be
-            alt patient profile not created
-                be --> web : 422: Unprocessable Content
-            else patient profile created successfully
-                be --> web : 201: Created
+            alt profile not created
+                be --> web : informs error
+            else success
+                be --> web : shows created patient profile
             end
         deactivate be
     
