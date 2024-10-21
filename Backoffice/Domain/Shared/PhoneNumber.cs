@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Backoffice.Domain.Shared
 {
     [Owned]
-    public class PhoneNumber
+    public class PhoneNumber : IValueObject
     {
         public string PhoneNum { get; private set; }
 
@@ -19,6 +19,11 @@ namespace Backoffice.Domain.Shared
             }
 
             this.PhoneNum = phoneNum;
+        }
+
+        public override string ToString()
+        {
+            return this.PhoneNum;
         }
     }
 }

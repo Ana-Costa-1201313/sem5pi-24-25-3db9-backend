@@ -13,7 +13,7 @@ using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
-using Backoffice.Domain.Staff;
+using Backoffice.Domain.Staffs;
 using System.Text.Json.Serialization;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Specializations;
@@ -97,13 +97,8 @@ namespace Backoffice
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
 
-            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
-            services.AddTransient<OperationTypeService>();
+            services.AddTransient<StaffMapper>();
 
-            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
-            services.AddTransient<SpecializationService>();
-
-            services.AddTransient<ILogRepository, LogRepository>();
         }
     }
 }

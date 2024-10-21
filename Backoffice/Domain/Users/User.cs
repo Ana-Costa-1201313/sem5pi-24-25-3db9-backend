@@ -12,27 +12,16 @@ namespace Backoffice.Domain.Users
 
         public bool Active { get; private set; }
 
-        public int MechanographicNum { get; private set; }
-
         private User()
         {
 
         }
 
-        public User(Role role, string email, int mechanographicNum)
+        public User(Role role, string email)
         {
             this.Id = new UserId(Guid.NewGuid());
             this.Role = role;
-            this.MechanographicNum = mechanographicNum;
-
-            if (role != Role.Patient)
-            {
-                this.Email = new Email(role.ToString().Substring(0, 1) + MechanographicNum  + "@healthcareapp.com");
-            }
-            else
-            {
-                this.Email = new Email(email);
-            }
+            this.Email = new Email(email);
             this.Active = false;
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Backoffice.Domain.Users;
+using Backoffice.Infraestructure.Shared;
 
 namespace Backoffice.Infraestructure.Users
 {
@@ -15,6 +16,8 @@ namespace Backoffice.Infraestructure.Users
 
             builder.OwnsOne(u => u.Password);
             builder.OwnsOne(v => v.Email);
+
+            builder.Property(r => r.Role).HasConversion(new RoleConverter());
         }
     }
 }

@@ -1,24 +1,24 @@
-# US 5.1.12
+# US 5.1.13
 
 ## 1. Context
 
-This task appears in the start of the project's development, to be able to create a staff profile.
+This task appears in the start of the project's development, to be able to edit a staff profile.
 
 
 ## 2. Requirements
 
-**US 5.1.12** As an Admin, I want to create a new staff profile, so that I can add them to the hospital's roster.
+**US 5.1.13** As an Admin, I want to edit a staff's profile, so that I can update their information.
 
 **Acceptance Criteria:**
 
-- Admins can input staff details such as first name, last name, contact information, and specialization.
-- A unique staff ID (License Number) is generated upon profile creation.
-- The system ensures that the staff's email and phone number are unique.
-- The profile is stored securely, and access is based on role-based permissions
+- Admins can search for and select a staff profile to edit.
+- Editable fields include contact information, availability slots, and specialization.
+- The system logs all profile changes, and any changes to contact information trigger a confirmation email to the staff member.
+- The edited data is updated in real-time across the system.
 
 **Dependencies/References:**
 
-It is also required that the user is registered and logged in as an admin.
+It is also required that the user is registered and logged in as an admin and that the staff profile is already in the system.
 
 
 ## 3. Analysis
@@ -56,7 +56,6 @@ It will boil down to a design decision. From the functional perspective, it's no
 *"... regarding healthcare staff, we want to understand if the staff ID is unique or if it is, for example, if it is unique in the sense that, for example, doctor is 1, nurse is 2, or if, for example, the doctor has ID 1, there is a nurse ID 1? Okay, I understand what the issue is. Employees are identified by a mechanical number, basically. And it doesn't matter if this typing number is for a doctor, a nurse, or an assistant. It's a number of employees ..."*
 
 
-
 - **Question:** Can you clarify the difference between mechanographic number, staff id and license number?
   - **Answer:** The staff id and mechanographic number is the same concept. the license number is the number assigned by the professional guild (ex., "ordem dos enfermeiros", "ordem dos médicos") to the doctor or nurse attesting they legally can perform the medical acts of their profession.
 
@@ -72,20 +71,12 @@ It will boil down to a design decision. From the functional perspective, it's no
 
 - **Question:** Can you clarify the username and email requirements?
   - **Answer:** The username is the "official" email address of the user. for backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "D180023@myhospital.com". The system must allow for an easy configuration of the DNS domain (e.g., environment variable). For patients, the username is the email address provided in the patient record and used as identity in the external IAM. for instance patient Carlos Silva has provided his email csilva98@gmail.com the first time he entered the hospital. That email address will be his username when he self-registers in the system
-  
-
-After these client's clarifications, the following flow will be implemented:
-
-1- First it's created the staff profile, with the staff personal data (US 5.1.12);
-2- Then the staff mechanographical number is generated, and with that their professional email (US 5.1.12);
-3- After that, a user may be created, using the staff professional email as the username, but also requesting a personal email just to be used once, to send the confirmation link (US 5.1.1);
-4 - Finally, the new staff member can insert the password and the user account will become active (US 5.1.1).
 
 
 The following **HTTP requests** will be implemented:
-- POST (to register the new staff profile)
-- GET (to check the new staff profile)
-- Get by ID (to see the staff ID in the URL)
+- GET (to check available staff member)
+- PUT (to edit a specific staff member)
+- PATCH (to edit some data of a specific staff member)
 
 ## 4. Design
 
@@ -95,24 +86,30 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.12 N1 SD](US5.1.12%20N1%20SD.svg)
+![US5.1.13 N1 SD](US5.1.13%20N1%20SD.svg)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.12 N2 SD](US5.1.12%20N2%20SD.svg)
+![US5.1.13 N2 SD](US5.1.13%20N2%20SD.svg)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.12 N3 SD](US5.1.12%20N3%20SD.svg)
+![US5.1.13 N3 SD](US5.1.13%20N3%20SD.svg)
 
 
-### 4.4. Applied Design Patterns
+### 4.4. Class Diagram
+
+This diagram presents the classes that support the functionality.
+*To do*
+
+
+### 4.5. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -124,34 +121,35 @@ This diagram guides the realization of the functionality, for level 3 process vi
 - **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
-### 4.5. Tests
+
+### 4.6. Tests
 
 The following tests are to be developed:
-- The staff profile must be valid.
-- The staff phone number must be valid.
-- The staff availability slots must be valid.
-- The staff mechanographic number be valid.
-- The staff recruitment year must be valid.
+- updating an existing staff with new data
+- updating an existing staff with some new data, like phone number, specialization and availability slots~
+  - if the new data is invalid, exceptions should be thrown
 
 All Value Objects will be tested in Unitary Tests, to check if they fullfill their requirements.
 
-The Staff Service will be tested to see if the created Staff is correct.
+The Staff Service will be tested to see if the updated Staff is correct.
 
-The Staff Controller will be tested to see if the created Staff and responses are correct.
+The Staff Controller will be tested to see if the updated Staff and responses are correct.
 
-Postman Tests will also check the created Staff data and the responses, for both success and failure cases.
+Postman Tests will also check the updated Staff data and the responses, for both success and failure cases.
+
 
 
 ## 5. Implementation
 
 The implementation of this US is according to the design, as can be seen in the diagrams presented before.
 
-All commits referred the corresponding issue in GitHub, using the #15 tag, as well as a relevant commit message.
+All commits referred the corresponding issue in GitHub, using the #16 tag, as well as a relevant commit message.
 
 
 ## 6. Integration/Demonstration
 
-To register a new staff profile, run the Backoffice app and send a POST HTTP request with the new staff data.
+To edit a staff profile, run the Backoffice app and send a PUT or PATCH HTTP request with the staff ID and the new staff data.
+Then send a GET request with the staff ID and check the updated data.
 
 ## 7. Observations
 

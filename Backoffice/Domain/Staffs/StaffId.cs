@@ -1,6 +1,6 @@
 using Backoffice.Domain.Shared;
 
-namespace Backoffice.Domain.Staff
+namespace Backoffice.Domain.Staffs
 {
     public class StaffId : EntityId
     {
@@ -11,13 +11,6 @@ namespace Backoffice.Domain.Staff
         public StaffId(string value) : base(value)
         {
         }
-        
-        
-        // (N | D | O) yyyynnnnn
-        // ex: N202401234
-        // N nurse, D doctor, O other
-        // yyyy é o ano de recrutamento
-        // nnnnn é um num sequencial (n importa se é nurse ou doctor)
 
         override
         protected Object createFromString(String text)

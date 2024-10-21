@@ -1,24 +1,23 @@
-# US 5.1.12
+# US 5.1.14
 
 ## 1. Context
 
-This task appears in the start of the project's development, to be able to create a staff profile.
+This task appears in the start of the project's development, to be able to deactivate a staff profile.
 
 
 ## 2. Requirements
 
-**US 5.1.12** As an Admin, I want to create a new staff profile, so that I can add them to the hospital's roster.
+**US 5.1.14** As an Admin, I want to deactivate a staff profile, so that I can remove them from the hospital's active roster without losing their historical data.
 
 **Acceptance Criteria:**
 
-- Admins can input staff details such as first name, last name, contact information, and specialization.
-- A unique staff ID (License Number) is generated upon profile creation.
-- The system ensures that the staff's email and phone number are unique.
-- The profile is stored securely, and access is based on role-based permissions
+- Admins can search for and select a staff profile to deactivate.
+- Deactivating a staff profile removes them from the active roster, but their historical data (e.g. appointments) remains accessible.
+- The system confirms deactivation and records the action for audit purposes.
 
 **Dependencies/References:**
 
-It is also required that the user is registered and logged in as an admin.
+It is also required that the user is registered and logged in as an admin and that the staff profile is already in the system.
 
 
 ## 3. Analysis
@@ -74,18 +73,9 @@ It will boil down to a design decision. From the functional perspective, it's no
   - **Answer:** The username is the "official" email address of the user. for backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "D180023@myhospital.com". The system must allow for an easy configuration of the DNS domain (e.g., environment variable). For patients, the username is the email address provided in the patient record and used as identity in the external IAM. for instance patient Carlos Silva has provided his email csilva98@gmail.com the first time he entered the hospital. That email address will be his username when he self-registers in the system
   
 
-After these client's clarifications, the following flow will be implemented:
-
-1- First it's created the staff profile, with the staff personal data (US 5.1.12);
-2- Then the staff mechanographical number is generated, and with that their professional email (US 5.1.12);
-3- After that, a user may be created, using the staff professional email as the username, but also requesting a personal email just to be used once, to send the confirmation link (US 5.1.1);
-4 - Finally, the new staff member can insert the password and the user account will become active (US 5.1.1).
-
-
 The following **HTTP requests** will be implemented:
-- POST (to register the new staff profile)
-- GET (to check the new staff profile)
-- Get by ID (to see the staff ID in the URL)
+- GET by ID (to check a specific staff member)
+- DELETE (to deactivate the staff member profile)
 
 ## 4. Design
 
@@ -95,21 +85,22 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.12 N1 SD](US5.1.12%20N1%20SD.svg)
+![US5.1.14 N1 SD](US5.1.14%20N1%20SD.svg)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.12 N2 SD](US5.1.12%20N2%20SD.svg)
+![US5.1.14 N2 SD](US5.1.14%20N2%20SD.svg)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.12 N3 SD](US5.1.12%20N3%20SD.svg)
+![US5.1.14 N3 SD](US5.1.14%20N3%20SD.svg)
+
 
 
 ### 4.4. Applied Design Patterns
@@ -124,6 +115,7 @@ This diagram guides the realization of the functionality, for level 3 process vi
 - **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
+
 ### 4.5. Tests
 
 The following tests are to be developed:
@@ -132,26 +124,28 @@ The following tests are to be developed:
 - The staff availability slots must be valid.
 - The staff mechanographic number be valid.
 - The staff recruitment year must be valid.
+- The staff active field turns to false.
 
 All Value Objects will be tested in Unitary Tests, to check if they fullfill their requirements.
 
-The Staff Service will be tested to see if the created Staff is correct.
+The Staff Service will be tested to see if the staff profile is deactivated.
 
-The Staff Controller will be tested to see if the created Staff and responses are correct.
+The Staff Controller will be tested to see if the profile deactivation and responses are correct.
 
-Postman Tests will also check the created Staff data and the responses, for both success and failure cases.
+Postman Tests will also check the deactivation of the Staff profile and the response, for both success and failure cases.
 
 
 ## 5. Implementation
 
 The implementation of this US is according to the design, as can be seen in the diagrams presented before.
 
-All commits referred the corresponding issue in GitHub, using the #15 tag, as well as a relevant commit message.
+All commits referred the corresponding issue in GitHub, using the #17 tag, as well as a relevant commit message.
 
 
 ## 6. Integration/Demonstration
 
-To register a new staff profile, run the Backoffice app and send a POST HTTP request with the new staff data.
+To deactivate a staff profile, run the Backoffice app and send a DELETE HTTP request with the staff ID.
+Then send a GET request with the staff ID and check that the user has deleted data.
 
 ## 7. Observations
 

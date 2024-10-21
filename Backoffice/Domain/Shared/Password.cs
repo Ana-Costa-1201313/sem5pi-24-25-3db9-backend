@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Backoffice.Domain.Shared
 {
     [Owned]
-    public class Password
+    public class Password : IValueObject
     {
         public string Passwd { get; private set; }
 
