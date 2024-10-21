@@ -39,4 +39,29 @@ public class OperationTypeNameTests
 
         Assert.Equal("Error: The operation type name can't be null, empty or consist in only white spaces.", exception.Message);
     }
+
+
+    //After teoric class
+
+    [Theory]
+    [InlineData("asdasdas")]
+    [InlineData("Operation Type B")]
+    [InlineData("ASGA  ASDASA SDS")]
+    public void WhenPassingCorrectData_ThenOperationTypeNameIsInstantiated(string name)
+    {
+        new OperationTypeName(name);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("        ")]
+    public void WhenPassingInvalidName_ThenThrowsException(string name)
+    {
+        var ex = Assert.Throws<BusinessRuleValidationException>(() =>
+
+            new OperationTypeName(name)
+        );
+        Assert.Equal("Error: The operation type name can't be null, empty or consist in only white spaces.", ex.Message);
+    }
 }

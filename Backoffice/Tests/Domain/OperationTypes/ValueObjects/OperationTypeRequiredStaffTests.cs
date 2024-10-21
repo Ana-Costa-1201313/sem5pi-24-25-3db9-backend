@@ -2,6 +2,7 @@ using System;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
+using Moq;
 using Xunit;
 
 namespace Backoffice.Tests;
@@ -37,4 +38,16 @@ public class OperationTypeRequiredStaffTests
 
         Assert.Equal("Error: The total number of required staff of a specialization can't be lower or equal to 0.", exception.Message);
     }
+
+    //After teoric class
+
+    /*[Fact]
+    public void WhenPassingASpecialization_ThenHolidayIsInstantiated()
+    {
+        
+        Mock<Specialization> specDouble = new Mock<Specialization>();
+        int totalDouble = 5;
+
+        new OperationTypeRequiredStaff(specDouble.Object, totalDouble);
+    }*/
 }

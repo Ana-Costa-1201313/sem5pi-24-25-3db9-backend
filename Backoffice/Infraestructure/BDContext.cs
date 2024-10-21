@@ -43,6 +43,8 @@ namespace Backoffice.Infraestructure
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new LogEntityTypeConfiguration());
+
+            modelBuilder.Ignore<RequiredStaffDto>();
         }
     }
 
