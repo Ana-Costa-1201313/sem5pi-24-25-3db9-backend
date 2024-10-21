@@ -73,6 +73,14 @@ namespace Backoffice.Domain.OperationTypes
             this.RequiredStaff = requiredStaff;
         }
 
+        public void ChangeAll(OperationTypeName name, int duration1, int duration2, int duration3, List<OperationTypeRequiredStaff> requiredStaff)
+        {
+                ChangeName(name);
+                ChangeAnesthesiaPatientPreparationDuration(duration1);
+                ChangeSurgeryDuration(duration2);
+                ChangeCleaningDuration(duration3);
+                ChangeRequiredStaff(requiredStaff);
+        }
 
 
         public string ToJSON()

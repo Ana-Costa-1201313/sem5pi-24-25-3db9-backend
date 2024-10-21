@@ -91,6 +91,27 @@ namespace Backoffice.Controllers
             return Ok(updatedOperationType);
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> UpdateOperationType(Guid id, [FromBody] PutOperationTypeDto updateDto)
+        {
+            try
+            {
+                var updatedOperationType = await _service.Put(id, updateDto);
+
+                if (updatedOperationType == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedOperationType);
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
 
 
     }
