@@ -53,3 +53,5 @@ bin/
 obj/
 Migrations/
 /.vs/
+/.vs/sem5pi-24-25-3db9-backend/v17/.suo
+/.vs/slnx.sqlite
