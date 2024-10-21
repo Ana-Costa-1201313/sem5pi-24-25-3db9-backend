@@ -27,7 +27,7 @@ namespace Backoffice.Domain.Patients
         //public List<Appointment> AppointmentHistory { get; private set; }
 
         public string PatientId { get; private set; }
-
+        public bool isInactive{get; private set;}
         private Patient(){}
 
         public Patient(CreatePatientDto dto)
@@ -56,6 +56,11 @@ namespace Backoffice.Domain.Patients
             this.Allergies = allergies;
             this.EmergencyContact = emergencyContact;
          }
+        
+        public void MarkAsInactive()
+        {
+            isInactive = true;
+        }
 
          public void ChangeFirstName(string firstName)
          {
