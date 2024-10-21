@@ -40,7 +40,7 @@ namespace Backoffice.Controllers
             }
 
             // query database
-            bool userExists = false;
+            bool userExists;
             try
             {
                 userExists = await CheckUserCredentials(email, password);

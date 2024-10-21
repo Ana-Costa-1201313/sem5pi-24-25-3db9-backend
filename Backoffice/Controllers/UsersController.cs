@@ -38,6 +38,18 @@ namespace Backoffice.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create(CreateUserDto dto)
         {
+
+            List<String> roles = new List<String> { "Admin" };
+
+            // verificar header -> enviar header token para auth -> confirmar validade -> continuar
+            if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
+            {
+                return BadRequest("Authorization header is missing");
+            }
+            LoginDTO loginDTO = await _service.validateAuthorization(tokenHeader);
+
+            if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
+
             try
             {
                 var user = await _service.AddAsync(dto);
@@ -71,6 +83,13 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
+        }
+
+        private async void checkHeader(List<String> roles, String token) 
+        {
+            LoginDTO loginDTO = await _service.validateAuthorization(token);
+
+            if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
         }
     }
 }

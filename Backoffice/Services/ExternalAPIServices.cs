@@ -4,13 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Backoffice.Domain.Users;
+using Backoffice.Domain.Shared;
+using System.Text;
 
 namespace Backoffice.Services
 {
     public class ExternalApiServices
     {
 
-        protected string validateUrl = "validate";
+        protected string validateUrl = "Auth/Login/validate";
 
         private readonly IConfiguration _iconfig;
         private HttpClient _httpClient;
@@ -24,29 +26,32 @@ namespace Backoffice.Services
 
         public async Task<LoginDTO> validateToken(LoginDTO loginDTO)
         {
+            // Create a POST request message
+            var request = new HttpRequestMessage(HttpMethod.Post, _iconfig["Auth:urlLocal"]+validateUrl);
+
+            // Add the token to the headers
+            request.Headers.Add("Authorization", $"Bearer {loginDTO.jwt}");
+            request.Content = new StringContent(JsonSerializer.Serialize(loginDTO), Encoding.UTF8, "application/json");
+
+
+            //  Send
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+            
+            //throw new Exception($"Forced Exception in ExternalApiServices:\n{_iconfig["Auth:urlLocal"] + validateUrl}");
             try
-            {
-                // Create a GET request message
-                var request = new HttpRequestMessage(HttpMethod.Get, _iconfig["Auth:urlLocal"]+validateUrl);
-
-                // Add the token to the headers
-                request.Headers.Add("Authorization", $"Bearer {loginDTO.jwt}");
-
-                //  Send
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
-
+            {   
                 response.EnsureSuccessStatusCode(); // Throw an exception if the response status code is not successful
-
-                // Deserialize the JSON response content to a LoginDTO object
-                string responseBody = await response.Content.ReadAsStringAsync();
-                LoginDTO resultLoginDTO = JsonSerializer.Deserialize<LoginDTO>(responseBody);
-
-                return resultLoginDTO;
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                throw new NullReferenceException("Token not valid");
+                throw new Exception($"Failed to authenticate user: {ex.Message}\n {loginDTO.jwt}\n");
             }
+            // Deserialize the JSON response content to a LoginDTO object
+            string responseBody = await response.Content.ReadAsStringAsync();
+            LoginDTO resultLoginDTO = JsonSerializer.Deserialize<LoginDTO>(responseBody);
+
+            return resultLoginDTO;
         }
 
     }

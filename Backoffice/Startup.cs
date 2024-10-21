@@ -67,7 +67,8 @@ namespace Backoffice
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //what????????????? why????????????????
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -87,10 +88,11 @@ namespace Backoffice
             services.AddTransient<CategoryService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<EmailService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
 
             services.AddTransient<LogInServices>();
+            services.AddTransient<ExternalApiServices>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
         }

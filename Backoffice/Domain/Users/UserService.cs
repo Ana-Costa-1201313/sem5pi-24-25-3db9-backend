@@ -1,4 +1,6 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Services;
+using Microsoft.Extensions.Primitives;
 using System.Net.Mail;
 
 namespace Backoffice.Domain.Users
@@ -8,15 +10,18 @@ namespace Backoffice.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly IUserRepository _repo;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
+        private readonly ExternalApiServices _externalApiServices;
 
+        // passar isto para o configurations file
         private readonly string emailBody = $"https://localhost:5000/api/Users/";
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, EmailService emailService)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._emailService = emailService;
+            this._externalApiServices = externalApiServices;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -106,6 +111,22 @@ namespace Backoffice.Domain.Users
                 Password = user.Password,
                 Active = user.Active
             };
+        }
+
+        internal async Task<LoginDTO> validateAuthorization(StringValues tokenHeader)
+        {
+
+            // Remove the 'Bearer ' prefix from the token
+            var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
+
+            LoginDTO loginDTO = new LoginDTO()
+            {
+                jwt = token
+            };
+
+            LoginDTO loginDTOResult =await _externalApiServices.validateToken(loginDTO);
+
+            return loginDTOResult;
         }
     }
 }
