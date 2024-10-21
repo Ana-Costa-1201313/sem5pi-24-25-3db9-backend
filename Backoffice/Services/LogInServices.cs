@@ -26,11 +26,13 @@ namespace Backoffice.Services
             this._httpClient = httpClient;
         }
 
-        public async Task<bool> CheckUserCredentials1(string username, string password)
+        public async Task<bool> CheckUserCredentials1(string email, string password)
         {
-            User user = await _userRepository.getUserByEmail(username);
-            if (user == null) return false;
+            User user = await _userRepository.getUserByEmail(email);
+            //if (user == null) return false;
+            if (user == null) throw new NullReferenceException("user é null em CheckUserCredentials1");
             if (password.Equals(user.Password.Passwd)) return true;
+            //if (password.Equals(user.Password.Passwd)) throw new Exception("password é null");
             return false;
         }
 

@@ -27,31 +27,12 @@ namespace Backoffice.Controllers
                 return BadRequest("Authorization header is missing");
             }
 
-            // Remove the 'Bearer ' prefix from the token
+            // Remove the 'Basic ' prefix from the token
             var token = tokenHeader.ToString().Replace("Basic ", string.Empty);
             byte[] credentialsBytes = Convert.FromBase64String(token);
             string credentials = Encoding.UTF8.GetString(credentialsBytes);
-            (string email, string password) = (null, null);
-            try
-            {
-                (email, password) = SeparateCredentials(credentials);
-            }
-            catch (FormatException ex) 
-            {
-                if (credentials.Contains("@"))
-                {
-                    LoginDTO loginDTOShort = await getLoginDTO(email);
 
-                    if (loginDTOShort != null)
-                    {
-                        return Ok(loginDTOShort);
-                    }
-                    else
-                    {
-                        return Unauthorized("Invalid email");
-                    }
-                }
-            }
+            (string email, string password) = SeparateCredentials(credentials);            
             // Validate parameters  present
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
@@ -59,9 +40,16 @@ namespace Backoffice.Controllers
             }
 
             // query database
-            bool userExists = await CheckUserCredentials(email, password);
-
-            LoginDTO loginDTO = await getLoginDTO(email);
+            bool userExists = false;
+            try
+            {
+                userExists = await CheckUserCredentials(email, password);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Invalid email or password. {email} {password}\n {ex.Message}");
+            }
+                LoginDTO loginDTO = await getLoginDTO(email);
 
             if (userExists)
             {
@@ -69,7 +57,7 @@ namespace Backoffice.Controllers
             }
             else
             {
-                return Unauthorized("Invalid email or password.");
+                return Unauthorized($"Invalid email or password. {email} {password}");
             }
         }
 
