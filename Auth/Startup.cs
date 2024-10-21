@@ -84,6 +84,7 @@ namespace Auth
 
 
             //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

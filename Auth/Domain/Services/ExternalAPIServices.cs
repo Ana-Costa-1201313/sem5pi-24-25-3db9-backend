@@ -42,11 +42,17 @@ public class ExternalApiService
             var response = await httpClient.SendAsync(request);
             try
             {
-                response.EnsureSuccessStatusCode();
+                if (response != null)
+                    response.EnsureSuccessStatusCode();
+                else throw new NullReferenceException();
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                throw new Exception($"Failed to authenticate user:+ {ex.Message} + {a} + {authToken}+ {email}+,+{password}");
+                throw new Exception($"Failed to authenticate user: {ex.Message} + {a} + {authToken} , {email} , {password}");
+            }
+            catch (NullReferenceException ex)
+            {
+                throw new Exception($"Failed to authenticate user: {ex.Message} + {a} + {authToken} , {email} , {password}");
             }
             var responseContent = await response.Content.ReadAsStringAsync();
             var loginDto = JsonSerializer.Deserialize<LoginDTO>(responseContent, new JsonSerializerOptions
