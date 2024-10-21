@@ -46,10 +46,8 @@ namespace Backoffice.Controllers
             {
                 return BadRequest("Authorization header is missing");
             }
-            LoginDTO loginDTO = await _service.validateAuthorization(tokenHeader);
-
-            if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
-
+            checkHeader(roles, tokenHeader);
+            
             try
             {
                 var user = await _service.AddAsync(dto);
