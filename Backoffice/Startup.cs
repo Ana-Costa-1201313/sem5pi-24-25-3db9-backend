@@ -11,10 +11,8 @@ using Backoffice.Infraestructure.Users;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
-using Backoffice.Domain.Users;
 using System.Text.Json.Serialization;
 using Backoffice.Services;
-
 
 
 namespace Backoffice
@@ -52,8 +50,6 @@ namespace Backoffice
 
             services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +66,7 @@ namespace Backoffice
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -90,6 +86,7 @@ namespace Backoffice
             services.AddTransient<CategoryService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<EmailService>();
             services.AddTransient<UserService>();
 
             services.AddTransient<LogInServices>();

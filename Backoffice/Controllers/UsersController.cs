@@ -55,7 +55,7 @@ namespace Backoffice.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, [FromBody] string password)
+        public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, [FromQuery] string password)
         {
             try
             {
