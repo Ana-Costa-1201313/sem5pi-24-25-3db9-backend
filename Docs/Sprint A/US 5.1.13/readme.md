@@ -74,7 +74,7 @@ It will boil down to a design decision. From the functional perspective, it's no
 
 
 The following **HTTP requests** will be implemented:
-- GET by ID (to check a specific staff member)
+- GET (to check available staff member)
 - PUT (to edit a specific staff member)
 - PATCH (to edit some data of a specific staff member)
 
@@ -86,21 +86,21 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.1 N1 SD](US5.1.1%20N1%20SD.svg)
+![US5.1.13 N1 SD](US5.1.13%20N1%20SD.svg)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.1 N2 SD](US5.1.1%20N2%20SD.svg)
+![US5.1.13 N2 SD](US5.1.13%20N2%20SD.svg)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.1 N3 SD](US5.1.1%20N3%20SD.svg)
+![US5.1.13 N3 SD](US5.1.13%20N3%20SD.svg)
 
 
 ### 4.4. Class Diagram
