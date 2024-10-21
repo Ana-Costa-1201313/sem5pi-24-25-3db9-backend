@@ -45,18 +45,16 @@ namespace Backoffice.Domain.Patients
 
         }
 
-        public void UpdateDetails(string firstName, string lastName, string fullName, string gender, DateTime dateOfBirth,
-         string email, string phoneNumber, string[] allergies, int medicalRecordNumber)
+        public void UpdateDetails(string firstName, string lastName, string fullName,
+         string email, string phoneNumber, string[] allergies, string emergencyContact)
          {
             this.FirstName = firstName;
             this.LastName = lastName;
             this.FullName = fullName;
-            this.Gender = gender;
-            this.DateOfBirth = dateOfBirth;
             this.Email = new Email(email);
             this.Phone = new PhoneNumber(phoneNumber);
             this.Allergies = allergies;
-            this.MedicalRecordNumber = medicalRecordNumber;
+            this.EmergencyContact = emergencyContact;
          }
     }
 }

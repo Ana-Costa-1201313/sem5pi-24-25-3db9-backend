@@ -51,20 +51,16 @@ namespace Backoffice.Controllers
         }
         //Dar update PUT: api/Patients
         [HttpPut("{id}")]
-        public async Task<ActionResult<PatientDto>> Update(Guid id,PatientDto dto)
+        public async Task<ActionResult<PatientDto>> Update(Guid id,EditPatientDto dto)
         {
-            if (id != dto.Id)
-            {
-                return BadRequest(new {Message = "The ID in the URL doesn't match the patient profile ID !!!"});
-            }
-
+           
             try{
-                var updatedPatient = await _service.UpdateAsync(dto);
+                var updatedPatient = await _service.UpdateAsync(id,dto);
 
                 if(updatedPatient == null){
                     return NotFound(); //Erro 404 caso o patient profile nao tenha sido encontrado
                 }
-                return Ok(updatedPatient);
+                return Ok(updatedPatient); // Sucesso
             }
             catch (BusinessRuleValidationException ex) {
                     return BadRequest(new {Message = ex.Message}); // Erro 400 caso haja uma exceção na regra de negocio ou seja na alteração de algum dado

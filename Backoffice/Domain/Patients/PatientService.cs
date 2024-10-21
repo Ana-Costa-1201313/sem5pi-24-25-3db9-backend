@@ -73,14 +73,13 @@ namespace Backoffice.Domain.Patients{
             return _patientMapper.ToPatientDto(patient);
         }
 
-        public async Task<PatientDto> UpdateAsync(PatientDto dto)
+        public async Task<PatientDto> UpdateAsync(Guid id,EditPatientDto dto)
         {
-            var patient = await _repo.GetByIdAsync(new PatientId(dto.Id));
+            var patient = await _repo.GetByIdAsync(new PatientId(id));
             if(patient == null)
                 return null;
 
-            patient.UpdateDetails(dto.FirstName,dto.LastName,dto.FullName,dto.Gender,
-            dto.DateOfBirth,dto.Email,dto.Phone,dto.Allergies,dto.MedicalRecordNumber);
+            patient.UpdateDetails(dto.FirstName,dto.LastName,dto.FullName,dto.Email,dto.Phone,dto.Allergies,dto.EmergencyContact);
 
             await _unitOfWork.CommitAsync();
             return _patientMapper.ToPatientDto(patient);
