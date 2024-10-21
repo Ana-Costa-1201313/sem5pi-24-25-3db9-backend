@@ -1,17 +1,13 @@
-using Backoffice.Domain.OperationTypes;
-using Backoffice.Domain.Patient;
-using Backoffice.Domain.Staff;
-
 namespace Backoffice.Domain.OperationRequests
 {
     public class OperationRequestDto
     {
         public Guid Id { get; set; }
-        public OperationTypeDto OpType { get; set; }
-        public DateTime DeadlineDate { get; set; }
-        public Priority Priority { get; set; }
-        public PatientDto Patient { get; set; }
-        public StaffDto Doctor { get; set; }
+        public string OpTypeName { get; set; }
+        public string DeadlineDate { get; set; }
+        public string Priority { get; set; }
+        public string PatientName { get; set; }
+        public string DoctorName { get; set; }
 
     }
 }

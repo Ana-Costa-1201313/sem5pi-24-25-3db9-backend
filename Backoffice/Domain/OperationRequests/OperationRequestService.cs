@@ -14,24 +14,25 @@ namespace Backoffice.Domain.OperationRequests
         }
 
         public async Task<List<OperationRequestDto>> GetAllAsync()
-        {
+        {/*
             var list = await this._repo.GetAllAsync();
 
             List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(or => new OperationRequestDto
             {
                 Id = or.Id.AsGuid(),
-                OpType = or.OpType,
+                OpTypeName = or.OpTypeName,
                 DeadlineDate = or.DeadlineDate,
                 Priority = or.Priority,
-                Patient = or.Patient,
-                Doctor = or.Doctor
+                PatientName = or.PatientName,
+                DoctorName = or.DoctorName
             });
 
-            return listDto;
+            return listDto;*/
+            return null;
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(Guid id)
-        {
+        {/*
             var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
 
             if (opReq == null)
@@ -40,16 +41,17 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequestDto
             {
                 Id = opReq.Id.AsGuid(),
-                OpType = opReq.OpType,
+                OpTypeName = opReq.OpTypeName,
                 DeadlineDate = opReq.DeadlineDate,
                 Priority = opReq.Priority,
-                Patient = opReq.Patient,
-                Doctor = opReq.Doctor
-            };
+                PatientName = opReq.PatientName,
+                DoctorName = opReq.DoctorName
+            };*/
+            return null;
         }
 
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)
-        {
+        {/*
             var OperationRequest = new OperationRequest(dto);
 
             await this._repo.AddAsync(OperationRequest);
@@ -59,12 +61,13 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequestDto
             {
                 Id = OperationRequest.Id.AsGuid(),
-                OpType = OperationRequest.OpType,
+                OpTypeName = OperationRequest.OpTypeName,
                 DeadlineDate = OperationRequest.DeadlineDate,
                 Priority = OperationRequest.Priority,
-                Patient = OperationRequest.Patient,
-                Doctor = OperationRequest.Doctor
-            };
+                PatientName = OperationRequest.PatientName,
+                DoctorName = OperationRequest.DoctorName
+            };*/
+            return null;
         }
     }
 }
