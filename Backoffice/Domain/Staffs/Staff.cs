@@ -79,6 +79,7 @@ namespace Backoffice.Domain.Staffs
             {
                 throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
             }
+
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
 
@@ -90,6 +91,36 @@ namespace Backoffice.Domain.Staffs
             }
 
             this.AvailabilitySlots = list;
+        }
+
+        public void PartialEdit(EditStaffDto dto)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
+            }
+
+            if (dto.Phone != null)
+            {
+                this.Phone = new PhoneNumber(dto.Phone);
+            }
+
+            if (dto.Specialization != null)
+            {
+                this.Specialization = dto.Specialization;
+            }
+
+            if (dto.AvailabilitySlots != null)
+            {
+                List<AvailabilitySlot> list = new List<AvailabilitySlot>();
+
+                foreach (string s in dto.AvailabilitySlots)
+                {
+                    list.Add(AvailabilitySlot.CreateAvailabilitySlot(s));
+                }
+
+                this.AvailabilitySlots = list;
+            }
         }
     }
 }

@@ -100,5 +100,30 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<StaffDto>> PartialUpdate(Guid id, EditStaffDto dto)
+        {
+            if (id != dto.Id)
+            {
+                return BadRequest(new { Message = "The staff Id does not match the header!" });
+            }
+
+            try
+            {
+                var staff = await _service.PartialUpdateAsync(dto);
+
+                if (staff == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(staff);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
     }
 }
