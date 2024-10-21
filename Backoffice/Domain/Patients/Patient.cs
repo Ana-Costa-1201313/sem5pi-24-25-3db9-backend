@@ -56,5 +56,34 @@ namespace Backoffice.Domain.Patients
             this.Allergies = allergies;
             this.EmergencyContact = emergencyContact;
          }
+
+         public void ChangeFirstName(string firstName)
+         {
+            this.FirstName = firstName;
+         }
+         public void ChangeLastName(string lastName)
+         {
+            this.LastName = lastName;
+         }
+         public void ChangeFullName(string fullName)
+         {
+            this.FullName = fullName;
+         }
+         public void ChangeEmail(string email)
+         {
+            this.Email = new Email(email);
+         }
+         public void ChangePhone(string phone)
+         {
+            this.Phone = new PhoneNumber(phone);
+         }
+         public void ChangeAllergies(string[] allergies)
+         {
+            this.Allergies = allergies;
+         }
+         public void ChangeEmergencyContact(string emergencyContact)
+         {
+            this.EmergencyContact = emergencyContact;
+         }
     }
 }

@@ -66,6 +66,22 @@ namespace Backoffice.Controllers
                     return BadRequest(new {Message = ex.Message}); // Erro 400 caso haja uma exceção na regra de negocio ou seja na alteração de algum dado
             }
         }
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<PatientDto>> Patch(Guid id,EditPatientDto dto)
+        {
+            try 
+            {
+                var updatedPatient = await _service.PatchAsync(id,dto);
+                if(updatedPatient == null)
+                {
+                    return NotFound(); // Erro 404, nao foi encontrado
+                }
+                return Ok(updatedPatient); // Sucesso 200 e o patient profile updated 
+
+            } catch (BusinessRuleValidationException e){
+                        return BadRequest(new {Message = e.Message}); // Erro 400, erro na validação dos dados
+            }
+        }
         //Dar Delete a um patient profile
         
     }

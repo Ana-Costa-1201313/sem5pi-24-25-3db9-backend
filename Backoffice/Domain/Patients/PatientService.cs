@@ -21,7 +21,7 @@ namespace Backoffice.Domain.Patients{
             _repo = patientRepository;
             _patientMapper = patientMapper;
         }
-        //Obter todos os Patients
+        //Obter todos os Patient profiles
         public async Task<List<PatientDto>> GetAllAsync()
         {
             var list = await _repo.GetAllAsync();
@@ -34,7 +34,7 @@ namespace Backoffice.Domain.Patients{
             return listDto;
         }
 
-        //Obter Patient por Id
+        //Obter Patient profile por Id
         public async Task<PatientDto> GetByIdAsync(Guid id)
         {
             var patient = await _repo.GetByIdAsync(new PatientId(id));
@@ -45,7 +45,7 @@ namespace Backoffice.Domain.Patients{
 
             return _patientMapper.ToPatientDto(patient);
         }
-        // Adicionar um novo Patient
+        // Adicionar um novo Patient profile
         public async Task<PatientDto> AddAsync(CreatePatientDto dto)
         {
             var patient = _patientMapper.ToPatient(dto);
@@ -72,7 +72,7 @@ namespace Backoffice.Domain.Patients{
             }
             return _patientMapper.ToPatientDto(patient);
         }
-
+        // Dar um put de um patient profile
         public async Task<PatientDto> UpdateAsync(Guid id,EditPatientDto dto)
         {
             var patient = await _repo.GetByIdAsync(new PatientId(id));
@@ -84,8 +84,39 @@ namespace Backoffice.Domain.Patients{
             await _unitOfWork.CommitAsync();
             return _patientMapper.ToPatientDto(patient);
         }
+        //Dar um patch de um patient profile
+        public async Task<PatientDto> PatchAsync(Guid id, EditPatientDto dto)
+        {
+            var patient = await _repo.GetByIdAsync(new PatientId(id));
+            if(patient == null)
+                return null;
 
-        //Dar delete de um Patient
+           if(!string.IsNullOrEmpty(dto.FirstName))
+            patient.ChangeFirstName(dto.FirstName);
+
+            if(!string.IsNullOrEmpty(dto.LastName))
+            patient.ChangeLastName(dto.LastName);
+
+            if(!string.IsNullOrEmpty(dto.FullName))
+            patient.ChangeFullName(dto.FullName);
+
+            if(!string.IsNullOrEmpty(dto.Email))
+            patient.ChangeEmail(dto.Email);
+
+            if(!string.IsNullOrEmpty(dto.Phone))
+            patient.ChangePhone(dto.Phone);
+
+            if(dto.Allergies != null)
+            patient.ChangeAllergies(dto.Allergies);
+
+            if(!string.IsNullOrEmpty(dto.EmergencyContact))
+            patient.ChangeEmergencyContact(dto.EmergencyContact);
+
+            await _unitOfWork.CommitAsync();
+            return _patientMapper.ToPatientDto(patient);
+        }
+
+        //Dar delete de um Patient profile
         public async Task DeleteAsync(Guid id)
         {
             var patient = await _repo.GetByIdAsync(new PatientId(id));
