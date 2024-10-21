@@ -95,5 +95,28 @@ namespace Backoffice.Domain.Staffs
 
             return _staffMapper.ToStaffDto(staff);
         }
+
+        public async Task<StaffDto> UpdateAsync(EditStaffDto dto)
+        {
+            var staff = await _repo.GetByIdAsync(new StaffId(dto.Id));
+
+            if (staff == null)
+            {
+                return null;
+            }
+
+            staff.Edit(dto);
+
+            try
+            {
+                await this._unitOfWork.CommitAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new BusinessRuleValidationException("Error: This phone number is already in use!");
+            }
+
+            return _staffMapper.ToStaffDto(staff);
+        }
     }
 }

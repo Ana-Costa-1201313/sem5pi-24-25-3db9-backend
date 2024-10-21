@@ -46,18 +46,7 @@ namespace Backoffice.Domain.Staffs
 
             foreach (var slotString in dto.AvailabilitySlots)
             {
-                var times = slotString.Split('/');
-                if (times.Length == 2)
-                {
-                    var startTime = times[0];
-                    var endTime = times[1];
-
-                    this.AvailabilitySlots.Add(new AvailabilitySlot(startTime, endTime));
-                }
-                else
-                {
-                    throw new BusinessRuleValidationException("Error: Invalid Availability slot format!");
-                }
+                AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
             }
 
             this.Role = dto.Role;
@@ -82,6 +71,25 @@ namespace Backoffice.Domain.Staffs
             this.Specialization = "Deactivated Staff";
             this.AvailabilitySlots = null;
             this.Active = false;
+        }
+
+        public void Edit(EditStaffDto dto)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
+            }
+            this.Phone = new PhoneNumber(dto.Phone);
+            this.Specialization = dto.Specialization;
+
+            List<AvailabilitySlot> list = new List<AvailabilitySlot>();
+
+            foreach (string s in dto.AvailabilitySlots)
+            {
+                list.Add(AvailabilitySlot.CreateAvailabilitySlot(s));
+            }
+
+            this.AvailabilitySlots = list;
         }
     }
 }
