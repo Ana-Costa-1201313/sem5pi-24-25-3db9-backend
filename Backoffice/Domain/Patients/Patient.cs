@@ -18,15 +18,16 @@ namespace Backoffice.Domain.Patients
         public Email Email { get; private set; }
 
         public PhoneNumber Phone { get; private set; }
+        public string EmergencyContact {get; private set;}
 
         public string[] Allergies { get; private set; }
 
         public int MedicalRecordNumber { get; private set; }
 
-        //public Appointment[] AppointmentHistory { get; private set; }
+        //public List<Appointment> AppointmentHistory { get; private set; }
 
         public string PatientId { get; private set; }
-
+        public bool isInactive{get; private set;}
         private Patient(){}
 
         public Patient(CreatePatientDto dto)
@@ -39,8 +40,55 @@ namespace Backoffice.Domain.Patients
             this.DateOfBirth = dto.DateOfBirth;
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Allergies = dto.Allergies;
+            this.EmergencyContact = dto.EmergencyContact;
             this.MedicalRecordNumber = dto.MedicalRecordNumber;
+
         }
+
+        public void UpdateDetails(string firstName, string lastName, string fullName,
+         string email, string phoneNumber, string[] allergies, string emergencyContact)
+         {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.FullName = fullName;
+            this.Email = new Email(email);
+            this.Phone = new PhoneNumber(phoneNumber);
+            this.Allergies = allergies;
+            this.EmergencyContact = emergencyContact;
+         }
+        
+        public void MarkAsInactive()
+        {
+            isInactive = true;
+        }
+
+         public void ChangeFirstName(string firstName)
+         {
+            this.FirstName = firstName;
+         }
+         public void ChangeLastName(string lastName)
+         {
+            this.LastName = lastName;
+         }
+         public void ChangeFullName(string fullName)
+         {
+            this.FullName = fullName;
+         }
+         public void ChangeEmail(string email)
+         {
+            this.Email = new Email(email);
+         }
+         public void ChangePhone(string phone)
+         {
+            this.Phone = new PhoneNumber(phone);
+         }
+         public void ChangeAllergies(string[] allergies)
+         {
+            this.Allergies = allergies;
+         }
+         public void ChangeEmergencyContact(string emergencyContact)
+         {
+            this.EmergencyContact = emergencyContact;
+         }
     }
 }

@@ -1,0 +1,18 @@
+@startuml
+autonumber
+
+participant "<<system>>\nSystem HealthcareApp" as sys
+
+[-> sys: PATCH /patient/{id}
+
+activate sys
+alt patient profile not found/invalid parameters
+    [<-- sys : 422 Error
+else patient profile edited successfully
+    [<-- sys  : 201 Edited
+end
+deactivate sys
+
+
+
+@enduml

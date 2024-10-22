@@ -1,0 +1,16 @@
+@startuml
+autonumber
+
+participant "BE" as be
+
+[-> be: PATCH /patient/{id}
+
+activate be
+    alt patient profile not found/invalid parameters
+        [<-- be : 422: Unprocessable Content
+    else patient profile edited successfully
+        [<-- be : 201: Edited
+    end
+deactivate be
+
+@enduml
