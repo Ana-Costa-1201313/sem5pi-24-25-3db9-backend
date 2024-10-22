@@ -117,7 +117,7 @@ namespace Backoffice.Domain.Patients{
         }
 
         //Dar delete de um Patient profile
-        public async Task DeleteAsync(Guid id)
+        public async Task<PatientDto> DeleteAsync(Guid id)
         {
             var patient = await _repo.GetByIdAsync(new PatientId(id));
 
@@ -126,6 +126,19 @@ namespace Backoffice.Domain.Patients{
                 
             _repo.Remove(patient);
             await _unitOfWork.CommitAsync();
+            return new PatientDto
+            {
+                Id = patient.Id.AsGuid(),
+                FirstName = patient.FirstName,
+                LastName = patient.LastName,
+                FullName = patient.FullName,
+                Gender = patient.Gender,
+                DateOfBirth = patient.DateOfBirth,
+                Email = patient.Email._Email,
+                Phone = patient.Phone.PhoneNum,
+                Allergies = patient.Allergies,
+                MedicalRecordNumber = patient.MedicalRecordNumber
+            };
         }
 
     }

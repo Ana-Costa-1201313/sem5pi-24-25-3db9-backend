@@ -83,6 +83,21 @@ namespace Backoffice.Controllers
             }
         }
         //Dar Delete a um patient profile
-        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<PatientDto>> HardDelete(Guid id)
+        {
+                try 
+                {
+                    var patient = await _service.DeleteAsync(id);
+
+                    if (patient == null)
+                        return NotFound(); //404 se o patient profile nao foi encontrado
+
+                    return Ok(patient); // 202 e o patient profile caso seja um sucesso
+                } catch (BusinessRuleValidationException e) {
+                            return BadRequest(new {Message = e.Message}); // 400 se houver um erro de validação
+                }
+                
+        }
     }
 }
