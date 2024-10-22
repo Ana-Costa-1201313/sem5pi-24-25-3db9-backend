@@ -8,11 +8,11 @@ namespace Backoffice.Domain.OperationTypes
     public class OperationTypeDuration : IValueObject
     {
 
-        public TimeSpan AnesthesiaPatientPreparationInMinutes { get; set; }
-        public TimeSpan SurgeryInMinutes { get; set; }
-        public TimeSpan CleaningInMinutes { get; set; }
+        public virtual TimeSpan AnesthesiaPatientPreparationInMinutes { get; set; }
+        public virtual TimeSpan SurgeryInMinutes { get; set; }
+        public virtual TimeSpan CleaningInMinutes { get; set; }
 
-        private OperationTypeDuration()
+        public OperationTypeDuration()
         {
         }
 

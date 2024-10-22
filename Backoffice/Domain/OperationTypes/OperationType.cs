@@ -31,6 +31,10 @@ namespace Backoffice.Domain.OperationTypes
                 throw new BusinessRuleValidationException("Error: The operation type duration can't be null.");
             }
             this.Duration = duration;
+            if (requiredStaff == null)
+            {
+                throw new BusinessRuleValidationException("Error: The operation type can't have null required staff.");
+            }
             if (!requiredStaff.Any())
             {
                 throw new BusinessRuleValidationException("Error: The operation type must have at least one required staff.");

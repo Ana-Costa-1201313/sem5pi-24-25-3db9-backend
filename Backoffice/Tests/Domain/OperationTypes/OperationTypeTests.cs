@@ -102,6 +102,101 @@ namespace Backoffice.Tests
             Assert.Single(operationType.RequiredStaff);
         }
 
-        
+        //After teoric class
+
+        [Fact]
+        public void WhenPassingNameDurationAndRequiredStaff_ThenOperationTypeIsInstantiated()
+        {
+
+            Mock<OperationTypeName> opNameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> opDurationDouble = new Mock<OperationTypeDuration>();
+            var opReqStaffMock = new Mock<OperationTypeRequiredStaff>();
+            var opReqList = new List<OperationTypeRequiredStaff>
+            {
+                opReqStaffMock.Object
+            };
+
+            new OperationType(opNameDouble.Object, opDurationDouble.Object, opReqList);
+        }
+
+        [Fact]
+        public void WhenPassingNullAsOperationTypeName_ThenThrowsException()
+        {
+            Mock<OperationTypeDuration> opDurationDouble = new Mock<OperationTypeDuration>();
+            Mock<List<OperationTypeRequiredStaff>> opReqDouble = new Mock<List<OperationTypeRequiredStaff>>();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => new OperationType(null, opDurationDouble.Object, opReqDouble.Object));
+            Assert.Equal("Error: The operation type name can't be null.", ex.Message);
+        }
+
+        [Fact]
+        public void WhenPassingNullAsOperationTypeDuration_ThenThrowsException()
+        {
+            Mock<OperationTypeName> opNameDouble = new Mock<OperationTypeName>();
+            Mock<List<OperationTypeRequiredStaff>> opReqDouble = new Mock<List<OperationTypeRequiredStaff>>();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => new OperationType(opNameDouble.Object, null, opReqDouble.Object));
+            Assert.Equal("Error: The operation type duration can't be null.", ex.Message);
+        }
+
+        [Fact]
+        public void WhenPassingNullAsOperationTypeRequiredStaff_ThenThrowsException()
+        {
+            Mock<OperationTypeName> opNameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> opDurationDouble = new Mock<OperationTypeDuration>();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => new OperationType(opNameDouble.Object, opDurationDouble.Object, null));
+            Assert.Equal("Error: The operation type can't have null required staff.", ex.Message);
+        }
+
+        [Fact]
+        public void WhenPassingEmptyAsOperationTypeRequiredStaff_ThenThrowsException()
+        {
+            Mock<OperationTypeName> opNameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> opDurationDouble = new Mock<OperationTypeDuration>();
+            var opReqList = new List<OperationTypeRequiredStaff>();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => new OperationType(opNameDouble.Object, opDurationDouble.Object, opReqList));
+            Assert.Equal("Error: The operation type must have at least one required staff.", ex.Message);
+        }
+
+        [Fact]
+        public void WhenRequestingOperationTypeName_ThenReturnOperationTypeName()
+        {
+            string expectedName = "OpTypeA";
+
+            var opMock = new Mock<OperationTypeName>();
+
+            opMock.Setup(s => s.Name).Returns(expectedName);
+
+            string actualName = opMock.Object.Name;
+
+            Assert.Equal(expectedName, actualName);
+        }
+
+        [Fact]
+        public void WhenRequestingOperationTypeDuration_ThenReturnOperationTypeDuration()
+        {
+            TimeSpan phase1 = TimeSpan.FromMinutes(20);
+            TimeSpan phase2 = TimeSpan.FromMinutes(60);
+            TimeSpan phase3 = TimeSpan.FromMinutes(30);
+
+            var opMock = new Mock<OperationTypeDuration>();
+
+            opMock.Setup(s => s.AnesthesiaPatientPreparationInMinutes).Returns(phase1);
+            opMock.Setup(s => s.SurgeryInMinutes).Returns(phase2);
+            opMock.Setup(s => s.CleaningInMinutes).Returns(phase3);
+
+            TimeSpan actualPhase1 = opMock.Object.AnesthesiaPatientPreparationInMinutes;
+            TimeSpan actualPhase2 = opMock.Object.SurgeryInMinutes;
+            TimeSpan actualPhase3 = opMock.Object.CleaningInMinutes;
+            
+
+            Assert.Equal(phase1, actualPhase1);
+            Assert.Equal(phase2, actualPhase2);
+            Assert.Equal(phase3, actualPhase3);
+        }
+
+
     }
 }

@@ -8,9 +8,9 @@ namespace Backoffice.Domain.Specializations
     public class SpecializationName : IValueObject
     {
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
-        private SpecializationName()
+        public SpecializationName()
         {
         }
 

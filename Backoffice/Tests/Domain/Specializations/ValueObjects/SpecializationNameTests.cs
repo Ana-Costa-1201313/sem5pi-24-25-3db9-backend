@@ -40,4 +40,30 @@ public class SpecializationNameTests
 
         Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", exception.Message);
     }
+
+    //After teoric class
+
+    [Theory]
+    [InlineData("Cardiology")]
+    [InlineData("Cardio - logy")]
+    [InlineData("asdasda1223dsg")]
+    public void WhenPassingCorrectData_ThenSpecializationNameIsInstantiated(string name)
+    {
+        new SpecializationName(name);
+    }
+
+    [Theory]
+    [InlineData("       ")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void WhenPassingInvalidAnesthesiaPatientPreparationInMinutes_ThenThrowsException(string name)
+    {
+        var ex = Assert.Throws<BusinessRuleValidationException>(() =>
+
+            new SpecializationName(name)
+        );
+        Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", ex.Message);
+    }
+
+
 }

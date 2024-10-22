@@ -9,9 +9,9 @@ namespace Backoffice.Domain.OperationTypes
     public class OperationTypeName : IValueObject
     {
 
-        public string Name {get; private set;}
+        public virtual string Name {get; private set;}
 
-        private OperationTypeName()
+        public OperationTypeName()
         {
         }
 
