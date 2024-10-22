@@ -36,19 +36,35 @@ namespace Backoffice.Domain.Staffs
         public Staff(CreateStaffDto dto, int mecNumSeq)
         {
             this.Id = new StaffId(Guid.NewGuid());
+
+            if (string.IsNullOrEmpty(dto.FirstName))
+            {
+                throw new BusinessRuleValidationException("Error: The staff must have a first name!");
+            }
             this.FirstName = dto.FirstName;
+
+            if (string.IsNullOrEmpty(dto.LastName))
+            {
+                throw new BusinessRuleValidationException("Error: The staff must have a last name!");
+            }
             this.LastName = dto.LastName;
+
+            if (string.IsNullOrEmpty(dto.FullName))
+            {
+                throw new BusinessRuleValidationException("Error: The staff must have a full name!");
+            }
             this.FullName = dto.FullName;
 
             this.LicenseNumber = new LicenseNumber(dto.LicenseNumber);
 
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Specialization = dto.Specialization;
-            this.AvailabilitySlots = new List<AvailabilitySlot>();
 
+            this.Specialization = dto.Specialization;
+
+            this.AvailabilitySlots = new List<AvailabilitySlot>();
             foreach (var slotString in dto.AvailabilitySlots)
             {
-                AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
+                this.AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
             }
 
             if (dto.Role != Role.Admin && dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
@@ -58,8 +74,11 @@ namespace Backoffice.Domain.Staffs
             this.Role = dto.Role;
 
             this.MecNumSequence = mecNumSeq;
+
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
+
             this.Email = new Email(MechanographicNum + "@healthcareapp.com");
+
             this.Active = true;
         }
 
@@ -91,8 +110,8 @@ namespace Backoffice.Domain.Staffs
             {
                 throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
             }
-
             this.Phone = new PhoneNumber(dto.Phone);
+
             this.Specialization = dto.Specialization;
 
             List<AvailabilitySlot> list = new List<AvailabilitySlot>();
@@ -101,7 +120,6 @@ namespace Backoffice.Domain.Staffs
             {
                 list.Add(AvailabilitySlot.CreateAvailabilitySlot(s));
             }
-
             this.AvailabilitySlots = list;
         }
 
@@ -130,7 +148,6 @@ namespace Backoffice.Domain.Staffs
                 {
                     list.Add(AvailabilitySlot.CreateAvailabilitySlot(s));
                 }
-
                 this.AvailabilitySlots = list;
             }
         }
