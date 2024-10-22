@@ -80,6 +80,11 @@ namespace Backoffice.Domain.Staffs
                 throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
             }
 
+            if (dto.Phone == null)
+            {
+                throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
+            }
+
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
 
