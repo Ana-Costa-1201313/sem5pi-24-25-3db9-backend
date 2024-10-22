@@ -39,6 +39,11 @@ namespace Backoffice.Domain.Staffs
             this.FirstName = dto.FirstName;
             this.LastName = dto.LastName;
             this.FullName = dto.FullName;
+
+            if (dto.LicenseNumber == 0)
+            {
+                throw new BusinessRuleValidationException("Error: The staff's license number can't be zero!");
+            }
             this.LicenseNumber = dto.LicenseNumber;
 
             if (dto.Phone == null)
