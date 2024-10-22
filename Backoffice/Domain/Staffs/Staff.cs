@@ -40,7 +40,13 @@ namespace Backoffice.Domain.Staffs
             this.LastName = dto.LastName;
             this.FullName = dto.FullName;
             this.LicenseNumber = dto.LicenseNumber;
+
+            if (dto.Phone == null)
+            {
+                throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
+            }
             this.Phone = new PhoneNumber(dto.Phone);
+
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
@@ -49,7 +55,12 @@ namespace Backoffice.Domain.Staffs
                 AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
             }
 
+            if (dto.Role != Role.Admin && dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
+            {
+                throw new BusinessRuleValidationException("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!");
+            }
             this.Role = dto.Role;
+
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
             this.Email = new Email(MechanographicNum + "@healthcareapp.com");
