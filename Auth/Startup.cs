@@ -1,28 +1,24 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Backoffice.Infraestructure;
-using Backoffice.Infraestructure.Categories;
-using Backoffice.Infraestructure.Users;
-using Backoffice.Infraestructure.Shared;
-using Backoffice.Domain.Shared;
-using Backoffice.Domain.Categories;
-using Backoffice.Domain.OperationTypes;
-using Backoffice.Domain.Specializations;
-using Backoffice.Infraestructure.Specializations;
-using Backoffice.Domain.Logs;
-using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
-using Backoffice.Services;
-using Backoffice.Domain.Users;
+
+using Auth.Infrastructure;
+using Auth.Infrastructure.Shared;
+using Auth.Domain.Shared;
+using Auth.Domain.Users;
+using Auth.Domain;
+using Auth.Infrastructure.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 
-
-namespace Backoffice
+namespace Auth
 {
     public class Startup
     {
@@ -33,7 +29,7 @@ namespace Backoffice
             Configuration = configuration;
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            DbPath = System.IO.Path.Join(path, "BD.db");
+            DbPath = System.IO.Path.Join(path, "Auth.db");
         }
 
         public IConfiguration Configuration { get; }
@@ -41,12 +37,7 @@ namespace Backoffice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            //services.AddDbContext<BDContext>(opt =>
-            // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-            //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
-            services.AddDbContext<BDContext>(opt =>
+            services.AddDbContext<AuthDbContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
@@ -55,8 +46,26 @@ namespace Backoffice
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+
+
             services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+
+            // redirecionar utilizadores para a pagina de autentica��o da google  --  https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
+            })
+                .AddCookie()
+                .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+                {
+                    options.ClientId = this.Configuration.GetSection("GoogleKeys:ClientID").Value;
+                    options.ClientSecret = this.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,11 +82,13 @@ namespace Backoffice
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
@@ -89,24 +100,17 @@ namespace Backoffice
         {
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddTransient<ICategoryRepository, CategoryRepository>();
-            services.AddTransient<CategoryService>();
-
-            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
-            services.AddTransient<OperationTypeService>();
-
-            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
-            services.AddTransient<SpecializationService>();
-
-            services.AddTransient<ILogRepository, LogRepository>();
-
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<EmailService>();
-            services.AddTransient<UserService>();
 
-            services.AddTransient<LogInServices>();
-            services.AddHttpClient();
-            services.AddHttpLogging(o => { });
+            services.AddTransient<LoginService>();
+
+            services.AddHttpClient<ExternalApiService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["Backoffice:Uri"]);
+            });
         }
     }
 }
+
+
+
