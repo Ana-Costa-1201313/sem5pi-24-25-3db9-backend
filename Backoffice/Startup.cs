@@ -12,7 +12,6 @@ using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
 using System.Text.Json.Serialization;
-using Backoffice.Services;
 using Backoffice.Domain.Users;
 
 
@@ -66,9 +65,8 @@ namespace Backoffice
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            //what????????????? why????????????????
-            //app.UseHttpsRedirection();
+            
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

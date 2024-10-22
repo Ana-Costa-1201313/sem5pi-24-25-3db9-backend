@@ -5,6 +5,7 @@ using System.Configuration;
 using System.ComponentModel;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using System.Net.Mail;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers
 {
@@ -14,9 +15,12 @@ namespace Backoffice.Controllers
     {
         private readonly UserService _service;
 
-        public UsersController(UserService service)
+        private readonly ExternalApiServices _externalApiService;
+
+        public UsersController(UserService service, ExternalApiServices externalApiService)
         {
             _service = service;
+            _externalApiService = externalApiService;
         }
 
         [HttpGet]
@@ -51,7 +55,9 @@ namespace Backoffice.Controllers
             }
             try
             {
-                if(! await checkHeader(roles, tokenHeader)) return BadRequest("User does not autenticated");
+                //if(! await checkHeader(roles, tokenHeader)) return BadRequest("User does not autenticated");
+                if(! await _externalApiService.checkHeader(roles, tokenHeader)) return BadRequest("User not autenticated");
+                //_externalApiService.checkHeader(roles, tokenHeader);
             }
             catch (Exception ex)
             {
@@ -97,20 +103,5 @@ namespace Backoffice.Controllers
             }
         }
 
-        private async Task<bool> checkHeader(List<String> roles, String token) 
-        {
-            try
-            {
-                LoginDTO loginDTO = await _service.validateAuthorization(token);
-                if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
-            }
-            catch (Exception e) 
-            {
-                throw new UnauthorizedAccessException($"User does not have necessary roles! {e.Message}");
-                //return false;
-            }
-            return true;
-
-        }
     }
 }

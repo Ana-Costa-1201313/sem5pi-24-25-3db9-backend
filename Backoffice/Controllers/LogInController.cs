@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using Backoffice.Domain.Users;
 using Microsoft.IdentityModel.Tokens;
-using Backoffice.Services;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers
 {

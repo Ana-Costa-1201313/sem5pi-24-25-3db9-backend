@@ -1,5 +1,5 @@
 using Backoffice.Domain.Shared;
-using Backoffice.Services;
+using Backoffice.Domain.Shared;
 using Microsoft.Extensions.Primitives;
 using System.Net.Mail;
 
@@ -71,9 +71,10 @@ namespace Backoffice.Domain.Users
             await this._unitOfWork.CommitAsync();
 
             string messageBodyParameters = $"{user.Id.AsGuid()}?password=changeMeToYourNewPassword";
+            string messageSubject = "change your password";
             try
             {
-                await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, "change your password");
+                await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, messageSubject);
             }
             catch (SmtpException ex) {
                 Console.WriteLine(ex.Message);
@@ -113,21 +114,6 @@ namespace Backoffice.Domain.Users
             };
         }
 
-        internal async Task<LoginDTO> validateAuthorization(StringValues tokenHeader)
-        {
-
-            // Remove the 'Bearer ' prefix from the token
-            var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
-
-            LoginDTO loginDTO = new LoginDTO()
-            {
-                jwt = token
-            };
-
-            LoginDTO loginDTOResult = await _externalApiServices.validateToken(loginDTO);
-
-            return loginDTOResult;
-        }
 
         public async void sendConfirmationEmail(UserDto user)
         {
@@ -138,7 +124,7 @@ namespace Backoffice.Domain.Users
             try
             {
                 await _emailService.SendEmail(user.Email, $"New account has been created with password: { user.Password.ToString} .","Confirmation email");
-                //await _emailService.SendEmail("ricardo.sousa.ribeiro@hotmail.com", $"New account has been created with password: { user.Password.Passwd} .","Confirmation email");
+                //await _emailService.SendEmail("1221695@isep.ipp.pt", $"New account has been created with password: { user.Password.Passwd} .","Confirmation email");
             }
             catch (SmtpException ex)
             {

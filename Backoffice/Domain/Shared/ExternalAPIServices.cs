@@ -7,7 +7,7 @@ using Backoffice.Domain.Users;
 using Backoffice.Domain.Shared;
 using System.Text;
 
-namespace Backoffice.Services
+namespace Backoffice.Domain.Shared
 {
     public class ExternalApiServices
     {
@@ -54,5 +54,27 @@ namespace Backoffice.Services
             return resultLoginDTO;
         }
 
+        public async Task<bool> checkHeader(List<String> roles, String tokenHeader) 
+        {
+            var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
+
+            LoginDTO loginDTO = new LoginDTO()
+            {
+                jwt = token
+            };
+
+            LoginDTO loginDTOResult = await validateToken(loginDTO);
+
+            try
+            {
+                if (loginDTOResult == null || !roles.Contains(loginDTOResult.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
+            }
+            catch (Exception e)
+            {
+                throw new UnauthorizedAccessException($"User does not have necessary roles! {e.Message}");
+                //return false;
+            }
+            return true;
+        }
     }
 }
