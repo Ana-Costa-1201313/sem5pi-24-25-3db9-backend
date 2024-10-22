@@ -98,7 +98,7 @@ namespace Backoffice.Domain.OperationTypes
 
         public async Task<OperationTypeDto> Patch(Guid id, PatchOperationTypeDto operationTypeDto)
         {
-            var operationType = await _repo.GetByIdAsync(new OperationTypeId(id));
+            var operationType = await _repo.GetByIdWithDetailsAsync(new OperationTypeId(id));
 
             if (operationType == null)
             {
@@ -110,22 +110,22 @@ namespace Backoffice.Domain.OperationTypes
                 operationType.ChangeName(new OperationTypeName(operationTypeDto.Name));
             }
 
-            if (operationTypeDto.AnesthesiaPatientPreparationInMinutes.HasValue)
+            if (operationTypeDto.AnesthesiaPatientPreparationInMinutes != 0)
             {
-                operationType.ChangeAnesthesiaPatientPreparationDuration(operationTypeDto.AnesthesiaPatientPreparationInMinutes.Value);
+                operationType.ChangeAnesthesiaPatientPreparationDuration(operationTypeDto.AnesthesiaPatientPreparationInMinutes);
             }
 
-            if (operationTypeDto.SurgeryInMinutes.HasValue)
+            if (operationTypeDto.SurgeryInMinutes != 0)
             {
-                operationType.ChangeSurgeryDuration(operationTypeDto.SurgeryInMinutes.Value);
+                operationType.ChangeSurgeryDuration(operationTypeDto.SurgeryInMinutes);
             }
 
-            if (operationTypeDto.CleaningInMinutes.HasValue)
+            if (operationTypeDto.CleaningInMinutes != 0)
             {
-                operationType.ChangeCleaningDuration(operationTypeDto.CleaningInMinutes.Value);
+                operationType.ChangeCleaningDuration(operationTypeDto.CleaningInMinutes);
             }
 
-            if (operationTypeDto.RequiredStaff != null)
+            if (operationTypeDto.RequiredStaff != null && operationTypeDto.RequiredStaff.Any())
             {
                 var updatedStaff = operationTypeDto.RequiredStaff.Select(rsDto =>
                     new OperationTypeRequiredStaff(new Specialization(new SpecializationName(rsDto.Specialization)), rsDto.Total)
@@ -153,13 +153,13 @@ namespace Backoffice.Domain.OperationTypes
             ).ToList();
 
             operationType.ChangeAll(
-                new OperationTypeName(operationTypeDto.Name), 
-                operationTypeDto.AnesthesiaPatientPreparationInMinutes, 
-                operationTypeDto.SurgeryInMinutes, 
-                operationTypeDto.CleaningInMinutes, 
+                new OperationTypeName(operationTypeDto.Name),
+                operationTypeDto.AnesthesiaPatientPreparationInMinutes,
+                operationTypeDto.SurgeryInMinutes,
+                operationTypeDto.CleaningInMinutes,
                 updatedStaff);
-            
-            
+
+
 
             await _unitOfWork.CommitAsync();
             return OperationTypeMapper.ToDto(operationType);

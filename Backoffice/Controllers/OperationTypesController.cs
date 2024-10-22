@@ -81,14 +81,21 @@ namespace Backoffice.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchOperationType(Guid id, [FromBody] PatchOperationTypeDto operationTypeDto)
         {
-            var updatedOperationType = await _service.Patch(id, operationTypeDto);
-
-            if (updatedOperationType == null)
+            try
             {
-                return NotFound();
-            }
+                var updatedOperationType = await _service.Patch(id, operationTypeDto);
 
-            return Ok(updatedOperationType);
+                if (updatedOperationType == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedOperationType);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpPut("{id}")]
