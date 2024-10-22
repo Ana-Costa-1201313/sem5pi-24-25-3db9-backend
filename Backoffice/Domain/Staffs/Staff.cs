@@ -46,12 +46,7 @@ namespace Backoffice.Domain.Staffs
             }
             this.LicenseNumber = dto.LicenseNumber;
 
-            if (dto.Phone == null)
-            {
-                throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
-            }
             this.Phone = new PhoneNumber(dto.Phone);
-
             this.Specialization = dto.Specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
