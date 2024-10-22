@@ -33,6 +33,49 @@ namespace Backoffice.Domain.Patients{
             }
             return listDto;
         }
+        // Obter os patient profiles por nome 
+        public async Task<List<SearchPatientDto>> GetPatientsByName(string name)
+         {
+            var list = await _repo.GetPatientsByNameAsync(name);
+            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
+
+            foreach(var patient in list)
+                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
+
+                return listDto;
+         }
+        // Obter os patient profiles por data de nascimento
+         public async Task<List<SearchPatientDto>> GetPatientsByDateOfBirth(DateTime dateOfBirth)
+         {
+            var list = await _repo.GetPatientsByDateOfBirth(dateOfBirth);
+            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
+
+            foreach(var patient in list)
+                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
+                
+                return listDto;
+         }
+         // Obter os patient profiles por medical record number
+         public async Task<List<SearchPatientDto>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber)
+         {
+            var list = await _repo.GetPatientsByMedicalRecordNumber(medicalRecordNumber);
+            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
+
+            foreach(var patient in list)
+                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
+                
+                return listDto;
+         }
+         public async Task<SearchPatientDto> GetByEmailAsync(Email email)
+        {
+            var patient = await _repo.GetPatientByEmailAsync(email);
+
+            if(patient == null){
+                return null;
+            }
+
+            return _patientMapper.ToSearchPatientDto(patient);
+        }
 
         //Obter Patient profile por Id
         public async Task<PatientDto> GetByIdAsync(Guid id)
@@ -141,7 +184,7 @@ namespace Backoffice.Domain.Patients{
             };
         }
 
-        
+
 
     }
 }

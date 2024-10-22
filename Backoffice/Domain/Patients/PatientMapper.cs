@@ -21,4 +21,12 @@ public class PatientMapper{
     public Patient ToPatient(CreatePatientDto dto){
         return new Patient(dto);
     }
+
+    public SearchPatientDto ToSearchPatientDto(Patient patient){
+        return new SearchPatientDto{
+            FullName = patient.FullName,
+            Email = patient.Email._Email,
+            DateOfBirth = patient.DateOfBirth
+        };
+    }
 }

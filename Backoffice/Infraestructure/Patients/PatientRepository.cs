@@ -15,6 +15,7 @@ namespace Backoffice.Infraestructure.Patients
         public async Task<Patient> GetPatientByEmailAsync(Email email){
             return await _context.Patients.Where(p => p.Email == email).FirstOrDefaultAsync();
         }
+        
         public async Task<List<Patient>> GetPatientsByNameAsync(string name)
         {
         return await _context.Patients
