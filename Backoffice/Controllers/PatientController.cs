@@ -24,6 +24,22 @@ namespace Backoffice.Controllers
             return await _service.GetAllAsync();  
         }
 
+        [HttpGet("SearchByVariousAttributes")]
+        public async Task<ActionResult<List<SearchPatientDto>>> SearchPatients(
+            //[FromQuery] usado para ir buscar à query o que existe la porque como todos sao opcionais podem existir ou nao 
+            [FromQuery] string name = null,
+            [FromQuery] string email = null,
+            [FromQuery] DateTime? dateOfBirth = null, // ? para permitir que seja null 
+            [FromQuery] int? medicalRecordNumber = null
+        )
+        {
+                var patients = await _service.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
+
+                if(patients == null || patients.Count == 0)
+                    return NotFound("No patients found using the attributes given");
+                return Ok(patients);
+        }
+
         //Obter patient por Id
         [HttpGet("{id}")]
         public async Task<ActionResult<PatientDto>> GetById(Guid id)

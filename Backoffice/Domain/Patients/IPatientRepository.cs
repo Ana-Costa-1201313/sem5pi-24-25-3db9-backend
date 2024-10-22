@@ -8,5 +8,7 @@ namespace Backoffice.Domain.Patients
         Task<List<Patient>> GetPatientsByNameAsync(string name);
         Task<List<Patient>> GetPatientsByDateOfBirth(DateTime dateOfBirth);
         Task<List<Patient>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber);
+        Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth
+        , int? medicalRecordNumber);
     }
 }

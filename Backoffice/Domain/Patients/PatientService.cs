@@ -184,6 +184,18 @@ namespace Backoffice.Domain.Patients{
             };
         }
 
+        //Get de patients por varios atributos 
+        public async Task<List<SearchPatientDto>> SearchPatientsAsync(string name, string email, DateTime? dateOfBirth,int? medicalRecordNumber)
+        {
+            var patients = await _repo.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
+            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
+
+                foreach(var patient in patients)
+                    listDto.Add(_patientMapper.ToSearchPatientDto(patient));
+
+            return listDto;
+        }
+
 
 
     }
