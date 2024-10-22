@@ -24,7 +24,7 @@ namespace Backoffice.Domain.Staffs
                 FirstName = staff.FirstName,
                 LastName = staff.LastName,
                 FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber,
+                LicenseNumber = staff.LicenseNumber.LicenseNum,
                 Email = staff.Email._Email,
                 Phone = staff.Phone?.PhoneNum,
                 Specialization = staff.Specialization,

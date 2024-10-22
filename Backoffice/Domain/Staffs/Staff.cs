@@ -10,7 +10,7 @@ namespace Backoffice.Domain.Staffs
 
         public string FullName { get; private set; }
 
-        public int LicenseNumber { get; private set; }
+        public LicenseNumber LicenseNumber { get; private set; }
 
         public Email Email { get; private set; }
 
@@ -40,11 +40,7 @@ namespace Backoffice.Domain.Staffs
             this.LastName = dto.LastName;
             this.FullName = dto.FullName;
 
-            if (dto.LicenseNumber == 0)
-            {
-                throw new BusinessRuleValidationException("Error: The staff's license number can't be zero!");
-            }
-            this.LicenseNumber = dto.LicenseNumber;
+            this.LicenseNumber = new LicenseNumber(dto.LicenseNumber);
 
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
@@ -77,7 +73,7 @@ namespace Backoffice.Domain.Staffs
             this.FirstName = "Deactivated Staff";
             this.LastName = "Deactivated Staff";
             this.FullName = "Deactivated Staff";
-            this.LicenseNumber = this.Id.GetHashCode();
+            this.LicenseNumber = new LicenseNumber(this.Id.GetHashCode());
             this.Phone = null;
             this.Specialization = "Deactivated Staff";
             this.AvailabilitySlots = null;

@@ -126,7 +126,7 @@ namespace Backoffice.Tests
             Assert.Equal(staff.FirstName, actualStaff.FirstName);
             Assert.Equal(staff.LastName, actualStaff.LastName);
             Assert.Equal(staff.FullName, actualStaff.FullName);
-            Assert.Equal(staff.LicenseNumber, actualStaff.LicenseNumber);
+            Assert.Equal(staff.LicenseNumber.LicenseNum, actualStaff.LicenseNumber);
             Assert.Equal(staff.Specialization, actualStaff.Specialization);
             Assert.Equal(staff.Role, actualStaff.Role);
         }
