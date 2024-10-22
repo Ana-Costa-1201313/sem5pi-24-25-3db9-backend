@@ -8,7 +8,7 @@ using Backoffice.Domain.Shared;
 using Backoffice.Infraestructure.Users;
 using System.Text;
 
-namespace Backoffice.Services
+namespace Backoffice.Domain.Shared
 {
     public class LogInServices
     {
@@ -72,7 +72,7 @@ namespace Backoffice.Services
 
                 return resultLoginDTO;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }

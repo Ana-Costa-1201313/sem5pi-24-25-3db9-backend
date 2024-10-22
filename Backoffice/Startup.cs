@@ -17,7 +17,6 @@ using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
-using Backoffice.Services;
 using Backoffice.Domain.Users;
 
 
@@ -72,7 +71,7 @@ namespace Backoffice
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -101,10 +100,11 @@ namespace Backoffice
             services.AddTransient<ILogRepository, LogRepository>();
 
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<EmailService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
 
             services.AddTransient<LogInServices>();
+            services.AddTransient<ExternalApiServices>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
         }

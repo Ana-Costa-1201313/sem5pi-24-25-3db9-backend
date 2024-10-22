@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using Backoffice.Domain.Users;
 using Microsoft.IdentityModel.Tokens;
-using Backoffice.Services;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers
 {
@@ -40,7 +40,7 @@ namespace Backoffice.Controllers
             }
 
             // query database
-            bool userExists = false;
+            bool userExists;
             try
             {
                 userExists = await CheckUserCredentials(email, password);
