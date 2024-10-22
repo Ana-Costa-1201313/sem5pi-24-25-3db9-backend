@@ -14,7 +14,7 @@ namespace Backoffice.Domain.Users
         private readonly ExternalApiServices _externalApiServices;
 
         // passar isto para o configurations file
-        private readonly string emailBody = $"https://localhost:5000/api/Users/";
+        private readonly string emailBody = $"https://localhost:5001/api/Users/";
 
         public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices)
         {
@@ -124,9 +124,26 @@ namespace Backoffice.Domain.Users
                 jwt = token
             };
 
-            LoginDTO loginDTOResult =await _externalApiServices.validateToken(loginDTO);
+            LoginDTO loginDTOResult = await _externalApiServices.validateToken(loginDTO);
 
             return loginDTOResult;
+        }
+
+        public async void sendConfirmationEmail(UserDto user)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException("No user to send confirmation eail to!");
+            }
+            try
+            {
+                await _emailService.SendEmail(user.Email, $"New account has been created with password: { user.Password.ToString} .","Confirmation email");
+                //await _emailService.SendEmail("ricardo.sousa.ribeiro@hotmail.com", $"New account has been created with password: { user.Password.Passwd} .","Confirmation email");
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

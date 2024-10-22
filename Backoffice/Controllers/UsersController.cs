@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Users;
 using Backoffice.Domain.Shared;
 using System.Configuration;
+using System.ComponentModel;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using System.Net.Mail;
 
 namespace Backoffice.Controllers
 {
@@ -46,7 +49,15 @@ namespace Backoffice.Controllers
             {
                 return BadRequest("Authorization header is missing");
             }
-            checkHeader(roles, tokenHeader);
+            try
+            {
+                if(! await checkHeader(roles, tokenHeader)) return BadRequest("User does not autenticated");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
             
             try
             {
@@ -75,6 +86,9 @@ namespace Backoffice.Controllers
                 {
                     return NotFound();
                 }
+
+                _service.sendConfirmationEmail(user);
+
                 return Ok(user);
             }
             catch (BusinessRuleValidationException e)
@@ -83,11 +97,20 @@ namespace Backoffice.Controllers
             }
         }
 
-        private async void checkHeader(List<String> roles, String token) 
+        private async Task<bool> checkHeader(List<String> roles, String token) 
         {
-            LoginDTO loginDTO = await _service.validateAuthorization(token);
+            try
+            {
+                LoginDTO loginDTO = await _service.validateAuthorization(token);
+                if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
+            }
+            catch (Exception e) 
+            {
+                throw new UnauthorizedAccessException($"User does not have necessary roles! {e.Message}");
+                //return false;
+            }
+            return true;
 
-            if (loginDTO == null || !roles.Contains(loginDTO.role)) throw new UnauthorizedAccessException("User does not have necessary roles!");
         }
     }
 }
