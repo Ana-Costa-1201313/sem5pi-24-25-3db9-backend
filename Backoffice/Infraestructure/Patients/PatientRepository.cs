@@ -13,8 +13,7 @@ namespace Backoffice.Infraestructure.Patients
             _context = context;
         }
 
-        public async Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth
-        , int? medicalRecordNumber)
+        public async Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth, int? medicalRecordNumber)
         {
             var query = _context.Patients.AsQueryable();
 
