@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Backoffice.Domain.Shared
 {
-    public class ExternalApiServices
+    public class ExternalApiServices : IExternalApiServices
     {
 
         protected string validateUrl = "Auth/Login/validate";
@@ -51,7 +51,7 @@ namespace Backoffice.Domain.Shared
             return resultLoginDTO;
         }
 
-        public virtual async Task<bool> checkHeader(List<String> roles, String tokenHeader) 
+        public async Task<bool> checkHeader(List<String> roles, String tokenHeader) 
         {
             var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
 
