@@ -22,7 +22,7 @@ public class SpecializationNameTests
     {
         var exception = Assert.Throws<BusinessRuleValidationException>(() => new SpecializationName(null));
 
-        Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", exception.Message);
+        Assert.Equal("Error: The specialization name can't be null, empty or consist in only white spaces.", exception.Message);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class SpecializationNameTests
     {
         var exception = Assert.Throws<BusinessRuleValidationException>(() => new SpecializationName(""));
 
-        Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", exception.Message);
+        Assert.Equal("Error: The specialization name can't be null, empty or consist in only white spaces.", exception.Message);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class SpecializationNameTests
     {
         var exception = Assert.Throws<BusinessRuleValidationException>(() => new SpecializationName("   "));
 
-        Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", exception.Message);
+        Assert.Equal("Error: The specialization name can't be null, empty or consist in only white spaces.", exception.Message);
     }
 
     //After teoric class
@@ -62,7 +62,7 @@ public class SpecializationNameTests
 
             new SpecializationName(name)
         );
-        Assert.Equal("Error: The operation name can't be null, empty or consist in only white spaces.", ex.Message);
+        Assert.Equal("Error: The specialization name can't be null, empty or consist in only white spaces.", ex.Message);
     }
 
 

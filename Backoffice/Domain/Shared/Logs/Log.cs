@@ -15,6 +15,11 @@ namespace Backoffice.Domain.Logs
         public LogType LogType {get; private set;}
         public LogEntity LogEntity {get; private set;}
 
+        public Log(){
+
+        }
+
+        
         public Log(string description, LogType logType, LogEntity logEntity)
         {
             this.DateTime = DateTime.Now;

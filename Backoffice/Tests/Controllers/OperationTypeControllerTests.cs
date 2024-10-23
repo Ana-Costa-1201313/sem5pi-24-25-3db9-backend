@@ -19,6 +19,8 @@ namespace Backoffice.Tests.Controllers
         private readonly Mock<IOperationTypeRepository> _mockRepo;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ISpecializationRepository> _mockSpecializationRepo;
+        private readonly Mock<ILogRepository> _mockLogRepo;
+        private readonly Mock<IExternalApiServices> _mockAuthService;
         private readonly OperationTypesController _controller;
         private readonly OperationTypeService _service;
 
@@ -27,53 +29,70 @@ namespace Backoffice.Tests.Controllers
             _mockRepo = new Mock<IOperationTypeRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockSpecializationRepo = new Mock<ISpecializationRepository>();
+            _mockLogRepo = new Mock<ILogRepository>();
+
+            _mockAuthService = new Mock<IExternalApiServices>();
+
             _service = new OperationTypeService(
                 _mockUnitOfWork.Object,
                 _mockRepo.Object,
                 _mockSpecializationRepo.Object,
-                null
+                _mockLogRepo.Object
             );
-            _controller = new OperationTypesController(_service);
+
+            _controller = new OperationTypesController(_service, _mockAuthService.Object);
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Headers["Authorization"] = "Bearer someToken";
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
 
         [Fact]
-        public async Task GetById_ReturnsOkResult_WithOperationType()
+        public async Task GetAll_ReturnsNoContent_WhenNoOperationTypesExist_WithAuthorization()
         {
 
-            var requiredStaff = new List<(string SpecializationName, int Total)>
-                {
-                    ("Surgeon", 5)
-                };
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(true);
 
-            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            var emptyList = new List<OperationType>();
+            _mockRepo.Setup(repo => repo.GetAllWithDetailsAsync())
+                     .ReturnsAsync(emptyList);
 
+            var result = await _controller.GetAll();
 
-            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
-                     .ReturnsAsync(operationType);
+            var okResult = Assert.IsType<ActionResult<IEnumerable<OperationTypeDto>>>(result);
 
-            var result = await _controller.GetGetById(operationType.Id.AsGuid());
-
-            var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
-            var returnValue = Assert.IsType<OperationTypeDto>(okResult.Value);
-
-            Assert.Equal("Surgery", returnValue.Name);
-            Assert.Equal(30, returnValue.AnesthesiaPatientPreparationInMinutes);
-            Assert.Equal(60, returnValue.SurgeryInMinutes);
-            Assert.Equal(15, returnValue.CleaningInMinutes);
-            Assert.Single(returnValue.RequiredStaff);
-            Assert.Equal("Surgeon", returnValue.RequiredStaff[0].Specialization);
-            Assert.Equal(5, returnValue.RequiredStaff[0].Total);
+            Assert.IsType<NoContentResult>(okResult.Result);
         }
 
         [Fact]
-        public async Task GetAll_ReturnsOkResult_WithOperationTypes()
+        public async Task GetAll_ReturnsBadRequestResult_WithouAuthorization()
         {
+
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(false);
+
+            var result = await _controller.GetAll();
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("User not autenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task GetAll_ReturnsOkResult_WithOperationTypes_WithAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(true);
 
             var requiredStaff1 = new List<(string SpecializationName, int Total)>
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery",30,60,15, requiredStaff1);
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
@@ -81,7 +100,7 @@ namespace Backoffice.Tests.Controllers
                     ("Surgeon", 2),
                     ("Cardio", 3)
                 };
-            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy",30,60,15, requiredStaff2);
+            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
 
             var listOp = new List<OperationType> { operationType1, operationType2 };
@@ -91,7 +110,8 @@ namespace Backoffice.Tests.Controllers
 
             var result = await _controller.GetAll();
 
-            var okResult = Assert.IsType<ActionResult<IEnumerable<OperationTypeDto>>>(result);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+
             var returnValue = Assert.IsType<List<OperationTypeDto>>(okResult.Value);
 
             Assert.Equal(2, returnValue.Count);
@@ -123,8 +143,44 @@ namespace Backoffice.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetById_ReturnsNotFound_WhenOperationTypeDoesNotExist()
+        public async Task GetById_ReturnsOkResult_WithOperationType_WithAuthorization()
         {
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(true);
+
+            var requiredStaff = new List<(string SpecializationName, int Total)>
+                        {
+                            ("Surgeon", 5)
+                        };
+
+            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                     .ReturnsAsync(operationType);
+
+            var result = await _controller.GetGetById(operationType.Id.AsGuid());
+
+            var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
+            var returnValue = Assert.IsType<OperationTypeDto>(okResult.Value);
+
+            Assert.Equal("Surgery", returnValue.Name);
+            Assert.Equal(30, returnValue.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(60, returnValue.SurgeryInMinutes);
+            Assert.Equal(15, returnValue.CleaningInMinutes);
+            Assert.Single(returnValue.RequiredStaff);
+            Assert.Equal("Surgeon", returnValue.RequiredStaff[0].Specialization);
+            Assert.Equal(5, returnValue.RequiredStaff[0].Total);
+        }
+
+
+
+        [Fact]
+        public async Task GetById_ReturnsNotFound_WhenOperationTypeDoesNotExist_WithAuthorization()
+        {
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(true);
+
             var operationTypeId = Guid.NewGuid();
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
@@ -136,18 +192,100 @@ namespace Backoffice.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAll_ReturnsOkResult_WithEmptyList_WhenNoOperationTypesExist()
+        public async Task GetById_ReturnsBadRequest_WithoutAuthorization()
         {
-            var emptyList = new List<OperationType>();
-            _mockRepo.Setup(repo => repo.GetAllWithDetailsAsync())
-                     .ReturnsAsync(emptyList);
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(false);
 
-            var result = await _controller.GetAll();
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                     .ReturnsAsync((OperationType)null);
 
-            var okResult = Assert.IsType<ActionResult<IEnumerable<OperationTypeDto>>>(result);
-            var returnValue = Assert.IsType<List<OperationTypeDto>>(okResult.Value);
+            var result = await _controller.GetGetById(Guid.NewGuid());
 
-            Assert.Empty(returnValue);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("User not autenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task Create_ReturnsBadRequest_WithoutAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                    .ReturnsAsync(false);
+
+            var creatingDto = new CreatingOperationTypeDto
+            (
+                "Surgery",
+                30,
+                60,
+                15,
+                new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
+                }
+            );
+
+            var result = await _controller.Create(creatingDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("User not autenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task Create_ReturnsCreatedAtAction_WithValidInput_WithAuthorization()
+        {
+            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+                            .ReturnsAsync(true);
+
+            var creatingDto = new CreatingOperationTypeDto
+            (
+                "Op",
+                30,
+                60,
+                15,
+                new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Spec", Total = 2 }
+                }
+            );
+
+            var createdDto = new OperationTypeDto
+            {
+                Id = Guid.NewGuid(),
+                Name = creatingDto.Name,
+                AnesthesiaPatientPreparationInMinutes = creatingDto.AnesthesiaPatientPreparationInMinutes,
+                SurgeryInMinutes = creatingDto.SurgeryInMinutes,
+                CleaningInMinutes = creatingDto.CleaningInMinutes,
+                RequiredStaff = creatingDto.RequiredStaff
+            };
+
+            _mockRepo.Setup(repo => repo.AddAsync(It.IsAny<OperationType>()))
+                        .ReturnsAsync(OperationTypeMapper.ToDomain(createdDto));
+
+            _mockSpecializationRepo.Setup(repo => repo.SpecializationNameExists(It.IsAny<string>()))
+                           .ReturnsAsync(true);
+
+            var specialization = new Specialization(new SpecializationName("Spec"));
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Spec"))
+                                   .ReturnsAsync(specialization);
+
+    
+            _mockLogRepo.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
+                        .ReturnsAsync(new Mock<Log>().Object);
+
+
+
+            var result = await _controller.Create(creatingDto);
+
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+            var returnValue = Assert.IsType<OperationTypeDto>(createdAtActionResult.Value);
+            Assert.Equal("Op", returnValue.Name);
+            Assert.Equal(30, returnValue.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(60, returnValue.SurgeryInMinutes);
+            Assert.Equal(15, returnValue.CleaningInMinutes);
+            Assert.Equal("Spec", returnValue.RequiredStaff[0].Specialization);
+            Assert.Equal(2, returnValue.RequiredStaff[0].Total);
         }
     }
 }
