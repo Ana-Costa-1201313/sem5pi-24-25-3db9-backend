@@ -11,6 +11,7 @@ using Backoffice.Domain.Specializations;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
 using Backoffice.Domain.Logs;
+using Backoffice.Infraestructure.Specializations;
 
 namespace Backoffice.Tests.Controllers
 {
@@ -20,7 +21,8 @@ namespace Backoffice.Tests.Controllers
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ISpecializationRepository> _mockSpecializationRepo;
         private readonly Mock<ILogRepository> _mockLogRepo;
-        private readonly Mock<IExternalApiServices> _mockAuthService;
+        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<ExternalApiServices> _mockAuthService;
         private readonly OperationTypesController _controller;
         private readonly OperationTypeService _service;
 
@@ -31,7 +33,9 @@ namespace Backoffice.Tests.Controllers
             _mockSpecializationRepo = new Mock<ISpecializationRepository>();
             _mockLogRepo = new Mock<ILogRepository>();
 
-            _mockAuthService = new Mock<IExternalApiServices>();
+            _mockConfig = new Mock<IConfiguration>();
+
+            _mockAuthService = new Mock<ExternalApiServices>(_mockConfig.Object);
 
             _service = new OperationTypeService(
                 _mockUnitOfWork.Object,
@@ -270,7 +274,7 @@ namespace Backoffice.Tests.Controllers
             _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Spec"))
                                    .ReturnsAsync(specialization);
 
-    
+
             _mockLogRepo.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
                         .ReturnsAsync(new Mock<Log>().Object);
 

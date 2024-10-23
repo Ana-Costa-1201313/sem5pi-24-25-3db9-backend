@@ -12,9 +12,9 @@ namespace Backoffice.Controllers
     public class OperationTypesController : ControllerBase
     {
         private readonly OperationTypeService _service;
-        private readonly IExternalApiServices _authService;
+        private readonly ExternalApiServices _authService;
 
-        public OperationTypesController(OperationTypeService service, IExternalApiServices authService)
+        public OperationTypesController(OperationTypeService service, ExternalApiServices authService)
         {
             _service = service;
             _authService = authService;

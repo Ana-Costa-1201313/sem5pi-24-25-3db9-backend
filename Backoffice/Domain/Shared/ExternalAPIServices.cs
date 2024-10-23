@@ -15,13 +15,10 @@ namespace Backoffice.Domain.Shared
         protected string validateUrl = "Auth/Login/validate";
 
         private readonly IConfiguration _iconfig;
-        private HttpClient _httpClient;
 
-
-        public ExternalApiServices(IConfiguration iConfig, HttpClient httpClient)
+        public ExternalApiServices(IConfiguration iConfig)
         {
             this._iconfig = iConfig;
-            this._httpClient = httpClient;
         }
 
         public async Task<LoginDTO> validateToken(LoginDTO loginDTO)
@@ -54,7 +51,7 @@ namespace Backoffice.Domain.Shared
             return resultLoginDTO;
         }
 
-        public async Task<bool> checkHeader(List<String> roles, String tokenHeader) 
+        public virtual async Task<bool> checkHeader(List<String> roles, String tokenHeader) 
         {
             var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
 
