@@ -556,5 +556,370 @@ namespace Backoffice.Tests
 
             Assert.Equal("Error: This Staff profile is already deactivated!", errorMessage);
         }
+
+        [Fact]
+        public async Task UpdateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.Update(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("ana", returnValue.FirstName);
+            Assert.Equal("costa", returnValue.LastName);
+            Assert.Equal("ana costa", returnValue.FullName);
+            Assert.Equal("999999991", returnValue.Phone);
+            Assert.Equal("spec2", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task NullPhoneUpdateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.Update(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a phone number!", errorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateInactiveStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await _controller.Deactivate(staff.Id.AsGuid());
+
+            var result = await _controller.Update(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: Can't update an inactive staff!", errorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateStaffEmpty()
+        {
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            var staffId = new Guid("846b1792-6a40-4d97-ba61-300c934dddd3");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staffId,
+                Phone = "999999999",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            var result = await _controller.Update(staffId, editDto);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("ana", returnValue.FirstName);
+            Assert.Equal("costa", returnValue.LastName);
+            Assert.Equal("ana costa", returnValue.FullName);
+            Assert.Equal("999999991", returnValue.Phone);
+            Assert.Equal("spec2", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaffSamePhone()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("ana", returnValue.FirstName);
+            Assert.Equal("costa", returnValue.LastName);
+            Assert.Equal("ana costa", returnValue.FullName);
+            Assert.Equal("999999999", returnValue.Phone);
+            Assert.Equal("spec2", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaffSameSpec()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = null,
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("ana", returnValue.FirstName);
+            Assert.Equal("costa", returnValue.LastName);
+            Assert.Equal("ana costa", returnValue.FullName);
+            Assert.Equal("999999999", returnValue.Phone);
+            Assert.Equal("spec", returnValue.Specialization);
+        }
+    
+     [Fact]
+        public async Task PartialUpdateInactiveStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await _controller.Deactivate(staff.Id.AsGuid());
+
+            var result = await _controller.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: Can't update an inactive staff!", errorMessage);
+        }
     }
 }

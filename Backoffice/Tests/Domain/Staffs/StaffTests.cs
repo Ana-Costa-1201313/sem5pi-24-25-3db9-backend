@@ -299,8 +299,6 @@ namespace Backoffice.Tests
             Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", exception.Message);
         }
 
-
-
         [Fact]
         public void InvalidSlotFormat()
         {
@@ -381,5 +379,218 @@ namespace Backoffice.Tests
             Assert.Equal("Error: The year must be bigger than zero!", exception.Message);
         }
 
+        [Fact]
+        public void EditStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+
+            Role sRole = Role.Nurse;
+            int MecNumSequence = 1;
+            MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
+            Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+
+
+            var staff = new Staff(dto, MecNumSequence);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            staff.Edit(editDto);
+
+            Assert.NotNull(staff.Id);
+            Assert.Equal("ana", staff.FirstName);
+            Assert.Equal("costa", staff.LastName);
+            Assert.Equal("ana costa", staff.FullName);
+            Assert.Equal(1, staff.LicenseNumber.LicenseNum);
+            Assert.Equal("999999991", staff.Phone.PhoneNum);
+            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal(sRole, staff.Role);
+            Assert.Equal(MecNumSequence, staff.MecNumSequence);
+            Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
+            Assert.Equal(Email._Email, staff.Email._Email);
+        }
+
+        [Fact]
+        public void NullPhoneEditStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+
+            Role sRole = Role.Nurse;
+            int MecNumSequence = 1;
+            MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
+            Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+
+
+            var staff = new Staff(dto, MecNumSequence);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => staff.Edit(editDto));
+
+            Assert.Equal("Error: The staff must have a phone number!", exception.Message);
+        }
+
+         [Fact]
+        public void PartialEditStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+
+            Role sRole = Role.Nurse;
+            int MecNumSequence = 1;
+            MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
+            Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+
+
+            var staff = new Staff(dto, MecNumSequence);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            staff.PartialEdit(editDto);
+
+            Assert.NotNull(staff.Id);
+            Assert.Equal("ana", staff.FirstName);
+            Assert.Equal("costa", staff.LastName);
+            Assert.Equal("ana costa", staff.FullName);
+            Assert.Equal(1, staff.LicenseNumber.LicenseNum);
+            Assert.Equal("999999991", staff.Phone.PhoneNum);
+            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal(sRole, staff.Role);
+            Assert.Equal(MecNumSequence, staff.MecNumSequence);
+            Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
+            Assert.Equal(Email._Email, staff.Email._Email);
+        }
+
+        [Fact]
+        public void NullPhonePartialEditStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+
+            Role sRole = Role.Nurse;
+            int MecNumSequence = 1;
+            MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
+            Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+
+
+            var staff = new Staff(dto, MecNumSequence);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            staff.PartialEdit(editDto);
+
+            Assert.NotNull(staff.Id);
+            Assert.Equal("ana", staff.FirstName);
+            Assert.Equal("costa", staff.LastName);
+            Assert.Equal("ana costa", staff.FullName);
+            Assert.Equal(1, staff.LicenseNumber.LicenseNum);
+            Assert.Equal("999999999", staff.Phone.PhoneNum);
+            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal(sRole, staff.Role);
+            Assert.Equal(MecNumSequence, staff.MecNumSequence);
+            Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
+            Assert.Equal(Email._Email, staff.Email._Email);
+        }
     }
 }

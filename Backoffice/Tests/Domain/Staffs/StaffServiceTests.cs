@@ -278,5 +278,295 @@ namespace Backoffice.Tests
             Assert.Equal("Deactivated Staff", result.Specialization);
             Assert.False(result.Active);
         }
+
+        [Fact]
+        public async Task Update()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+            var result = await service.UpdateAsync(editDto);
+
+            Assert.NotNull(result);
+
+            Assert.Equal("ana", result.FirstName);
+            Assert.Equal("costa", result.LastName);
+            Assert.Equal("ana costa", result.FullName);
+            Assert.Equal("999999991", result.Phone);
+            Assert.Equal("spec2", result.Specialization);
+        }
+
+        [Fact]
+        public async Task InactiveUpdate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            await service.Deactivate(staff1.Id.AsGuid());
+
+           var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.UpdateAsync(editDto));
+
+            Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
+       
+        }
+
+        [Fact]
+        public async Task NullPhoneUpdate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.UpdateAsync(editDto));
+
+            Assert.Equal("Error: The staff must have a phone number!", exception.Message);
+        }
+
+        [Fact]
+        public async Task PartialUpdate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+            var result = await service.PartialUpdateAsync(editDto);
+
+            Assert.NotNull(result);
+
+            Assert.Equal("ana", result.FirstName);
+            Assert.Equal("costa", result.LastName);
+            Assert.Equal("ana costa", result.FullName);
+            Assert.Equal("999999991", result.Phone);
+            Assert.Equal("spec2", result.Specialization);
+        }
+
+[Fact]
+        public async Task InactivePartialUpdate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            await service.Deactivate(staff1.Id.AsGuid());
+
+           var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.PartialUpdateAsync(editDto));
+
+            Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
+       
+        }
+
+        [Fact]
+        public async Task NullPhonePartialUpdate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff1.Id.AsGuid(),
+                Phone = null,
+                Specialization = "spec2",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            var result = await service.PartialUpdateAsync(editDto);
+
+            Assert.NotNull(result);
+
+            Assert.Equal("ana", result.FirstName);
+            Assert.Equal("costa", result.LastName);
+            Assert.Equal("ana costa", result.FullName);
+            Assert.Equal("999999999", result.Phone);
+            Assert.Equal("spec2", result.Specialization);
+        }
+
     }
 }
