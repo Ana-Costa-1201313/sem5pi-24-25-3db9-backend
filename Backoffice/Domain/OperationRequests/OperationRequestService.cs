@@ -1,4 +1,8 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Patients;
+using Backoffice.Domain.OperationTypes;
+using Backoffice.Domain.Staffs;
+using Azure;
 
 namespace Backoffice.Domain.OperationRequests
 {
@@ -6,6 +10,9 @@ namespace Backoffice.Domain.OperationRequests
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationRequestRepository _repo;
+        private readonly IOperationTypeRepository _optyperepo;
+        private readonly IPatientRepository _patientrepo;
+        private readonly IStaffRepository _doctorrepo;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo)
         {
@@ -17,15 +24,12 @@ namespace Backoffice.Domain.OperationRequests
         {/*
             var list = await this._repo.GetAllAsync();
 
-            List<OperationRequestDto> listDto = list.ConvertAll<OperationRequestDto>(or => new OperationRequestDto
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
             {
-                Id = or.Id.AsGuid(),
-                OpTypeName = or.OpTypeName,
-                DeadlineDate = or.DeadlineDate,
-                Priority = or.Priority,
-                PatientName = or.PatientName,
-                DoctorName = or.DoctorName
-            });
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
 
             return listDto;*/
             return null;
@@ -38,35 +42,19 @@ namespace Backoffice.Domain.OperationRequests
             if (opReq == null)
                 return null;
 
-            return new OperationRequestDto
-            {
-                Id = opReq.Id.AsGuid(),
-                OpTypeName = opReq.OpTypeName,
-                DeadlineDate = opReq.DeadlineDate,
-                Priority = opReq.Priority,
-                PatientName = opReq.PatientName,
-                DoctorName = opReq.DoctorName
-            };*/
+            return OperationRequestMapper.ToDto(opReq);*/
             return null;
         }
 
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)
         {/*
-            var OperationRequest = new OperationRequest(dto);
+            var OperationRequest = OperationRequestMapper.ToDomain(dto);
 
             await this._repo.AddAsync(OperationRequest);
 
             await this._unitOfWork.CommitAsync();
 
-            return new OperationRequestDto
-            {
-                Id = OperationRequest.Id.AsGuid(),
-                OpTypeName = OperationRequest.OpTypeName,
-                DeadlineDate = OperationRequest.DeadlineDate,
-                Priority = OperationRequest.Priority,
-                PatientName = OperationRequest.PatientName,
-                DoctorName = OperationRequest.DoctorName
-            };*/
+            return OperationRequestMapper.ToDto(OperationRequest);*/
             return null;
         }
     }

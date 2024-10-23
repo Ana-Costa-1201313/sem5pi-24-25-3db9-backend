@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Backoffice.Domain.OperationRequests.ValueObjects;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
@@ -16,11 +17,14 @@ namespace Backoffice.Domain.OperationRequests
         public PatientId PatientId { get; private set; }
         public Staff Doctor { get; private set; }
         public StaffId DoctorId { get; private set; }
+        public Status Status { get; private set; }
+        public string Description { get; private set; }
         // public string OperationRequestId { get; private set; }
 
         private OperationRequest(){}
 
-        public OperationRequest(OperationType operationType, DateTime deadlineDate, Priority priority, Patient patient, Staff doctor)
+        public OperationRequest(OperationType operationType, DateTime deadlineDate, Priority priority, 
+                                Patient patient, Staff doctor, Status status, string description)
         {
             this.Id = new OperationRequestId(Guid.NewGuid());
             this.OpType = operationType;
@@ -31,6 +35,8 @@ namespace Backoffice.Domain.OperationRequests
             this.PatientId = patient.Id;
             this.Doctor = doctor;
             this.DoctorId = doctor.Id;
+            this.Status = status;
+            this.Description = description;
         }
     }
 }

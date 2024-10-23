@@ -13,13 +13,13 @@ namespace Backoffice.Infraestructure.OperationRequests
             builder.Property(b => b.Id)
                 .HasConversion(id => id.Value, value => new OperationRequestId(value));
 
-/*             builder.OwnsOne(b => b.OpType, opType => {
+            builder.OwnsOne(b => b.OpType, opType => {
                 opType.Property(p => p.Id).HasColumnName("OpTypeId");
                 opType.Property(p => p.Name).HasColumnName("OpTypeName");
-            }); */
+            });
 
-            //builder.Property(b => b.DeadlineDate).HasColumnName("DeadlineDate");
-            //builder.Property(b => b.Priority).HasColumnName("Priority");
+            builder.Property(b => b.DeadlineDate).HasColumnName("DeadlineDate");
+            builder.Property(b => b.Priority).HasColumnName("Priority");
         }
     }
 }
