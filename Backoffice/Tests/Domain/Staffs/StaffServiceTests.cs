@@ -239,5 +239,44 @@ namespace Backoffice.Tests
             Assert.Equal("spec", result.Specialization);
             Assert.Equal(Role.Nurse, result.Role);
         }
+
+        [Fact]
+        public async Task Deactivate()
+        {
+            var staffDb = new List<Staff>();
+            var service = Setup(staffDb);
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff1 = new Staff(dto1, 1);
+
+            staffDb.Add(staff1);
+
+            var result = await service.Deactivate(staff1.Id.AsGuid());
+
+            Assert.NotNull(result);
+
+            Assert.Equal("Deactivated Staff", result.FirstName);
+            Assert.Equal("Deactivated Staff", result.LastName);
+            Assert.Equal("Deactivated Staff", result.FullName);
+            Assert.Null(result.Phone);
+            Assert.Equal("Deactivated Staff", result.Specialization);
+            Assert.False(result.Active);
+        }
     }
 }

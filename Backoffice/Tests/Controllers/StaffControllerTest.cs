@@ -218,7 +218,7 @@ namespace Backoffice.Tests
             Assert.Equal(400, badRequestResult.StatusCode);
 
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
-            
+
             Assert.Equal("Error: The phone number is invalid!", errorMessage);
         }
 
@@ -249,8 +249,312 @@ namespace Backoffice.Tests
             Assert.Equal(400, badRequestResult.StatusCode);
 
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
-            
+
             Assert.Equal("Error: The year must be bigger than zero!", errorMessage);
+        }
+
+        [Fact]
+        public async Task NullFirstNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = null,
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a first name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task EmptyFirstNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a first name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task NullLastNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = null,
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a last name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task EmptyLastNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a last name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task NullFullNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = null,
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a full name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task EmptyFullNameCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a full name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task InvalidRoleCreateStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Patient,
+                RecruitmentYear = 2024
+            };
+
+            var result = await _controller.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", errorMessage);
+        }
+
+        [Fact]
+        public async Task DeleteStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await _controller.Deactivate(staff.Id.AsGuid());
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("Deactivated Staff", returnValue.FirstName);
+            Assert.Equal("Deactivated Staff", returnValue.LastName);
+            Assert.Equal("Deactivated Staff", returnValue.FullName);
+            Assert.Null(returnValue.Phone);
+            Assert.Equal("Deactivated Staff", returnValue.Specialization);
+            Assert.False(returnValue.Active);
+        }
+
+        [Fact]
+        public async Task InvalidDeleteStaff()
+        {
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            var staffId = Guid.NewGuid();
+
+            var result = await _controller.Deactivate(staffId);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task DeleteInactiveStaff()
+        {
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                FirstName = "ana",
+                LastName = "costa",
+                FullName = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "spec",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var staff = new Staff(dto1, 1);
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await _controller.Deactivate(staff.Id.AsGuid());
+
+            var result2 = await _controller.Deactivate(staff.Id.AsGuid());
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result2.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: This Staff profile is already deactivated!", errorMessage);
         }
     }
 }
