@@ -1,4 +1,6 @@
 using Backoffice.Domain.Shared;
+using System;
+using System.Configuration;
 
 namespace Backoffice.Domain.Users
 {
@@ -25,7 +27,6 @@ namespace Backoffice.Domain.Users
             this.Active = false;
         }
 
-
         public void ActivateUser(string passwd)
         {
             if (this.Active)
@@ -35,6 +36,11 @@ namespace Backoffice.Domain.Users
             this.Password = new Password(passwd);
 
             this.Active = true;
+        }
+
+        public string ReadDNS()
+        {
+            return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
         }
     }
 }

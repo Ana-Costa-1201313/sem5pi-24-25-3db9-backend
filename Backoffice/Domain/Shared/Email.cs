@@ -4,6 +4,7 @@ namespace Backoffice.Domain.Shared
 {
     [Owned]
     public class Email : IValueObject
+
     {
         public string _Email { get; private set;}
 

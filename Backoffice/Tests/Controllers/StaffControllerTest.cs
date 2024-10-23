@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Backoffice.Domain.Logs;
+
 
 namespace Backoffice.Tests
 {
@@ -14,6 +16,9 @@ namespace Backoffice.Tests
     {
         private readonly Mock<IStaffRepository> _repo;
         private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<ILogRepository> _mockLogRepo;
+        private readonly Mock<IExternalApiServices> _mockExternal;
+        private readonly Mock<AuthService> _mockAuthService;
         private readonly StaffService _service;
         private readonly StaffController _controller;
 
@@ -21,13 +26,26 @@ namespace Backoffice.Tests
         {
             _repo = new Mock<IStaffRepository>();
             _unitOfWork = new Mock<IUnitOfWork>();
+            _mockLogRepo = new Mock<ILogRepository>();
+            _mockExternal = new Mock<IExternalApiServices>();
+            _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
             _service = new StaffService(_unitOfWork.Object, _repo.Object, new StaffMapper());
-            _controller = new StaffController(_service);
+            _controller = new StaffController(_service, _mockAuthService.Object);
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Headers["Authorization"] = "Bearer someToken";
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
 
         [Fact]
         public async Task GetAllStaff()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -79,6 +97,9 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetAllEmpty()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             var expectedList = new List<Staff>();
 
             _repo.Setup(repo => repo.GetAllAsync())
@@ -94,6 +115,9 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdStaff()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -134,6 +158,9 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdEmpty()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             var staffId = Guid.NewGuid();
 
             _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
@@ -146,6 +173,9 @@ namespace Backoffice.Tests
         [Fact]
         public async Task CreateStaff()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -194,6 +224,9 @@ namespace Backoffice.Tests
         [Fact]
         public async Task InvalidPhoneCreateStaff()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -218,13 +251,16 @@ namespace Backoffice.Tests
             Assert.Equal(400, badRequestResult.StatusCode);
 
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
-            
+
             Assert.Equal("Error: The phone number is invalid!", errorMessage);
         }
 
         [Fact]
         public async Task InvalidRecYearCreateStaff()
         {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -249,7 +285,7 @@ namespace Backoffice.Tests
             Assert.Equal(400, badRequestResult.StatusCode);
 
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
-            
+
             Assert.Equal("Error: The year must be bigger than zero!", errorMessage);
         }
     }
