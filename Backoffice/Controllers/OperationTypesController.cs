@@ -12,9 +12,9 @@ namespace Backoffice.Controllers
     public class OperationTypesController : ControllerBase
     {
         private readonly OperationTypeService _service;
-        private readonly ExternalApiServices _authService;
+        private readonly AuthService _authService;
 
-        public OperationTypesController(OperationTypeService service, ExternalApiServices authService)
+        public OperationTypesController(OperationTypeService service, AuthService authService)
         {
             _service = service;
             _authService = authService;
@@ -25,20 +25,9 @@ namespace Backoffice.Controllers
         public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
         {
 
-            List<String> roles = new List<String> { "Admin" };
-
-            if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
-            {
-                return BadRequest("Authorization header is missing");
-            }
             try
             {
-
-                if (!await _authService.checkHeader(roles, tokenHeader))
-                {
-                    return BadRequest("User not autenticated");
-                }
-
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
             }
             catch (Exception ex)
             {
@@ -60,20 +49,9 @@ namespace Backoffice.Controllers
         public async Task<ActionResult<OperationTypeDto>> GetGetById(Guid id)
         {
 
-            List<String> roles = new List<String> { "Admin" };
-
-            if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
-            {
-                return BadRequest("Authorization header is missing");
-            }
             try
             {
-
-                if (!await _authService.checkHeader(roles, tokenHeader))
-                {
-                    return BadRequest("User not autenticated");
-                }
-
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
             }
             catch (Exception ex)
             {
@@ -95,20 +73,9 @@ namespace Backoffice.Controllers
         public async Task<ActionResult<OperationTypeDto>> Create(CreatingOperationTypeDto dto)
         {
 
-            List<String> roles = new List<String> { "Admin" };
-
-            if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
-            {
-                return BadRequest("Authorization header is missing");
-            }
             try
             {
-
-                if (!await _authService.checkHeader(roles, tokenHeader))
-                {
-                    return BadRequest("User not autenticated");
-                }
-
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
             }
             catch (Exception ex)
             {

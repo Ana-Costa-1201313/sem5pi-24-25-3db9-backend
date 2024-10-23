@@ -21,8 +21,8 @@ namespace Backoffice.Tests.Controllers
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<ISpecializationRepository> _mockSpecializationRepo;
         private readonly Mock<ILogRepository> _mockLogRepo;
-        private readonly Mock<IConfiguration> _mockConfig;
-        private readonly Mock<ExternalApiServices> _mockAuthService;
+        private readonly Mock<IExternalApiServices> _mockExternal;
+        private readonly Mock<AuthService> _mockAuthService;
         private readonly OperationTypesController _controller;
         private readonly OperationTypeService _service;
 
@@ -33,9 +33,9 @@ namespace Backoffice.Tests.Controllers
             _mockSpecializationRepo = new Mock<ISpecializationRepository>();
             _mockLogRepo = new Mock<ILogRepository>();
 
-            _mockConfig = new Mock<IConfiguration>();
+            _mockExternal = new Mock<IExternalApiServices>();
 
-            _mockAuthService = new Mock<ExternalApiServices>(_mockConfig.Object);
+            _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
 
             _service = new OperationTypeService(
                 _mockUnitOfWork.Object,
@@ -58,7 +58,7 @@ namespace Backoffice.Tests.Controllers
         public async Task GetAll_ReturnsNoContent_WhenNoOperationTypesExist_WithAuthorization()
         {
 
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ReturnsAsync(true);
 
             var emptyList = new List<OperationType>();
@@ -73,23 +73,23 @@ namespace Backoffice.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAll_ReturnsBadRequestResult_WithouAuthorization()
+        public async Task GetAll_ReturnsBadRequestResult_WithoutAuthorization()
         {
 
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
-                            .ReturnsAsync(false);
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
 
             var result = await _controller.GetAll();
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal("User not autenticated", badRequestResult.Value);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
         }
 
         [Fact]
         public async Task GetAll_ReturnsOkResult_WithOperationTypes_WithAuthorization()
         {
 
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ReturnsAsync(true);
 
             var requiredStaff1 = new List<(string SpecializationName, int Total)>
@@ -149,7 +149,7 @@ namespace Backoffice.Tests.Controllers
         [Fact]
         public async Task GetById_ReturnsOkResult_WithOperationType_WithAuthorization()
         {
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ReturnsAsync(true);
 
             var requiredStaff = new List<(string SpecializationName, int Total)>
@@ -182,7 +182,7 @@ namespace Backoffice.Tests.Controllers
         [Fact]
         public async Task GetById_ReturnsNotFound_WhenOperationTypeDoesNotExist_WithAuthorization()
         {
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ReturnsAsync(true);
 
             var operationTypeId = Guid.NewGuid();
@@ -198,8 +198,8 @@ namespace Backoffice.Tests.Controllers
         [Fact]
         public async Task GetById_ReturnsBadRequest_WithoutAuthorization()
         {
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
-                            .ReturnsAsync(false);
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
                      .ReturnsAsync((OperationType)null);
@@ -207,15 +207,15 @@ namespace Backoffice.Tests.Controllers
             var result = await _controller.GetGetById(Guid.NewGuid());
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal("User not autenticated", badRequestResult.Value);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
         }
 
         [Fact]
         public async Task Create_ReturnsBadRequest_WithoutAuthorization()
         {
 
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
-                    .ReturnsAsync(false);
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                    .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
 
             var creatingDto = new CreatingOperationTypeDto
             (
@@ -232,13 +232,13 @@ namespace Backoffice.Tests.Controllers
             var result = await _controller.Create(creatingDto);
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-            Assert.Equal("User not autenticated", badRequestResult.Value);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
         }
 
         [Fact]
         public async Task Create_ReturnsCreatedAtAction_WithValidInput_WithAuthorization()
         {
-            _mockAuthService.Setup(auth => auth.checkHeader(It.IsAny<List<string>>(), It.IsAny<string>()))
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ReturnsAsync(true);
 
             var creatingDto = new CreatingOperationTypeDto
@@ -290,6 +290,53 @@ namespace Backoffice.Tests.Controllers
             Assert.Equal(15, returnValue.CleaningInMinutes);
             Assert.Equal("Spec", returnValue.RequiredStaff[0].Specialization);
             Assert.Equal(2, returnValue.RequiredStaff[0].Total);
+        }
+
+        [Theory]
+        [InlineData("   ", 10, 10, 10, "SpecName", 10, "Error: The operation type name can't be null, empty or consist in only white spaces.")]
+        [InlineData("", 10, 10, 10, "SpecName", 10, "Error: The operation type name can't be null, empty or consist in only white spaces.")]
+        [InlineData(null, 10, 10, 10, "SpecName", 10, "Error: The operation type name can't be null, empty or consist in only white spaces.")]
+        [InlineData("OpName", -1, 10, 10, "SpecName", 10, "Error: The anesthesia/preparation duration must be more than 0 minutes.")]
+        [InlineData("OpName", 0, 10, 10, "SpecName", 10, "Error: The anesthesia/preparation duration must be more than 0 minutes.")]
+        [InlineData("OpName", 10, -1, 10, "SpecName", 10, "Error: The surgery duration must be more than 0 minutes.")]
+        [InlineData("OpName", 10, 0, 10, "SpecName", 10, "Error: The surgery duration must be more than 0 minutes.")]
+        [InlineData("OpName", 10, 10, -1, "SpecName", 10, "Error: The cleaning duration must be more than 0 minutes.")]
+        [InlineData("OpName", 10, 10, 0, "SpecName", 10, "Error: The cleaning duration must be more than 0 minutes.")]
+        [InlineData("OpName", 10, 10, 10, "SpecName", -10, "Error: The total number of required staff of a specialization can't be lower or equal to 0.")]
+        [InlineData("OpName", 10, 10, 10, "SpecName", 0, "Error: The total number of required staff of a specialization can't be lower or equal to 0.")]
+        [InlineData("OpName", 10, 10, 10, "     ", 10, "Error: The specialization can't be null.")]
+        [InlineData("OpName", 10, 10, 10, "", 10, "Error: The specialization can't be null.")]
+        [InlineData("OpName", 10, 10, 10, null, 10, "Error: The specialization can't be null.")]
+        public async Task Create_ReturnsException_WithInvalidInput_WithAuthorization(string opName, int opPhase1Duration, int opPhase2Duration, int opPhase3Duration, string specName, int total, string error)
+        {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                    .ReturnsAsync(true);
+
+            var creatingDto = new CreatingOperationTypeDto
+            (
+                opName,
+                opPhase1Duration,
+                opPhase2Duration,
+                opPhase3Duration,
+                new List<RequiredStaffDto>
+                {
+            new RequiredStaffDto { Specialization = specName, Total = total }
+                }
+            );
+
+            _mockSpecializationRepo.Setup(repo => repo.SpecializationNameExists(It.IsAny<string>()))
+                           .ReturnsAsync(true);
+
+            var specialization = new Specialization(new SpecializationName("SpecName"));
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("SpecName"))
+                                   .ReturnsAsync(specialization);
+
+            var result = await _controller.Create(creatingDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+            Assert.Equal(error, errorMessage);
         }
     }
 }
