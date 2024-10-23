@@ -22,7 +22,7 @@ namespace Backoffice.Domain.Patients
 
         public string[] Allergies { get; private set; }
 
-        public int MedicalRecordNumber { get; private set; }
+        public string MedicalRecordNumber { get; private set; }
 
         //public List<Appointment> AppointmentHistory { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Backoffice.Domain.Patients
         public bool isInactive{get; private set;}
         private Patient(){}
 
-        public Patient(CreatePatientDto dto)
+        public Patient(CreatePatientDto dto, string sequencialNumber)
         {
             this.Id = new PatientId(Guid.NewGuid());
             this.FirstName = dto.FirstName;
@@ -41,7 +41,7 @@ namespace Backoffice.Domain.Patients
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
             this.EmergencyContact = dto.EmergencyContact;
-            this.MedicalRecordNumber = dto.MedicalRecordNumber;
+            this.MedicalRecordNumber = MedicalRecordNumber;
 
         }
 

@@ -13,7 +13,7 @@ namespace Backoffice.Infraestructure.Patients
             _context = context;
         }
 
-        public async Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth, int? medicalRecordNumber)
+        public async Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth, string medicalRecordNumber)
         {
             var query = _context.Patients.AsQueryable();
 
@@ -23,7 +23,7 @@ namespace Backoffice.Infraestructure.Patients
                 query = query.Where(p => p.Email._Email == email);
             if(dateOfBirth.HasValue)
                 query = query.Where(p => p.DateOfBirth == dateOfBirth);
-            if(medicalRecordNumber.HasValue)
+            if(!string.IsNullOrEmpty(medicalRecordNumber))
                 query = query.Where(p=> p.MedicalRecordNumber == medicalRecordNumber);
 
                 return await query.ToListAsync();
@@ -34,25 +34,11 @@ namespace Backoffice.Infraestructure.Patients
             return await _context.Patients.Where(p => p.Email == email).FirstOrDefaultAsync();
         }
         
-        public async Task<List<Patient>> GetPatientsByNameAsync(string name)
+        public async Task<Patient> GetLatestPatientByMonthAsync()
         {
-        return await _context.Patients
-            .Where(p => p.FullName.Contains(name)) 
-            .ToListAsync();
-        }
+            return await _context.Patients.OrderByDescending(p=> p.MedicalRecordNumber).FirstOrDefaultAsync();
         
-
-        public async Task<List<Patient>> GetPatientsByDateOfBirth(DateTime dateOfBirth)
-        {
-            return await _context.Patients
-            .Where(p => p.DateOfBirth == dateOfBirth)
-            .ToListAsync();
+       
         }
-
-        public async Task<List<Patient>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber){
-            return await _context.Patients
-            .Where(p=> p.MedicalRecordNumber == medicalRecordNumber)
-            .ToListAsync();
-        }
-        }
+}
 }

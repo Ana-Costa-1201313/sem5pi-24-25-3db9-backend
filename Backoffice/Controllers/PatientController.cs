@@ -30,7 +30,7 @@ namespace Backoffice.Controllers
             [FromQuery] string name = null,
             [FromQuery] string email = null,
             [FromQuery] DateTime? dateOfBirth = null, // ? para permitir que seja null 
-            [FromQuery] int? medicalRecordNumber = null
+            [FromQuery] string medicalRecordNumber = null
         )
         {
                 var patients = await _service.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
@@ -58,7 +58,9 @@ namespace Backoffice.Controllers
         public async Task<ActionResult<PatientDto>> Create(CreatePatientDto dto)
         {
             try {
-                var patient = await _service.AddAsync(dto);
+                var medicalRecordNumber = await _service.GenerateNextMedicalRecordNumber();
+                
+                var patient = await _service.AddAsync(dto,medicalRecordNumber);
                 return CreatedAtAction(nameof(GetById),new {id = patient.Id},patient);
             
             } catch(BusinessRuleValidationException e) {

@@ -18,8 +18,8 @@ public class PatientMapper{
             MedicalRecordNumber = patient.MedicalRecordNumber
         };
     }
-    public Patient ToPatient(CreatePatientDto dto){
-        return new Patient(dto);
+    public Patient ToPatient(CreatePatientDto dto,string medicalRecordNumber){
+        return new Patient(dto,medicalRecordNumber);
     }
 
     public SearchPatientDto ToSearchPatientDto(Patient patient){

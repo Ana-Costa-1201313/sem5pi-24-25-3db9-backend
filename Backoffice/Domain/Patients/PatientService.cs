@@ -33,39 +33,6 @@ namespace Backoffice.Domain.Patients{
             }
             return listDto;
         }
-        // Obter os patient profiles por nome 
-        public async Task<List<SearchPatientDto>> GetPatientsByName(string name)
-         {
-            var list = await _repo.GetPatientsByNameAsync(name);
-            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
-
-            foreach(var patient in list)
-                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
-
-                return listDto;
-         }
-        // Obter os patient profiles por data de nascimento
-         public async Task<List<SearchPatientDto>> GetPatientsByDateOfBirth(DateTime dateOfBirth)
-         {
-            var list = await _repo.GetPatientsByDateOfBirth(dateOfBirth);
-            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
-
-            foreach(var patient in list)
-                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
-                
-                return listDto;
-         }
-         // Obter os patient profiles por medical record number
-         public async Task<List<SearchPatientDto>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber)
-         {
-            var list = await _repo.GetPatientsByMedicalRecordNumber(medicalRecordNumber);
-            List<SearchPatientDto> listDto = new List<SearchPatientDto>();
-
-            foreach(var patient in list)
-                listDto.Add(_patientMapper.ToSearchPatientDto(patient));
-                
-                return listDto;
-         }
          public async Task<SearchPatientDto> GetByEmailAsync(Email email)
         {
             var patient = await _repo.GetPatientByEmailAsync(email);
@@ -89,10 +56,10 @@ namespace Backoffice.Domain.Patients{
             return _patientMapper.ToPatientDto(patient);
         }
         // Adicionar um novo Patient profile
-        public async Task<PatientDto> AddAsync(CreatePatientDto dto)
+        public async Task<PatientDto> AddAsync(CreatePatientDto dto, string medicalRecordNumber)
         {
-            var patient = _patientMapper.ToPatient(dto);
-
+            var patient = _patientMapper.ToPatient(dto,medicalRecordNumber);
+            
             try 
             {
                 await _repo.AddAsync(patient);
@@ -173,7 +140,7 @@ namespace Backoffice.Domain.Patients{
         }
 
         //Get de patients por varios atributos 
-        public async Task<List<SearchPatientDto>> SearchPatientsAsync(string name, string email, DateTime? dateOfBirth,int? medicalRecordNumber)
+        public async Task<List<SearchPatientDto>> SearchPatientsAsync(string name, string email, DateTime? dateOfBirth,string medicalRecordNumber)
         {
             var patients = await _repo.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
             List<SearchPatientDto> listDto = new List<SearchPatientDto>();
@@ -183,7 +150,33 @@ namespace Backoffice.Domain.Patients{
 
             return listDto;
         }
+        //Gerar um medical record number de acordo com o Ano Mês e pessoal anterior 
+        public async Task<string> GenerateNextMedicalRecordNumber()
+        {
+            DateTime date = DateTime.Now;
+            int year = date.Year;
+            int month = date.Month;
 
+            var latestPatient = await _repo.GetLatestPatientByMonthAsync();
+            int nextSequential = 1; // se nao existir ninguem começa com o 1
+
+            if (latestPatient != null)
+            {
+                string latestMedicalRN = latestPatient.MedicalRecordNumber;
+                string latestYear = latestMedicalRN.Substring(0,4);  // Vai buscar os 4 primeiros ou seja o ano
+                string latestMonth = latestMedicalRN.Substring(4,2); // vai buscar os 2 seguintes ou seja o mês 
+                string latestSequential = latestMedicalRN.Substring(6); //vai buscar o resto ou seja o numero sequencial
+
+                if(int.Parse(latestYear) == year && int.Parse(latestMonth)==month)
+                    nextSequential = int.Parse(latestSequential) +1;
+            }
+            string finalSequential = nextSequential.ToString("D6");
+
+            string medicalRecordNumber = $"{year}{month:D2}{finalSequential}";
+
+            return medicalRecordNumber;
+
+        }
 
 
     }
