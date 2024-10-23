@@ -61,9 +61,11 @@ namespace Backoffice.Controllers
                 var medicalRecordNumber = await _service.GenerateNextMedicalRecordNumber();
                 
                 var patient = await _service.AddAsync(dto,medicalRecordNumber);
+                //Codigo 201 -> Created
                 return CreatedAtAction(nameof(GetById),new {id = patient.Id},patient);
             
             } catch(BusinessRuleValidationException e) {
+                    //Codigo 400 erro de validação 
                     return BadRequest(new {Message = e.Message});
             }
         }
