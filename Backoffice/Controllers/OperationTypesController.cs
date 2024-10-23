@@ -65,7 +65,7 @@ namespace Backoffice.Controllers
                 return NotFound();
             }
 
-            return opType;
+            return Ok(opType);
         }
 
         // POST: api/OperationTypes

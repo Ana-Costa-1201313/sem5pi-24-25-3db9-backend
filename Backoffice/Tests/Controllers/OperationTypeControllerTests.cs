@@ -165,8 +165,10 @@ namespace Backoffice.Tests.Controllers
 
             var result = await _controller.GetGetById(operationType.Id.AsGuid());
 
+
             var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
-            var returnValue = Assert.IsType<OperationTypeDto>(okResult.Value);
+            var objectResult  = Assert.IsType<OkObjectResult>(okResult.Result);
+            var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
 
             Assert.Equal("Surgery", returnValue.Name);
             Assert.Equal(30, returnValue.AnesthesiaPatientPreparationInMinutes);
