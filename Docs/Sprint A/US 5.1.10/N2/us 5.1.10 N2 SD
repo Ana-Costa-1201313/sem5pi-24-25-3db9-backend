@@ -1,0 +1,19 @@
+@startuml US_Delete_Nivel2
+autonumber
+
+actor "Admin" as admin
+participant "BE" as be
+activate admin
+
+admin -> be : DELETE /patient/{id}
+
+activate be
+    alt patient profile not found
+        admin <-- be : 404: Not Found
+    else patient profile deleted successfully
+        admin <-- be : 200: OK
+    end
+deactivate be
+deactivate admin
+
+@enduml
