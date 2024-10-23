@@ -10,10 +10,15 @@ namespace Backoffice.Tests
 {
     public class StaffServiceTests
     {
-        private StaffService Setup(List<Staff> staffDb)
+        private Mock<IStaffRepository> staffRepository;
+        private Mock<IUnitOfWork> unitOfWork;
+        private StaffMapper staffMapper;
+        private StaffService service;
+
+        private void Setup(List<Staff> staffDb)
         {
-            var staffRepository = new Mock<IStaffRepository>();
-            var unitOfWork = new Mock<IUnitOfWork>();
+            staffRepository = new Mock<IStaffRepository>();
+            unitOfWork = new Mock<IUnitOfWork>();
 
             staffRepository.Setup(repo => repo.GetAllAsync())
             .ReturnsAsync(staffDb);
@@ -32,16 +37,16 @@ namespace Backoffice.Tests
 
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            var staffMapper = new StaffMapper();
+            staffMapper = new StaffMapper();
 
-            return new StaffService(unitOfWork.Object, staffRepository.Object, staffMapper);
+            service = new StaffService(unitOfWork.Object, staffRepository.Object, staffMapper);
         }
 
         [Fact]
         public async Task GetAllAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -81,6 +86,8 @@ namespace Backoffice.Tests
 
             var result = await service.GetAllAsync();
 
+            staffRepository.Verify(repo => repo.GetAllAsync(), Times.Once);
+
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
 
@@ -107,7 +114,7 @@ namespace Backoffice.Tests
         public async Task GetByIdAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -147,6 +154,8 @@ namespace Backoffice.Tests
 
             var result = await service.GetByIdAsync(staff1.Id.AsGuid());
 
+            staffRepository.Verify(repo => repo.GetByIdAsync(staff1.Id), Times.Once);
+
             Assert.NotNull(result);
 
             Assert.Equal("ana", result.FirstName);
@@ -162,7 +171,7 @@ namespace Backoffice.Tests
         public async Task InvalidGetByIdAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -208,7 +217,7 @@ namespace Backoffice.Tests
         public async Task AddAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -229,6 +238,9 @@ namespace Backoffice.Tests
 
             var result = await service.AddAsync(dto1);
 
+            staffRepository.Verify(repo => repo.GetLastMechanographicNumAsync(), Times.Once);
+
+
             Assert.NotNull(result);
 
             Assert.Equal("ana", result.FirstName);
@@ -244,7 +256,7 @@ namespace Backoffice.Tests
         public async Task Deactivate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -269,6 +281,9 @@ namespace Backoffice.Tests
 
             var result = await service.Deactivate(staff1.Id.AsGuid());
 
+            staffRepository.Verify(repo => repo.GetByIdAsync(staff1.Id), Times.Once);
+
+
             Assert.NotNull(result);
 
             Assert.Equal("Deactivated Staff", result.FirstName);
@@ -283,7 +298,8 @@ namespace Backoffice.Tests
         public async Task Update()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -319,6 +335,9 @@ namespace Backoffice.Tests
             };
             var result = await service.UpdateAsync(editDto);
 
+            staffRepository.Verify(repo => repo.GetByIdAsync(staff1.Id), Times.Once);
+
+
             Assert.NotNull(result);
 
             Assert.Equal("ana", result.FirstName);
@@ -332,7 +351,8 @@ namespace Backoffice.Tests
         public async Task InactiveUpdate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -369,18 +389,19 @@ namespace Backoffice.Tests
 
             await service.Deactivate(staff1.Id.AsGuid());
 
-           var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                await service.UpdateAsync(editDto));
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                 await service.UpdateAsync(editDto));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
-       
+
         }
 
         [Fact]
         public async Task NullPhoneUpdate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -425,7 +446,8 @@ namespace Backoffice.Tests
         public async Task PartialUpdate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -461,6 +483,8 @@ namespace Backoffice.Tests
             };
             var result = await service.PartialUpdateAsync(editDto);
 
+            staffRepository.Verify(repo => repo.GetByIdAsync(staff1.Id), Times.Once);
+
             Assert.NotNull(result);
 
             Assert.Equal("ana", result.FirstName);
@@ -470,11 +494,12 @@ namespace Backoffice.Tests
             Assert.Equal("spec2", result.Specialization);
         }
 
-[Fact]
+        [Fact]
         public async Task InactivePartialUpdate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -511,18 +536,19 @@ namespace Backoffice.Tests
 
             await service.Deactivate(staff1.Id.AsGuid());
 
-           var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                await service.PartialUpdateAsync(editDto));
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                 await service.PartialUpdateAsync(editDto));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
-       
+
         }
 
         [Fact]
         public async Task NullPhonePartialUpdate()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            Setup(staffDb);
+
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
