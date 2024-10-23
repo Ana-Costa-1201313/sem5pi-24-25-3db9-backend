@@ -71,7 +71,7 @@ namespace Backoffice
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -102,7 +102,9 @@ namespace Backoffice
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
+            services.AddTransient<IExternalApiServices, ExternalApiServices>();
 
+            services.AddTransient<AuthService>();
             services.AddTransient<LogInServices>();
             services.AddTransient<ExternalApiServices>();
             services.AddHttpClient();
