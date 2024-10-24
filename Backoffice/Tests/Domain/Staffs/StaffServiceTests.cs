@@ -4,21 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Specializations;
 using Xunit;
+using Backoffice.Infraestructure.Staffs;
+using Backoffice.Infraestructure;
+using System.Runtime.CompilerServices;
 
 namespace Backoffice.Tests
 {
     public class StaffServiceTests
     {
-        private StaffService Setup(List<Staff> staffDb)
-        {
-            var staffRepository = new Mock<IStaffRepository>();
-            var unitOfWork = new Mock<IUnitOfWork>();
+        Mock<IStaffRepository> staffRepository;
 
-            staffRepository.Setup(repo => repo.GetAllAsync())
+        Mock<IUnitOfWork> unitOfWork;
+
+        Mock<ISpecializationRepository> specRepository;
+
+        Mock<StaffService> mockService;
+
+        private void Setup(List<Staff> staffDb, List<Specialization> specializationsDb)
+        {
+            staffRepository = new Mock<IStaffRepository>();
+            unitOfWork = new Mock<IUnitOfWork>();
+            specRepository = new Mock<ISpecializationRepository>();
+
+
+            staffRepository.Setup(repo => repo.GetAllWithDetailsAsync())
             .ReturnsAsync(staffDb);
 
-            staffRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>()))
+            staffRepository.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>()))
             .ReturnsAsync((StaffId id) => staffDb.SingleOrDefault(s => s.Id.Equals(id)));
 
             staffRepository.Setup(repo => repo.AddAsync(It.IsAny<Staff>()))
@@ -30,18 +44,28 @@ namespace Backoffice.Tests
             staffRepository.Setup(repo => repo.GetStaffByEmailAsync(It.IsAny<Email>()))
             .ReturnsAsync((Email email) => staffDb.FirstOrDefault(s => s.Email == email));
 
+            specRepository.Setup(repo => repo.GetBySpecializationName(It.IsAny<string>()))
+                       .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            var staffMapper = new StaffMapper();
+            mockService = new Mock<StaffService>(unitOfWork.Object, staffRepository.Object, new StaffMapper(), specRepository.Object);
 
-            return new StaffService(unitOfWork.Object, staffRepository.Object, staffMapper);
         }
 
         [Fact]
         public async Task GetAllAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            var specializationsDb = new List<Specialization>();
+
+            Setup(staffDb, specializationsDb);
+
+            mockService.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            StaffService service = mockService.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -52,7 +76,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -63,14 +87,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
             staffDb.Add(staff2);
@@ -83,13 +109,13 @@ namespace Backoffice.Tests
             Assert.Equal("ana costa", result[0].Name);
             Assert.Equal(1, result[0].LicenseNumber);
             Assert.Equal("999999999", result[0].Phone);
-            Assert.Equal("spec", result[0].Specialization);
+            Assert.Equal("skin", result[0].Specialization);
             Assert.Equal(Role.Nurse, result[0].Role);
 
             Assert.Equal("maria silva", result[1].Name);
             Assert.Equal(2, result[1].LicenseNumber);
             Assert.Equal("999999989", result[1].Phone);
-            Assert.Equal("spec", result[1].Specialization);
+            Assert.Equal("skin", result[1].Specialization);
             Assert.Equal(Role.Doctor, result[1].Role);
 
         }
@@ -97,8 +123,16 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdAsync()
         {
-            var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+             var staffDb = new List<Staff>();
+            var specializationsDb = new List<Specialization>();
+
+            Setup(staffDb, specializationsDb);
+
+            mockService.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            StaffService service = mockService.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -109,7 +143,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -120,14 +154,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
             staffDb.Add(staff2);
@@ -139,7 +175,7 @@ namespace Backoffice.Tests
             Assert.Equal("ana costa", result.Name);
             Assert.Equal(1, result.LicenseNumber);
             Assert.Equal("999999999", result.Phone);
-            Assert.Equal("spec", result.Specialization);
+            Assert.Equal("skin", result.Specialization);
             Assert.Equal(Role.Nurse, result.Role);
         }
 
@@ -147,7 +183,15 @@ namespace Backoffice.Tests
         public async Task InvalidGetByIdAsync()
         {
             var staffDb = new List<Staff>();
-            var service = Setup(staffDb);
+            var specializationsDb = new List<Specialization>();
+
+            Setup(staffDb, specializationsDb);
+
+            mockService.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            StaffService service = mockService.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -158,7 +202,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -169,14 +213,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
 
@@ -185,36 +231,44 @@ namespace Backoffice.Tests
             Assert.Null(result);
         }
 
-        // [Fact]
-        // public async Task AddAsync()
-        // {
-        //     var staffDb = new List<Staff>();
-        //     var service = Setup(staffDb);
+        [Fact]
+        public async Task AddAsync()
+        {
+            var staffDb = new List<Staff>();
+            var specializationsDb = new List<Specialization>();
 
-        //     List<string> AvailabilitySlots = new List<string>();
-        //     AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
-        //     AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+            Setup(staffDb, specializationsDb);
 
-        //     CreateStaffDto dto1 = new CreateStaffDto
-        //     {
-        //         Name = "ana costa",
-        //         LicenseNumber = 1,
-        //         Phone = "999999999",
-        //         Specialization = "spec",
-        //         AvailabilitySlots = AvailabilitySlots,
-        //         Role = Role.Nurse,
-        //         RecruitmentYear = 2024
-        //     };
+            mockService.CallBase = true;
 
-        //     var result = await service.AddAsync(dto1);
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
 
-        //     Assert.NotNull(result);
+            StaffService service = mockService.Object;
 
-        //     Assert.Equal("ana costa", result.Name);
-        //     Assert.Equal(1, result.LicenseNumber);
-        //     Assert.Equal("999999999", result.Phone);
-        //     Assert.Equal("spec", result.Specialization);
-        //     Assert.Equal(Role.Nurse, result.Role);
-        // }
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await service.AddAsync(dto1);
+
+            Assert.NotNull(result);
+            Assert.Equal("ana costa", result.Name);
+            Assert.Equal(1, result.LicenseNumber);
+            Assert.Equal("999999999", result.Phone);
+            Assert.Equal("skin", result.Specialization);
+            Assert.Equal(Role.Nurse, result.Role);
+        }
     }
 }

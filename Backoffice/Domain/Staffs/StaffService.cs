@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Specializations;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Users;
 using System.Configuration;
@@ -13,21 +14,28 @@ namespace Backoffice.Domain.Staffs
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStaffRepository _repo;
         private readonly StaffMapper _staffMapper;
+        private readonly ISpecializationRepository _specRepo;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _staffMapper = staffMapper;
+            _specRepo = specRepo;
+        }
+
+        protected StaffService()
+        {
+
         }
 
         public async Task<List<StaffDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
+            List<Staff> list = await this._repo.GetAllWithDetailsAsync();
 
             List<StaffDto> listDto = new List<StaffDto>();
 
-            foreach (var staff in list)
+            foreach (Staff staff in list)
             {
                 listDto.Add(_staffMapper.ToStaffDto(staff));
             }
@@ -37,7 +45,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> GetByIdAsync(Guid id)
         {
-            var staff = await this._repo.GetByIdAsync(new StaffId(id));
+            Staff staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
 
             if (staff == null)
                 return null;
@@ -45,11 +53,23 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<StaffDto> AddAsync(CreateStaffDto dto)
+        public virtual async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
-            var staff = _staffMapper.ToStaff(dto, mechanographicNumSeq, ReadDNS());
+            if (mechanographicNumSeq == 0)
+            {
+                throw new BusinessRuleValidationException("Error: Couldn't get the number of staff members!");
+            }
+
+            Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+
+            if (specialization == null)
+            {
+                throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+            }
+
+            Staff staff = _staffMapper.ToStaff(dto, specialization, mechanographicNumSeq, ReadDNS());
 
             try
             {
@@ -82,7 +102,7 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public string ReadDNS()
+        public virtual string ReadDNS()
         {
             return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
         }

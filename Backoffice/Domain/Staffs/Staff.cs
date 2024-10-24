@@ -1,4 +1,5 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Specializations;
 
 namespace Backoffice.Domain.Staffs
 {
@@ -12,7 +13,7 @@ namespace Backoffice.Domain.Staffs
 
         public PhoneNumber Phone { get; private set; }
 
-        public string Specialization { get; private set; }
+        public Specialization Specialization { get; private set; }
 
         public List<AvailabilitySlot> AvailabilitySlots { get; private set; }
 
@@ -27,13 +28,13 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq, string dns)
+        public Staff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
             this.Name = dto.Name;
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Specialization = dto.Specialization;
+            this.Specialization = specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
             foreach (var slotString in dto.AvailabilitySlots)

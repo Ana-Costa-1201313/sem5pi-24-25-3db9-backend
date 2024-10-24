@@ -29,5 +29,19 @@ namespace Backoffice.Infraestructure.Staffs
                 .Select(s => s)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<Staff>> GetAllWithDetailsAsync()
+        {
+            return await _context.Staff
+            .Include(s => s.Specialization)
+            .ToListAsync();
+        }
+
+        public async Task<Staff> GetByIdWithDetailsAsync(StaffId id)
+        {
+            return await _context.Staff
+            .Include(s => s.Specialization)
+            .FirstOrDefaultAsync(s => s.Id == id);
+        }
     }
 }
