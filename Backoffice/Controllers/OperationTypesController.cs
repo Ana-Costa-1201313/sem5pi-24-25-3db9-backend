@@ -79,7 +79,7 @@ namespace Backoffice.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchOperationType(Guid id, [FromBody] PatchOperationTypeDto operationTypeDto)
+        public async Task<IActionResult> PatchOperationType(Guid id, [FromBody] EditOperationTypeDto operationTypeDto)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace Backoffice.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<OperationTypeDto>> UpdateOperationType(Guid id, [FromBody] PutOperationTypeDto updateDto)
+        public async Task<ActionResult<OperationTypeDto>> UpdateOperationType(Guid id, [FromBody] EditOperationTypeDto updateDto)
         {
             try
             {

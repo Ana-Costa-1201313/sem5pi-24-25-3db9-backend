@@ -67,6 +67,8 @@ namespace Backoffice.Domain.OperationTypes
 
             var opType = OperationTypeMapper.ToDomain(dto);
 
+            opType.ChangeRequiredStaff(requiredStaffList);
+
             if (await this._repo.OperationTypeNameExists(opType.Name.Name))
             {
                 throw new BusinessRuleValidationException("Error: This operation type name is already being used.");
@@ -96,7 +98,7 @@ namespace Backoffice.Domain.OperationTypes
         }
 
 
-        public async Task<OperationTypeDto> Patch(Guid id, PatchOperationTypeDto operationTypeDto)
+        public async Task<OperationTypeDto> Patch(Guid id, EditOperationTypeDto operationTypeDto)
         {
             var operationType = await _repo.GetByIdWithDetailsAsync(new OperationTypeId(id));
 
@@ -127,9 +129,25 @@ namespace Backoffice.Domain.OperationTypes
 
             if (operationTypeDto.RequiredStaff != null && operationTypeDto.RequiredStaff.Any())
             {
-                var updatedStaff = operationTypeDto.RequiredStaff.Select(rsDto =>
-                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName(rsDto.Specialization)), rsDto.Total)
-                ).ToList();
+                var specializationsNamesSet = new HashSet<String>();
+                var updatedStaff = new List<OperationTypeRequiredStaff>();
+                
+                foreach (var rsDto in operationTypeDto.RequiredStaff)
+                {
+                    var specialization = await _repoSpecialization.GetBySpecializationName(rsDto.Specialization);
+                    if (specialization == null)
+                    {
+                        throw new BusinessRuleValidationException("Error: There is no specialization with the name " + rsDto.Specialization + ".");
+                    }
+
+                    if (!specializationsNamesSet.Add(rsDto.Specialization))
+                    {
+                        throw new BusinessRuleValidationException("Error: Can't have duplicate specializations -> " + rsDto.Specialization + ".");
+                    }
+
+                    var requiredStaff = new OperationTypeRequiredStaff(specialization, rsDto.Total);
+                    updatedStaff.Add(requiredStaff);
+                }
 
                 operationType.ChangeRequiredStaff(updatedStaff);
             }
@@ -139,7 +157,7 @@ namespace Backoffice.Domain.OperationTypes
             return OperationTypeMapper.ToDto(operationType);
         }
 
-        public async Task<OperationTypeDto> Put(Guid id, PutOperationTypeDto operationTypeDto)
+        public async Task<OperationTypeDto> Put(Guid id, EditOperationTypeDto operationTypeDto)
         {
             var operationType = await _repo.GetByIdAsync(new OperationTypeId(id));
 
@@ -148,9 +166,25 @@ namespace Backoffice.Domain.OperationTypes
                 return null;
             }
 
-            var updatedStaff = operationTypeDto.RequiredStaff.Select(rsDto =>
-                new OperationTypeRequiredStaff(new Specialization(new SpecializationName(rsDto.Specialization)), rsDto.Total)
-            ).ToList();
+            var specializationsNamesSet = new HashSet<String>();
+            var updatedStaff = new List<OperationTypeRequiredStaff>();
+
+            foreach (var rsDto in operationTypeDto.RequiredStaff)
+            {
+                var specialization = await _repoSpecialization.GetBySpecializationName(rsDto.Specialization);
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + rsDto.Specialization + ".");
+                }
+
+                if (!specializationsNamesSet.Add(rsDto.Specialization))
+                {
+                    throw new BusinessRuleValidationException("Error: Can't have duplicate specializations -> " + rsDto.Specialization + ".");
+                }
+
+                var requiredStaff = new OperationTypeRequiredStaff(specialization, rsDto.Total);
+                updatedStaff.Add(requiredStaff);
+            }
 
             operationType.ChangeAll(
                 new OperationTypeName(operationTypeDto.Name),

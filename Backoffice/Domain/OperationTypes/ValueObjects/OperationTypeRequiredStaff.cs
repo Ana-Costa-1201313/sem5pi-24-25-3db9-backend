@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,8 @@ namespace Backoffice.Domain.OperationTypes
             {
                 throw new BusinessRuleValidationException("Error: The specialization can't be null.");
             }
-            this.Specialization = specialization;
             this.SpecializationId = specialization.Id;
+            this.Specialization = specialization;
             if (total <= 0)
             {
                 throw new BusinessRuleValidationException("Error: The total number of required staff of a specialization can't be lower or equal to 0.");
