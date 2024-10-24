@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Users;
 using Backoffice.Domain.Shared;
+using System.Configuration;
+using System.ComponentModel;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using System.Net.Mail;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers
 {
@@ -10,9 +15,12 @@ namespace Backoffice.Controllers
     {
         private readonly UserService _service;
 
-        public UsersController(UserService service)
+        private readonly ExternalApiServices _externalApiService;
+
+        public UsersController(UserService service, ExternalApiServices externalApiService)
         {
             _service = service;
+            _externalApiService = externalApiService;
         }
 
         [HttpGet]
@@ -37,6 +45,26 @@ namespace Backoffice.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create(CreateUserDto dto)
         {
+
+            List<String> roles = new List<String> { "Admin" };
+
+            // verificar header -> enviar header token para auth -> confirmar validade -> continuar
+            if (!Request.Headers.TryGetValue("Authorization", out var tokenHeader))
+            {
+                return BadRequest("Authorization header is missing");
+            }
+            try
+            {
+                //if(! await checkHeader(roles, tokenHeader)) return BadRequest("User does not autenticated");
+                if(! await _externalApiService.checkHeader(roles, tokenHeader)) return BadRequest("User not autenticated");
+                //_externalApiService.checkHeader(roles, tokenHeader);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            
             try
             {
                 var user = await _service.AddAsync(dto);
@@ -47,12 +75,14 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
-
-
+            catch (ConfigurationErrorsException e)
+            {
+                return StatusCode(500, new { message = e.Message });
+            }
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, [FromBody] string password)
+        public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, [FromQuery] string password)
         {
             try
             {
@@ -62,6 +92,9 @@ namespace Backoffice.Controllers
                 {
                     return NotFound();
                 }
+
+                _service.sendConfirmationEmail(user);
+
                 return Ok(user);
             }
             catch (BusinessRuleValidationException e)
@@ -69,5 +102,6 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
     }
 }

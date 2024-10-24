@@ -1,4 +1,7 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Shared;
+using Microsoft.Extensions.Primitives;
+using System.Net.Mail;
 
 namespace Backoffice.Domain.Users
 {
@@ -7,11 +10,18 @@ namespace Backoffice.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly IUserRepository _repo;
+        private readonly IEmailService _emailService;
+        private readonly ExternalApiServices _externalApiServices;
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo)
+        // passar isto para o configurations file
+        private readonly string emailBody = $"https://localhost:5001/api/Users/";
+
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            this._emailService = emailService;
+            this._externalApiServices = externalApiServices;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -48,7 +58,7 @@ namespace Backoffice.Domain.Users
         public async Task<UserDto> AddAsync(CreateUserDto dto)
         {
             int mechanographicNum = 0;
-            
+
             if (dto.Role != Role.Patient)
             {
                 mechanographicNum = await this._repo.GetLastMechanographicNumAsync() + 1;
@@ -60,6 +70,15 @@ namespace Backoffice.Domain.Users
 
             await this._unitOfWork.CommitAsync();
 
+            string messageBodyParameters = $"{user.Id.AsGuid()}?password=changeMeToYourNewPassword";
+            string messageSubject = "change your password";
+            try
+            {
+                await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, messageSubject);
+            }
+            catch (SmtpException ex) {
+                Console.WriteLine(ex.Message);
+            }
             return new UserDto
             {
                 Id = user.Id.AsGuid(),
@@ -71,6 +90,9 @@ namespace Backoffice.Domain.Users
 
         public async Task<UserDto> UpdatePassword(Guid id, string password)
         {
+
+            //pasword should be hashed for security
+
             var user = await this._repo.GetByIdAsync(new UserId(id));
 
             if (user == null)
@@ -90,6 +112,24 @@ namespace Backoffice.Domain.Users
                 Password = user.Password,
                 Active = user.Active
             };
+        }
+
+
+        public async void sendConfirmationEmail(UserDto user)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException("No user to send confirmation eail to!");
+            }
+            try
+            {
+                await _emailService.SendEmail(user.Email, $"New account has been created with password: { user.Password.ToString} .","Confirmation email");
+                //await _emailService.SendEmail("1221695@isep.ipp.pt", $"New account has been created with password: { user.Password.Passwd} .","Confirmation email");
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
