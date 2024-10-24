@@ -5,6 +5,7 @@ using Backoffice.Domain.Patients;
 using Backoffice.Domain.Patient;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Logs;
+using Backoffice.Domain.Users;
 
 
 namespace Backoffice.Domain.Patients{
@@ -16,13 +17,14 @@ namespace Backoffice.Domain.Patients{
         private readonly IPatientRepository _repo;
         private readonly PatientMapper _patientMapper;
         private readonly ILogRepository _repoLog;
+        private readonly EmailService _emailService;
 
-
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper, ILogRepository repoLog){
-            _unitOfWork = unitOfWork;
-            _repo = patientRepository;
-            _patientMapper = patientMapper;
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper, ILogRepository repoLog, EmailService emailService){
+            this._unitOfWork = unitOfWork;
+            this._repo = patientRepository;
+            this._patientMapper = patientMapper;
             this._repoLog = repoLog;
+            this._emailService = emailService; 
         }
         //Obter todos os Patient profiles
         public async Task<List<PatientDto>> GetAllAsync()
@@ -91,8 +93,25 @@ namespace Backoffice.Domain.Patients{
             var patient = await _repo.GetByIdAsync(new PatientId(id));
             if(patient == null)
                 return null;
+            //Guardar a informação sensível antiga
+            var oldEmail = patient.Email._Email;
+            var oldPhoneNumber = patient.Phone.PhoneNum;
+
 
             patient.UpdateDetails(dto.FirstName,dto.LastName,dto.FullName,dto.Email,dto.Phone,dto.Allergies,dto.EmergencyContact);
+            
+            //Verificar se houve mudanças
+            bool emailChanged = oldEmail != dto.Email;
+            bool phoneChanged = oldPhoneNumber != dto.Phone;
+
+            if (emailChanged || phoneChanged)
+            {
+            var message = "Your contact information has been updated, if you didn't request this change please contact us !!!";
+            var subject = "Patient Profile Updated";
+        
+            // Manda um email para o email antigo do patient
+            await _emailService.SendEmail(oldEmail, message, subject);
+            }
 
             await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
 
@@ -100,6 +119,7 @@ namespace Backoffice.Domain.Patients{
 
             return _patientMapper.ToPatientDto(patient);
         }
+
         //Dar um patch de um patient profile
         public async Task<PatientDto> PatchAsync(Guid id, EditPatientDto dto)
         {
@@ -107,6 +127,9 @@ namespace Backoffice.Domain.Patients{
             if(patient == null)
                 return null;
 
+            var oldEmail = patient.Email._Email;
+            var oldPhoneNumber = patient.Phone.PhoneNum;
+            
            if(!string.IsNullOrEmpty(dto.FirstName))
             patient.ChangeFirstName(dto.FirstName);
 
@@ -128,8 +151,21 @@ namespace Backoffice.Domain.Patients{
             if(!string.IsNullOrEmpty(dto.EmergencyContact))
             patient.ChangeEmergencyContact(dto.EmergencyContact);
 
+           
+            bool emailChanged = oldEmail != dto.Email;
+            bool phoneChanged = oldPhoneNumber != dto.Phone;
+
+            if (emailChanged || phoneChanged)
+            {
+            var message = "Your contact information has been updated, if you didn't request this change please contact us !!!";
+            var subject = "Patient Profile Updated";
+        
+           
+            await _emailService.SendEmail(oldEmail, message, subject);
+            }
+
             await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
-            
+
             await _unitOfWork.CommitAsync();
             return _patientMapper.ToPatientDto(patient);
         }
