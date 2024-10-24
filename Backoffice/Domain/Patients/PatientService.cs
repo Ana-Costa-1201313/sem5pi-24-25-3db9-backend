@@ -4,6 +4,7 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Patient;
 using Microsoft.EntityFrameworkCore;
+using Backoffice.Domain.Logs;
 
 
 namespace Backoffice.Domain.Patients{
@@ -14,12 +15,14 @@ namespace Backoffice.Domain.Patients{
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
         private readonly PatientMapper _patientMapper;
+        private readonly ILogRepository _repoLog;
 
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper){
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper, ILogRepository repoLog){
             _unitOfWork = unitOfWork;
             _repo = patientRepository;
             _patientMapper = patientMapper;
+            this._repoLog = repoLog;
         }
         //Obter todos os Patient profiles
         public async Task<List<PatientDto>> GetAllAsync()
@@ -135,7 +138,11 @@ namespace Backoffice.Domain.Patients{
                 throw new BusinessRuleValidationException("Error: Patient doesn't exist !!!");
                 
             _repo.Remove(patient);
+
+            await _repoLog.AddAsync(new Log(patient.ToJSON(), LogType.Delete,LogEntity.Patient));
+
             await _unitOfWork.CommitAsync();
+            
             return _patientMapper.ToPatientDto(patient);
         }
 

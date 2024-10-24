@@ -11,18 +11,37 @@ namespace Backoffice.Controllers
     public class PatientController : ControllerBase
     {
         private readonly PatientService _service;
+        private readonly AuthService _authService;
 
-        public PatientController(PatientService service)
+        public PatientController(PatientService service, AuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
-        //Obter todos os patients
+        //Get: api/Patients
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PatientDto>>> GetAll()
         {
-            return await _service.GetAllAsync();  
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            var list = await _service.GetAllAsync();
+
+            if(list == null || !list.Any())
+                return NoContent();  // codigo 204 caso nao haja nada
+
+
+            return Ok(list); // codigo 200 sucesso
         }
+
+
 
         [HttpGet("SearchByVariousAttributes")]
         public async Task<ActionResult<List<SearchPatientDto>>> SearchPatients(
@@ -33,6 +52,16 @@ namespace Backoffice.Controllers
             [FromQuery] string medicalRecordNumber = null
         )
         {
+                 try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
                 var patients = await _service.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
 
                 if(patients == null || patients.Count == 0)
@@ -40,23 +69,41 @@ namespace Backoffice.Controllers
                 return Ok(patients);
         }
 
-        //Obter patient por Id
+        // GET: api/Patient/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<PatientDto>> GetById(Guid id)
         {
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+
             var patient = await _service.GetByIdAsync(id);
 
             if (patient == null)
             {
-                return NotFound();
+                return NotFound(); // Erro 404
             }
 
-            return patient;
+            return Ok(patient);  // sucesso 200
         }
         //Criar um patient profile
         [HttpPost]
         public async Task<ActionResult<PatientDto>> Create(CreatePatientDto dto)
         {
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+
             try {
                 var medicalRecordNumber = await _service.GenerateNextMedicalRecordNumber();
                 
@@ -73,7 +120,15 @@ namespace Backoffice.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PatientDto>> Update(Guid id,EditPatientDto dto)
         {
-           
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+
             try{
                 var updatedPatient = await _service.UpdateAsync(id,dto);
 
@@ -89,6 +144,15 @@ namespace Backoffice.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<PatientDto>> Patch(Guid id,EditPatientDto dto)
         {
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+
             try 
             {
                 var updatedPatient = await _service.PatchAsync(id,dto);
@@ -106,6 +170,15 @@ namespace Backoffice.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<PatientDto>> HardDelete(Guid id)
         {
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+            
                 try 
                 {
                     var patient = await _service.DeleteAsync(id);

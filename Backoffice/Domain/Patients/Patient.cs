@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Backoffice.Domain.Shared;
+using Newtonsoft.Json;
 
 namespace Backoffice.Domain.Patients
 {
@@ -89,5 +90,27 @@ namespace Backoffice.Domain.Patients
          {
             this.EmergencyContact = new PhoneNumber(emergencyContact);
          }
+
+         public string ToJSON()
+{
+    var jsonRepresentation = new
+    {
+        PatientId = this.Id, 
+        FullName = this.FullName,
+        FirstName = this.FirstName,
+        LastName = this.LastName,
+        Gender = this.Gender,
+        DateOfBirth = this.DateOfBirth.ToString("yyyy-MM-dd"),
+        Email = this.Email._Email, 
+        Phone = this.Phone.PhoneNum,  
+        EmergencyContact = this.EmergencyContact, 
+        Allergies = this.Allergies != null ? string.Join(", ", this.Allergies) : null, 
+        MedicalRecordNumber = this.MedicalRecordNumber,
+        IsInactive = this.isInactive,
+       
+    };
+
+    return JsonConvert.SerializeObject(jsonRepresentation, Formatting.Indented);
+}
     }
 }
