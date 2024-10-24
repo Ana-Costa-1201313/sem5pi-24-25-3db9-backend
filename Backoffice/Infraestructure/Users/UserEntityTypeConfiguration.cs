@@ -12,9 +12,13 @@ namespace Backoffice.Infraestructure.Users
             builder.ToTable("Users", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
             builder.OwnsOne(u => u.Password);
-            builder.OwnsOne(v => v.Email);
-
             builder.Property(r => r.Role).HasConversion(new RoleConverter());
+
+            //builder.OwnsOne(v => v.Email);
+
+            builder.Property(e => e.Email).HasConversion(new EmailConverter());
+            builder.HasIndex(e => e.Email).IsUnique();
+
         }
     }
 }

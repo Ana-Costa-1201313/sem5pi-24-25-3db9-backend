@@ -1,4 +1,6 @@
 using Backoffice.Domain.Shared;
+using System;
+using System.Configuration;
 
 namespace Backoffice.Domain.Users
 {
@@ -24,7 +26,6 @@ namespace Backoffice.Domain.Users
             this.Email = new Email(email);
             this.Active = false;
         }
-
 
         public void ActivateUser(string passwd)
         {

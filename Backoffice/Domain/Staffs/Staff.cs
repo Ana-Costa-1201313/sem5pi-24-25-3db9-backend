@@ -1,14 +1,11 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Specializations;
 
 namespace Backoffice.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
-        public string FirstName { get; private set; }
-
-        public string LastName { get; private set; }
-
-        public string FullName { get; private set; }
+        public string Name { get; private set; }
 
         public int LicenseNumber { get; private set; }
 
@@ -16,7 +13,7 @@ namespace Backoffice.Domain.Staffs
 
         public PhoneNumber Phone { get; private set; }
 
-        public string Specialization { get; private set; }
+        public Specialization Specialization { get; private set; }
 
         public List<AvailabilitySlot> AvailabilitySlots { get; private set; }
 
@@ -33,15 +30,13 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq)
+        public Staff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
-            this.FirstName = dto.FirstName;
-            this.LastName = dto.LastName;
-            this.FullName = dto.FullName;
+            this.Name = dto.Name;
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Specialization = dto.Specialization;
+            this.Specialization = specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
             foreach (var slotString in dto.AvailabilitySlots)
@@ -63,7 +58,7 @@ namespace Backoffice.Domain.Staffs
             this.Role = dto.Role;
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
-            this.Email = new Email(MechanographicNum + "@healthcareapp.com");
+            this.Email = new Email(MechanographicNum + "@" + dns);
             this.Active = true;
         }
 
@@ -74,12 +69,10 @@ namespace Backoffice.Domain.Staffs
                 throw new BusinessRuleValidationException("Error: This Staff profile is already deactivated!");
             }
 
-            this.FirstName = "Deactivated Staff";
-            this.LastName = "Deactivated Staff";
-            this.FullName = "Deactivated Staff";
+            this.Name = "Deactivated Staff";
             this.LicenseNumber = this.Id.GetHashCode();
             this.Phone = null;
-            this.Specialization = "Deactivated Staff";
+            this.Specialization = null;
             this.AvailabilitySlots = null;
             this.Active = false;
         }

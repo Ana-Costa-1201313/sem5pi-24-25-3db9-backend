@@ -1,3 +1,5 @@
+using Backoffice.Domain.Specializations;
+
 namespace Backoffice.Domain.Staffs
 {
     public class StaffMapper
@@ -21,13 +23,11 @@ namespace Backoffice.Domain.Staffs
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
+                Name = staff.Name,
                 LicenseNumber = staff.LicenseNumber,
                 Email = staff.Email._Email,
-                Phone = staff.Phone?.PhoneNum,
-                Specialization = staff.Specialization,
+                Phone = staff.Phone.PhoneNum,
+                Specialization = staff.Specialization.Name.Name,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString(),
@@ -35,11 +35,9 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq)
+        public Staff ToStaff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
         {
-            return new Staff(dto, mecNumSeq);
+            return new Staff(dto, specialization, mecNumSeq, dns);
         }
-
-
     }
 }
