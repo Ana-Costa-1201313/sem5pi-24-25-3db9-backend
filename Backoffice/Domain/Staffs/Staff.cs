@@ -28,13 +28,13 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq, string dns)
+        public Staff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
             this.Name = dto.Name;
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
-            this.Specialization = new Specialization(new SpecializationName(dto.Specialization));
+            this.Specialization = specialization;
             this.AvailabilitySlots = new List<AvailabilitySlot>();
 
             foreach (var slotString in dto.AvailabilitySlots)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Specializations;
 using Xunit;
 
 namespace Backoffice.Tests
@@ -14,6 +15,8 @@ namespace Backoffice.Tests
         {
             var staffRepository = new Mock<IStaffRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
+            var specRepository = new Mock<ISpecializationRepository>();
+
 
             staffRepository.Setup(repo => repo.GetAllAsync())
             .ReturnsAsync(staffDb);
@@ -34,7 +37,7 @@ namespace Backoffice.Tests
 
             var staffMapper = new StaffMapper();
 
-            return new StaffService(unitOfWork.Object, staffRepository.Object, staffMapper);
+            return new StaffService(unitOfWork.Object, staffRepository.Object, staffMapper, specRepository.Object);
         }
 
         [Fact]
@@ -52,7 +55,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -63,14 +66,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
             staffDb.Add(staff2);
@@ -83,13 +88,13 @@ namespace Backoffice.Tests
             Assert.Equal("ana costa", result[0].Name);
             Assert.Equal(1, result[0].LicenseNumber);
             Assert.Equal("999999999", result[0].Phone);
-            Assert.Equal("spec", result[0].Specialization);
+            Assert.Equal("skin", result[0].Specialization);
             Assert.Equal(Role.Nurse, result[0].Role);
 
             Assert.Equal("maria silva", result[1].Name);
             Assert.Equal(2, result[1].LicenseNumber);
             Assert.Equal("999999989", result[1].Phone);
-            Assert.Equal("spec", result[1].Specialization);
+            Assert.Equal("skin", result[1].Specialization);
             Assert.Equal(Role.Doctor, result[1].Role);
 
         }
@@ -109,7 +114,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -120,14 +125,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
             staffDb.Add(staff2);
@@ -139,7 +146,7 @@ namespace Backoffice.Tests
             Assert.Equal("ana costa", result.Name);
             Assert.Equal(1, result.LicenseNumber);
             Assert.Equal("999999999", result.Phone);
-            Assert.Equal("spec", result.Specialization);
+            Assert.Equal("skin", result.Specialization);
             Assert.Equal(Role.Nurse, result.Role);
         }
 
@@ -158,7 +165,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -169,14 +176,16 @@ namespace Backoffice.Tests
                 Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Doctor,
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1,  "healthcareapp.com");
-            var staff2 = new Staff(dto2, 2,  "healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             staffDb.Add(staff1);
 
@@ -200,7 +209,7 @@ namespace Backoffice.Tests
         //         Name = "ana costa",
         //         LicenseNumber = 1,
         //         Phone = "999999999",
-        //         Specialization = "spec",
+        //         Specialization = "skin",
         //         AvailabilitySlots = AvailabilitySlots,
         //         Role = Role.Nurse,
         //         RecruitmentYear = 2024
@@ -213,7 +222,7 @@ namespace Backoffice.Tests
         //     Assert.Equal("ana costa", result.Name);
         //     Assert.Equal(1, result.LicenseNumber);
         //     Assert.Equal("999999999", result.Phone);
-        //     Assert.Equal("spec", result.Specialization);
+        //     Assert.Equal("skin", result.Specialization);
         //     Assert.Equal(Role.Nurse, result.Role);
         // }
     }

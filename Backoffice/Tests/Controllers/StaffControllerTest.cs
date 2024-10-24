@@ -1,6 +1,7 @@
 using Backoffice.Controllers;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Specializations;
 using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace Backoffice.Tests
     public class StaffControllerTest
     {
         private readonly Mock<IStaffRepository> _repo;
+        private readonly Mock<ISpecializationRepository> _specRepo;
         private readonly Mock<IUnitOfWork> _unitOfWork;
         private readonly Mock<ILogRepository> _mockLogRepo;
         private readonly Mock<IExternalApiServices> _mockExternal;
@@ -25,11 +27,12 @@ namespace Backoffice.Tests
         public StaffControllerTest()
         {
             _repo = new Mock<IStaffRepository>();
+            _specRepo = new Mock<ISpecializationRepository>();
             _unitOfWork = new Mock<IUnitOfWork>();
             _mockLogRepo = new Mock<ILogRepository>();
             _mockExternal = new Mock<IExternalApiServices>();
             _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
-            _service = new StaffService(_unitOfWork.Object, _repo.Object, new StaffMapper());
+            _service = new StaffService(_unitOfWork.Object, _repo.Object, new StaffMapper(), _specRepo.Object);
             _controller = new StaffController(_service, _mockAuthService.Object);
 
             var httpContext = new DefaultHttpContext();
@@ -72,8 +75,10 @@ namespace Backoffice.Tests
                 RecruitmentYear = 2024
             };
 
-            var staff1 = new Staff(dto1, 1, "hotmail.com");
-            var staff2 = new Staff(dto2, 2, "hotmail.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "hotmail.com");
+            var staff2 = new Staff(dto2, spec, 2, "hotmail.com");
 
             var expectedList = new List<Staff> { staff1, staff2 };
 
@@ -129,7 +134,9 @@ namespace Backoffice.Tests
                 RecruitmentYear = 2024
             };
 
-            var staff = new Staff(dto1, 1, "hotmail.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "hotmail.com");
 
             _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
 

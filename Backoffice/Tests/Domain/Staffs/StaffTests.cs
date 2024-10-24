@@ -1,5 +1,6 @@
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Specializations;
 using Xunit;
 
 namespace Backoffice.Tests
@@ -18,7 +19,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -27,14 +28,15 @@ namespace Backoffice.Tests
             string sName = "ana costa";
             int sLicenseNumber = 1;
             PhoneNumber sPhone = new PhoneNumber("999999999");
-            string sSpecialization = "spec";
+            string sSpecialization = "skin";
             Role sRole = Role.Nurse;
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
 
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
-            var staff = new Staff(dto, MecNumSequence, "healthcareapp.com");
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
 
             Assert.NotNull(staff.Id);
@@ -60,7 +62,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "99999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -69,7 +71,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -85,7 +89,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "199999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -94,7 +98,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -109,7 +115,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -118,7 +124,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: Invalid Availability slot format!", exception.Message);
         }
 
@@ -134,7 +142,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -143,7 +151,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = -1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The mechanographic number must be bigger than zero!", exception.Message);
         }
 
@@ -159,7 +169,7 @@ namespace Backoffice.Tests
                 Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = -2024
@@ -168,7 +178,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The year must be bigger than zero!", exception.Message);
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Specializations;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Users;
 using System.Configuration;
@@ -13,12 +14,14 @@ namespace Backoffice.Domain.Staffs
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStaffRepository _repo;
         private readonly StaffMapper _staffMapper;
+        private readonly ISpecializationRepository _specRepo;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _staffMapper = staffMapper;
+            _specRepo = specRepo;
         }
 
         public async Task<List<StaffDto>> GetAllAsync()
@@ -49,7 +52,19 @@ namespace Backoffice.Domain.Staffs
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
-            var staff = _staffMapper.ToStaff(dto, mechanographicNumSeq, ReadDNS());
+            if (mechanographicNumSeq == 0)
+            {
+                throw new BusinessRuleValidationException("Error: Couldn't get the number of staff members!");
+            }
+
+            Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+
+            if (specialization == null)
+            {
+                throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+            }
+
+            Staff staff = _staffMapper.ToStaff(dto, specialization, mechanographicNumSeq, ReadDNS());
 
             try
             {

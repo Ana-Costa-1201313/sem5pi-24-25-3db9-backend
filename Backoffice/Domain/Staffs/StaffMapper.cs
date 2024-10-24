@@ -1,3 +1,5 @@
+using Backoffice.Domain.Specializations;
+
 namespace Backoffice.Domain.Staffs
 {
     public class StaffMapper
@@ -25,8 +27,8 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq, string dns) {
-            return new Staff(dto, mecNumSeq, dns);
+        public Staff ToStaff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns) {
+            return new Staff(dto, specialization, mecNumSeq, dns);
         }
 
         
