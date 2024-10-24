@@ -14,6 +14,7 @@ public class PatientMapper{
             DateOfBirth = patient.DateOfBirth,
             Email = patient.Email._Email,
             Phone = patient.Phone.PhoneNum,
+            EmergencyContact = patient.EmergencyContact.PhoneNum,
             Allergies = patient.Allergies,
             MedicalRecordNumber = patient.MedicalRecordNumber
         };

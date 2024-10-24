@@ -18,7 +18,7 @@ namespace Backoffice.Domain.Patients
         public Email Email { get; private set; }
 
         public PhoneNumber Phone { get; private set; }
-        public string EmergencyContact {get; private set;}
+        public PhoneNumber EmergencyContact {get; private set;}
 
         public string[] Allergies { get; private set; }
 
@@ -26,7 +26,6 @@ namespace Backoffice.Domain.Patients
 
         //public List<Appointment> AppointmentHistory { get; private set; }
 
-        public string PatientId { get; private set; }
         public bool isInactive{get; private set;}
         private Patient(){}
 
@@ -40,7 +39,7 @@ namespace Backoffice.Domain.Patients
             this.DateOfBirth = dto.DateOfBirth;
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
-            this.EmergencyContact = dto.EmergencyContact;
+            this.EmergencyContact = new PhoneNumber(dto.EmergencyContact);
             this.MedicalRecordNumber = MedicalRecordNumber;
 
         }
@@ -54,7 +53,7 @@ namespace Backoffice.Domain.Patients
             this.Email = new Email(email);
             this.Phone = new PhoneNumber(phoneNumber);
             this.Allergies = allergies;
-            this.EmergencyContact = emergencyContact;
+            this.EmergencyContact = new PhoneNumber(emergencyContact);
          }
         
         public void MarkAsInactive()
@@ -88,7 +87,7 @@ namespace Backoffice.Domain.Patients
          }
          public void ChangeEmergencyContact(string emergencyContact)
          {
-            this.EmergencyContact = emergencyContact;
+            this.EmergencyContact = new PhoneNumber(emergencyContact);
          }
     }
 }
