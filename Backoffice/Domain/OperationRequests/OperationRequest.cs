@@ -88,7 +88,7 @@ namespace Backoffice.Domain.OperationRequests
                 DeadlineDate = this.DeadlineDate,
                 Priority = this.Priority.ToString(),
                 Patient = new { this.Patient.FullName },  // Pass the name object directly
-                Doctor = new { this.Doctor.FullName },  // Pass the name object directly
+                Doctor = new { this.Doctor.Name },  // Pass the name object directly
                 Status = this.Status.ToString(),
                 Description = this.Description
             };

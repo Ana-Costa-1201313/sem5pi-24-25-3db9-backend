@@ -21,9 +21,7 @@ namespace Backoffice.Domain.Staffs
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
+                Name = staff.Name,
                 LicenseNumber = staff.LicenseNumber,
                 Email = staff.Email._Email,
                 Phone = staff.Phone?.PhoneNum,
@@ -35,9 +33,8 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq)
-        {
-            return new Staff(dto, mecNumSeq);
+        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq, string dns) {
+            return new Staff(dto, mecNumSeq, dns);
         }
 
 

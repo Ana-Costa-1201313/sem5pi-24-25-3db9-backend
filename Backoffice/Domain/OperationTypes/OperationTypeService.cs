@@ -81,5 +81,19 @@ namespace Backoffice.Domain.OperationTypes
             return OperationTypeMapper.ToDto(opType);
         }
 
+        public async Task<OperationTypeDto> InactivateAsync(Guid id)
+        {
+            var opType = await this._repo.GetByIdWithDetailsAsync(new OperationTypeId(id));
+
+            if (opType == null)
+                return null;
+
+            opType.MarkAsInative();
+
+            await this._unitOfWork.CommitAsync();
+
+            return OperationTypeMapper.ToDto(opType);
+        }
+
     }
 }

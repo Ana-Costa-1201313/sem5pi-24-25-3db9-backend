@@ -13,7 +13,7 @@ namespace Backoffice.Domain.OperationTypes
         public Specialization Specialization { get; private set; }
         public int Total { get; private set; }
 
-        private OperationTypeRequiredStaff()
+        public OperationTypeRequiredStaff()
         {
         }
 

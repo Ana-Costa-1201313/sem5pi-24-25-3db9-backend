@@ -7,13 +7,13 @@ namespace Backoffice.Domain.OperationTypes
     public class OperationType : Entity<OperationTypeId>, IAggregateRoot
     {
 
-        public OperationTypeName Name { get; private set; }
-        public OperationTypeDuration Duration { get; private set; }
-        public List<OperationTypeRequiredStaff> RequiredStaff { get; private set; }
+        public virtual OperationTypeName Name { get; private set; }
+        public virtual OperationTypeDuration Duration { get; private set; }
+        public virtual List<OperationTypeRequiredStaff> RequiredStaff { get; private set; }
 
-        public bool Active { get; private set; }
+        public virtual bool Active { get; private set; }
 
-        private OperationType()
+        public OperationType()
         {
             this.Active = true;
         }
@@ -31,6 +31,10 @@ namespace Backoffice.Domain.OperationTypes
                 throw new BusinessRuleValidationException("Error: The operation type duration can't be null.");
             }
             this.Duration = duration;
+            if (requiredStaff == null)
+            {
+                throw new BusinessRuleValidationException("Error: The operation type can't have null required staff.");
+            }
             if (!requiredStaff.Any())
             {
                 throw new BusinessRuleValidationException("Error: The operation type must have at least one required staff.");
@@ -41,6 +45,10 @@ namespace Backoffice.Domain.OperationTypes
 
         public void MarkAsInative()
         {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: The operation type is already inactive.");
+            }
             this.Active = false;
         }
 
@@ -49,7 +57,7 @@ namespace Backoffice.Domain.OperationTypes
             var jsonRepresentation = new
             {
                 Id = this.Id.Value,
-                Name = new { this.Name.Name },  // Pass the name object directly
+                Name = new { this.Name.Name },
                 Duration = new
                 {
                     AnesthesiaPatientPreparationInMinutes = this.Duration.AnesthesiaPatientPreparationInMinutes,
@@ -58,7 +66,7 @@ namespace Backoffice.Domain.OperationTypes
                 },
                 RequiredStaff = this.RequiredStaff.Select(rs => new
                 {
-                    Specialization = new { rs.Specialization.Name.Name },  // Ensure correct nesting of specialization name
+                    Specialization = new { rs.Specialization.Name.Name },
                     Total = rs.Total
                 }).ToList(),
                 Active = this.Active

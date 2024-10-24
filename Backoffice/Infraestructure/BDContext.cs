@@ -16,6 +16,7 @@ using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 
+
 namespace Backoffice.Infraestructure
 {
     public class BDContext : DbContext
@@ -47,5 +48,4 @@ namespace Backoffice.Infraestructure
             modelBuilder.Ignore<RequiredStaffDto>();
         }
     }
-
 }

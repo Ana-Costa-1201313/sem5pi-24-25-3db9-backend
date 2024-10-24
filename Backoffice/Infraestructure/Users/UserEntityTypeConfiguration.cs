@@ -15,9 +15,13 @@ namespace Backoffice.Infraestructure.Users
                 .HasConversion(id => id.Value, value => new UserId(value));
 
             builder.OwnsOne(u => u.Password);
-            builder.OwnsOne(v => v.Email);
-
             builder.Property(r => r.Role).HasConversion(new RoleConverter());
+
+            //builder.OwnsOne(v => v.Email);
+
+            builder.Property(e => e.Email).HasConversion(new EmailConverter());
+            builder.HasIndex(e => e.Email).IsUnique();
+
         }
     }
 }

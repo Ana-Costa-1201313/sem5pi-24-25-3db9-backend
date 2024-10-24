@@ -15,9 +15,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -26,10 +24,7 @@ namespace Backoffice.Tests
                 RecruitmentYear = 2024
             };
 
-
-            string sFirstName = "ana";
-            string sLastName = "costa";
-            string sFullName = "ana costa";
+            string sName = "ana costa";
             int sLicenseNumber = 1;
             PhoneNumber sPhone = new PhoneNumber("999999999");
             string sSpecialization = "spec";
@@ -39,13 +34,11 @@ namespace Backoffice.Tests
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, MecNumSequence, "healthcareapp.com");
 
 
             Assert.NotNull(staff.Id);
-            Assert.Equal(sFirstName, staff.FirstName);
-            Assert.Equal(sLastName, staff.LastName);
-            Assert.Equal(sFullName, staff.FullName);
+            Assert.Equal(sName, staff.Name);
             Assert.Equal(sLicenseNumber, staff.LicenseNumber);
             Assert.Equal(sPhone.PhoneNum, staff.Phone.PhoneNum);
             Assert.Equal(sSpecialization, staff.Specialization);
@@ -64,9 +57,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "99999",
                 Specialization = "spec",
@@ -78,7 +69,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -91,9 +82,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "199999999",
                 Specialization = "spec",
@@ -105,7 +94,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -117,9 +106,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -131,7 +118,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: Invalid Availability slot format!", exception.Message);
         }
 
@@ -144,9 +131,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -158,7 +143,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = -1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The mechanographic number must be bigger than zero!", exception.Message);
         }
 
@@ -171,9 +156,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -185,9 +168,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The year must be bigger than zero!", exception.Message);
         }
-       
+
     }
 }

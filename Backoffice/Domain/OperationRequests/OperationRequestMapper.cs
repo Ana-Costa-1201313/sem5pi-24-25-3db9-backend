@@ -19,7 +19,7 @@ namespace Backoffice.Domain.OperationRequests
                 Priority = operationRequest.Priority.ToString(),
                 PatientName = operationRequest.Patient.FullName.ToString(),
                 PatientId = operationRequest.PatientId.ToString(),
-                DoctorName = operationRequest.Doctor.FullName.ToString(),
+                DoctorName = operationRequest.Doctor.Name.ToString(),
                 DoctorId = operationRequest.DoctorId.ToString(),
                 Status = operationRequest.Status.ToString(),
                 Description = operationRequest.Description

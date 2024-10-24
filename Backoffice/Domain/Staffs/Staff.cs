@@ -4,11 +4,7 @@ namespace Backoffice.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
-        public string FirstName { get; private set; }
-
-        public string LastName { get; private set; }
-
-        public string FullName { get; private set; }
+        public string Name { get; private set; }
 
         public int LicenseNumber { get; private set; }
 
@@ -33,12 +29,10 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq)
+        public Staff(CreateStaffDto dto, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
-            this.FirstName = dto.FirstName;
-            this.LastName = dto.LastName;
-            this.FullName = dto.FullName;
+            this.Name = dto.Name;
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;
@@ -63,25 +57,7 @@ namespace Backoffice.Domain.Staffs
             this.Role = dto.Role;
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
-            this.Email = new Email(MechanographicNum + "@healthcareapp.com");
-            this.Active = true;
-        }
-
-        public void Deactivate()
-        {
-            if (!this.Active)
-            {
-                throw new BusinessRuleValidationException("Error: This Staff profile is already deactivated!");
-            }
-
-            this.FirstName = "Deactivated Staff";
-            this.LastName = "Deactivated Staff";
-            this.FullName = "Deactivated Staff";
-            this.LicenseNumber = this.Id.GetHashCode();
-            this.Phone = null;
-            this.Specialization = "Deactivated Staff";
-            this.AvailabilitySlots = null;
-            this.Active = false;
+            this.Email = new Email(MechanographicNum + "@" + dns);
         }
     }
 }

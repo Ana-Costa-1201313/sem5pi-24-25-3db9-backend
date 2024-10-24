@@ -270,6 +270,67 @@ namespace Backoffice.Tests
             Assert.Single(operationTypesDatabase);
         }
 
+        [Fact]
+        public async Task InactivateAsync_OperationTypeExistsAndIsActive_ShouldInactivate()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+            var specializationsDatabase = new List<Specialization>();
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var requiredStaff = new List<(string SpecializationName, int Total)>
+            {
+                ("Surgeon", 2)
+            };
+
+            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            operationTypesDatabase.Add(operationType);
+
+            Assert.True(operationType.Active);
+
+            var result = await service.InactivateAsync(operationType.Id.AsGuid());
+
+            Assert.NotNull(result);
+            Assert.False(operationType.Active);
+            Assert.Equal("Surgery", result.Name);
+        }
+
+        [Fact]
+        public async Task InactivateAsync_OperationTypeDoesNotExist_ShouldReturnNull()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+            var specializationsDatabase = new List<Specialization>();
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var nonExistingId = Guid.NewGuid();
+
+
+            var result = await service.InactivateAsync(nonExistingId);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task InactivateAsync_OperationTypeExistsAndIsInactive_ShouldThrow()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+            var specializationsDatabase = new List<Specialization>();
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var requiredStaff = new List<(string SpecializationName, int Total)>
+            {
+                ("Surgeon", 2)
+            };
+
+            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            operationTypesDatabase.Add(operationType);
+
+            Assert.True(operationType.Active);
+            operationType.MarkAsInative();
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.InactivateAsync(operationType.Id.AsGuid()));
+
+            Assert.Equal("Error: The operation type is already inactive.", exception.Message);
+        }
 
     }
 }
