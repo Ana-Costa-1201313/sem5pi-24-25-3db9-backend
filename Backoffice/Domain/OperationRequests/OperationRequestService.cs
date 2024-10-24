@@ -14,10 +14,15 @@ namespace Backoffice.Domain.OperationRequests
         private readonly IPatientRepository _patientrepo;
         private readonly IStaffRepository _doctorrepo;
 
-        public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo)
+        public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo, 
+                                        IOperationTypeRepository optyperepo, IPatientRepository patientrepo, 
+                                        IStaffRepository doctorrepo)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
+            _optyperepo = optyperepo;
+            _patientrepo = patientrepo;
+            _doctorrepo = doctorrepo;
         }
 
         public async Task<List<OperationRequestDto>> GetAllAsync()

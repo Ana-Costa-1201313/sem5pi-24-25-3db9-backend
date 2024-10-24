@@ -7,6 +7,6 @@ namespace Backoffice.Domain.OperationRequests
         public string Priority { get; private set; }
         public string PatientName { get; private set; }
         public string DoctorName { get; private set; }
-
+        public string Description { get; private set; }
     }
 }

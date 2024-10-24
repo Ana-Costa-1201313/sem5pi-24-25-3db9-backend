@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Newtonsoft.Json;
 using Backoffice.Domain.OperationRequests.ValueObjects;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Patients;
@@ -23,20 +24,76 @@ namespace Backoffice.Domain.OperationRequests
 
         private OperationRequest(){}
 
-        public OperationRequest(OperationType operationType, DateTime deadlineDate, Priority priority, 
-                                Patient patient, Staff doctor, Status status, string description)
+        public OperationRequest(OperationType operationType, DateTime deadlineDate, Priority? priority, 
+                                Patient patient, Staff doctor, string description)
         {
             this.Id = new OperationRequestId(Guid.NewGuid());
+
+            if (operationType == null)
+            {
+                this.OpTypeId = null;
+                throw new BusinessRuleValidationException("Error: The operation type can't be null.");
+            }
             this.OpType = operationType;
             this.OpTypeId = operationType.Id;
+
+            if (deadlineDate == DateTime.MinValue)
+            {
+                throw new BusinessRuleValidationException("Error: The deadline date can't be the default value.");
+            }
             this.DeadlineDate = deadlineDate;
-            this.Priority = priority;
+
+            if (!priority.HasValue)
+            {
+                throw new BusinessRuleValidationException("Error: The priority can't be null.");
+            }
+            this.Priority = priority.Value;
+
+            if (patient == null)
+            {
+                this.PatientId = null;
+                throw new BusinessRuleValidationException("Error: The patient can't be null.");
+            }
             this.Patient = patient;
             this.PatientId = patient.Id;
+
+            if (doctor == null)
+            {
+                this.DoctorId = null;
+                throw new BusinessRuleValidationException("Error: The doctor can't be null.");
+            }
             this.Doctor = doctor;
             this.DoctorId = doctor.Id;
-            this.Status = status;
+
+            this.Status = Status.Requested;
+
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                throw new BusinessRuleValidationException("Error: The description can't be null or empty.");
+            }
             this.Description = description;
+        }
+
+        public void ChangeStatus()
+        {
+            this.Status = Status.Picked;
+        }
+
+        public string ToJSON()
+        {
+            var jsonRepresentation = new
+            {
+                Id = this.Id.Value,
+                OpType = new { this.OpType.Name.Name },  // Pass the name object directly
+                DeadlineDate = this.DeadlineDate,
+                Priority = this.Priority.ToString(),
+                Patient = new { this.Patient.FullName },  // Pass the name object directly
+                Doctor = new { this.Doctor.FullName },  // Pass the name object directly
+                Status = this.Status.ToString(),
+                Description = this.Description
+            };
+
+            return JsonConvert.SerializeObject(jsonRepresentation, Formatting.Indented);
         }
     }
 }
