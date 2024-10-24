@@ -34,7 +34,7 @@ namespace Backoffice.Tests
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, MecNumSequence, "healthcareapp.com");
 
 
             Assert.NotNull(staff.Id);
@@ -69,7 +69,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -94,7 +94,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -118,7 +118,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: Invalid Availability slot format!", exception.Message);
         }
 
@@ -143,7 +143,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = -1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The mechanographic number must be bigger than zero!", exception.Message);
         }
 
@@ -168,7 +168,7 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence,  "healthcareapp.com"));
             Assert.Equal("Error: The year must be bigger than zero!", exception.Message);
         }
 

@@ -3,6 +3,8 @@ using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Users;
+using System.Configuration;
+
 
 namespace Backoffice.Domain.Staffs
 {
@@ -47,7 +49,7 @@ namespace Backoffice.Domain.Staffs
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
-            var staff = _staffMapper.ToStaff(dto, mechanographicNumSeq);
+            var staff = _staffMapper.ToStaff(dto, mechanographicNumSeq, ReadDNS());
 
             try
             {
@@ -78,6 +80,11 @@ namespace Backoffice.Domain.Staffs
             }
 
             return _staffMapper.ToStaffDto(staff);
+        }
+
+        public string ReadDNS()
+        {
+            return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
         }
     }
 }

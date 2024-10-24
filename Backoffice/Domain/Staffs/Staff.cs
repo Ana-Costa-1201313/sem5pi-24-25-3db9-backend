@@ -27,7 +27,7 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq)
+        public Staff(CreateStaffDto dto, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
             this.Name = dto.Name;
@@ -55,7 +55,7 @@ namespace Backoffice.Domain.Staffs
             this.Role = dto.Role;
             this.MecNumSequence = mecNumSeq;
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
-            this.Email = new Email(MechanographicNum + "@healthcareapp.com");
+            this.Email = new Email(MechanographicNum + "@" + dns);
         }
     }
 }

@@ -37,10 +37,5 @@ namespace Backoffice.Domain.Users
 
             this.Active = true;
         }
-
-        public string ReadDNS()
-        {
-            return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
-        }
     }
 }
