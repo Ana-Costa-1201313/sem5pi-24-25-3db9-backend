@@ -21,9 +21,6 @@ namespace Backoffice.Tests
         Mock<ILogRepository> _mockLogRepo;
         Mock<IExternalApiServices> _mockExternal;
         Mock<AuthService> _mockAuthService;
-        StaffService _service;
-        AuthService _authService;
-        StaffController _controller;
         Mock<StaffService> mockService;
         Mock<StaffController> mockController;
 
