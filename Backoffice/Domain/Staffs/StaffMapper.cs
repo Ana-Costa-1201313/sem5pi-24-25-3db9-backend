@@ -18,7 +18,7 @@ namespace Backoffice.Domain.Staffs
                 LicenseNumber = staff.LicenseNumber,
                 Email = staff.Email._Email,
                 Phone = staff.Phone.PhoneNum,
-                Specialization = staff.Specialization,
+                Specialization = staff.Specialization.Name.Name,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString()

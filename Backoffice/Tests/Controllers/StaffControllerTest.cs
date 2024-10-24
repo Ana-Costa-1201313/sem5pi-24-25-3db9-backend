@@ -143,7 +143,7 @@ namespace Backoffice.Tests
 
             Assert.Equal(staff.Name, actualStaff.Name);
             Assert.Equal(staff.LicenseNumber, actualStaff.LicenseNumber);
-            Assert.Equal(staff.Specialization, actualStaff.Specialization);
+            Assert.Equal(staff.Specialization.Name.Name, actualStaff.Specialization);
             Assert.Equal(staff.Role, actualStaff.Role);
         }
 
