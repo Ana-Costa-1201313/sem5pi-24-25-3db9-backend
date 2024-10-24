@@ -128,9 +128,6 @@ This diagram guides the realization of the functionality, for level 3 process vi
 ### 4.5. Tests
 
 The following tests are to be developed:
-- The ID must be unique
-- The email must be unique.
-- The phone number must be unique.
 - The staff profile must be valid.
 - The staff phone number must be valid.
 - The staff availability slots must be valid.
