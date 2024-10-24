@@ -27,10 +27,11 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns) {
+        public Staff ToStaff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
+        {
             return new Staff(dto, specialization, mecNumSeq, dns);
         }
 
-        
+
     }
 }

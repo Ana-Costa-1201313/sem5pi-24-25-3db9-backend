@@ -24,13 +24,18 @@ namespace Backoffice.Domain.Staffs
             _specRepo = specRepo;
         }
 
+        protected StaffService()
+        {
+
+        }
+
         public async Task<List<StaffDto>> GetAllAsync()
         {
-            var list = await this._repo.GetAllAsync();
+            List<Staff> list = await this._repo.GetAllWithDetailsAsync();
 
             List<StaffDto> listDto = new List<StaffDto>();
 
-            foreach (var staff in list)
+            foreach (Staff staff in list)
             {
                 listDto.Add(_staffMapper.ToStaffDto(staff));
             }
@@ -40,7 +45,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> GetByIdAsync(Guid id)
         {
-            var staff = await this._repo.GetByIdAsync(new StaffId(id));
+            Staff staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
 
             if (staff == null)
                 return null;
@@ -48,7 +53,7 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<StaffDto> AddAsync(CreateStaffDto dto)
+        public virtual async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
@@ -97,7 +102,7 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public string ReadDNS()
+        public virtual string ReadDNS()
         {
             return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
         }
