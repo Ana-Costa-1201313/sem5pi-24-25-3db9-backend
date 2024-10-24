@@ -52,9 +52,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto1 = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -65,9 +63,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto2 = new CreateStaffDto
             {
-                FirstName = "maria",
-                LastName = "silva",
-                FullName = "maria silva",
+                Name = "maria silva",
                 LicenseNumber = 2,
                 Phone = "999999989",
                 Specialization = "spec",
@@ -124,9 +120,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto1 = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -147,9 +141,7 @@ namespace Backoffice.Tests
 
             var actualStaff = Assert.IsType<StaffDto>(objectResult.Value);
 
-            Assert.Equal(staff.FirstName, actualStaff.FirstName);
-            Assert.Equal(staff.LastName, actualStaff.LastName);
-            Assert.Equal(staff.FullName, actualStaff.FullName);
+            Assert.Equal(staff.Name, actualStaff.Name);
             Assert.Equal(staff.LicenseNumber, actualStaff.LicenseNumber);
             Assert.Equal(staff.Specialization, actualStaff.Specialization);
             Assert.Equal(staff.Role, actualStaff.Role);
@@ -182,9 +174,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto1 = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -196,9 +186,7 @@ namespace Backoffice.Tests
             StaffDto createdStaff = new StaffDto
             {
                 Id = Guid.NewGuid(),
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -212,9 +200,7 @@ namespace Backoffice.Tests
             var returnValue = Assert.IsType<StaffDto>(createdAtActionResult.Value);
             Assert.Equal(201, createdAtActionResult.StatusCode);
 
-            Assert.Equal(createdStaff.FirstName, returnValue.FirstName);
-            Assert.Equal(createdStaff.LastName, returnValue.LastName);
-            Assert.Equal(createdStaff.FullName, returnValue.FullName);
+            Assert.Equal(createdStaff.Name, returnValue.Name);
             Assert.Equal(createdStaff.Phone, returnValue.Phone);
             Assert.Equal(createdStaff.LicenseNumber, returnValue.LicenseNumber);
             Assert.Equal(createdStaff.Specialization, returnValue.Specialization);
@@ -233,9 +219,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto1 = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999",
                 Specialization = "spec",
@@ -267,9 +251,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto1 = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",

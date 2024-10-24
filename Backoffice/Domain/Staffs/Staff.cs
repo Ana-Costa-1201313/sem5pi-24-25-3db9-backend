@@ -4,11 +4,7 @@ namespace Backoffice.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
-        public string FirstName { get; private set; }
-
-        public string LastName { get; private set; }
-
-        public string FullName { get; private set; }
+        public string Name { get; private set; }
 
         public int LicenseNumber { get; private set; }
 
@@ -34,9 +30,7 @@ namespace Backoffice.Domain.Staffs
         public Staff(CreateStaffDto dto, int mecNumSeq)
         {
             this.Id = new StaffId(Guid.NewGuid());
-            this.FirstName = dto.FirstName;
-            this.LastName = dto.LastName;
-            this.FullName = dto.FullName;
+            this.Name = dto.Name;
             this.LicenseNumber = dto.LicenseNumber;
             this.Phone = new PhoneNumber(dto.Phone);
             this.Specialization = dto.Specialization;

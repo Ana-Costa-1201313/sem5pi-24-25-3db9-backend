@@ -11,7 +11,7 @@ This task appears in the start of the project's development, to be able to creat
 
 **Acceptance Criteria:**
 
-- Admins can input staff details such as first name, last name, contact information, and specialization.
+- Admins can input staff details such as the name, contact information, and specialization.
 - A unique staff ID (License Number) is generated upon profile creation.
 - The system ensures that the staff's email and phone number are unique.
 - The profile is stored securely, and access is based on role-based permissions
