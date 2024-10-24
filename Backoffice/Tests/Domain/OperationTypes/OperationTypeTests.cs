@@ -102,7 +102,45 @@ namespace Backoffice.Tests
             Assert.Single(operationType.RequiredStaff);
         }
 
+
         //After teoric class
+
+        [Fact]
+        public void WhenTryingToMarkAsInativeWhileActive_ThenChangeStatus()
+        {
+            Mock<OperationTypeName> nameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> durationDouble = new Mock<OperationTypeDuration>();
+            var opReqStaffMock = new Mock<OperationTypeRequiredStaff>();
+            var requiredStaffList = new List<OperationTypeRequiredStaff>
+            {
+                opReqStaffMock.Object
+            };
+
+            OperationType opType = new OperationType(nameDouble.Object, durationDouble.Object, requiredStaffList);
+
+            Assert.True(opType.Active);
+            opType.MarkAsInative();
+            Assert.False(opType.Active);
+        }
+
+        [Fact]
+        public void WhenTryingToMarkAsInativeWhileAlreadyInactive_ThenException()
+        {
+            Mock<OperationTypeName> nameDouble = new Mock<OperationTypeName>();
+            Mock<OperationTypeDuration> durationDouble = new Mock<OperationTypeDuration>();
+            var opReqStaffMock = new Mock<OperationTypeRequiredStaff>();
+            var requiredStaffList = new List<OperationTypeRequiredStaff>
+            {
+                opReqStaffMock.Object
+            };
+
+            OperationType opType = new OperationType(nameDouble.Object, durationDouble.Object, requiredStaffList);
+            opType.MarkAsInative();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => opType.MarkAsInative());
+            Assert.Equal("Error: The operation type is already inactive.", ex.Message);
+
+        }
 
         [Fact]
         public void WhenPassingNameDurationAndRequiredStaff_ThenOperationTypeIsInstantiated()
@@ -190,11 +228,47 @@ namespace Backoffice.Tests
             TimeSpan actualPhase1 = opMock.Object.AnesthesiaPatientPreparationInMinutes;
             TimeSpan actualPhase2 = opMock.Object.SurgeryInMinutes;
             TimeSpan actualPhase3 = opMock.Object.CleaningInMinutes;
-            
+
 
             Assert.Equal(phase1, actualPhase1);
             Assert.Equal(phase2, actualPhase2);
             Assert.Equal(phase3, actualPhase3);
+        }
+
+        [Fact]
+        public void WhenRequestingActiveStatus_ThenReturnTrue()
+        {
+            var opMock = new Mock<OperationType>();
+
+            opMock.Setup(s => s.Active).Returns(true);
+
+            bool status = opMock.Object.Active;
+
+            Assert.True(status);
+        }
+
+        [Fact]
+        public void WhenRequestingActiveStatus_AfterMarkAsInativeWhileActive_ThenReturnFalse()
+        {
+            var opMock = new Mock<OperationType>();
+            opMock.Setup(s => s.Active).Returns(true);
+            opMock.Object.MarkAsInative();
+            opMock.Setup(s => s.Active).Returns(false);
+            bool status = opMock.Object.Active;
+
+            Assert.False(status);
+        }
+
+        [Fact]
+        public void WhenRequestingActiveStatus_AfterMarkAsInativeWhileInactive_ThenReturnThrow()
+        {
+            var opMock = new Mock<OperationType>();
+            opMock.Setup(s => s.Active).Returns(false);
+
+            bool status = opMock.Object.Active;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => opMock.Object.MarkAsInative());
+            Assert.Equal("Error: The operation type is already inactive.", ex.Message);
         }
 
 

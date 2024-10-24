@@ -94,5 +94,37 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
+        // Inactivate: api/OperationTypes/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
+        {
+            
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var cat = await _service.InactivateAsync(id);
+
+                if (cat == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(cat);
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
     }
 }

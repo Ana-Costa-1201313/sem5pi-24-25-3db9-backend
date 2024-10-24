@@ -18,7 +18,8 @@ public static class OperationTypeMapper
             {
                 Specialization = staff.Specialization.Name.Name,
                 Total = staff.Total
-            }).ToList()
+            }).ToList(),
+            Active = operationType.Active
         };
     }
 

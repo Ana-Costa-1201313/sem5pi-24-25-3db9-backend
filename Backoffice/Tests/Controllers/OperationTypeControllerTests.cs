@@ -167,7 +167,7 @@ namespace Backoffice.Tests.Controllers
 
 
             var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
-            var objectResult  = Assert.IsType<OkObjectResult>(okResult.Result);
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
             var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
 
             Assert.Equal("Surgery", returnValue.Name);
@@ -339,6 +339,70 @@ namespace Backoffice.Tests.Controllers
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
             Assert.Equal(error, errorMessage);
+        }
+
+        [Fact]
+        public async Task SoftDelete_ReturnsBadRequest_WithoutAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+
+            var result = await _controller.SoftDelete(Guid.NewGuid());
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task SoftDelete_ReturnsNotFound_WithAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                        .ReturnsAsync(true);
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                        .ReturnsAsync((OperationType)null);
+
+            var result = await _controller.SoftDelete(Guid.NewGuid());
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task SoftDelete_ReturnsOk_WithAuthorization()
+        {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+
+            var expectedDto = new OperationTypeDto
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Operation",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 60,
+                CleaningInMinutes = 15,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
+                },
+                Active = true 
+            };
+
+            var opType = OperationTypeMapper.ToDomain(expectedDto);
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                     .ReturnsAsync(opType);
+
+            var result = await _controller.SoftDelete(expectedDto.Id);
+
+            var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
+
+            Assert.False(returnValue.Active);
         }
     }
 }
