@@ -99,7 +99,7 @@ namespace Backoffice.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
-            
+
             try
             {
                 await _authService.IsAuthorized(Request, new List<string> { "Admin" });
@@ -132,6 +132,15 @@ namespace Backoffice.Controllers
         {
             try
             {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
                 var updatedOperationType = await _service.Patch(id, operationTypeDto);
 
                 if (updatedOperationType == null)
@@ -150,6 +159,15 @@ namespace Backoffice.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<OperationTypeDto>> UpdateOperationType(Guid id, [FromBody] EditOperationTypeDto updateDto)
         {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
             try
             {
                 var updatedOperationType = await _service.Put(id, updateDto);
