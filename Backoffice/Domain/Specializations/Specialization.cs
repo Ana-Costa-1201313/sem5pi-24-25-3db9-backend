@@ -6,11 +6,11 @@ namespace Backoffice.Domain.Specializations
     public class Specialization : Entity<SpecializationId>, IAggregateRoot
     {
 
-        public SpecializationName Name {get; private set;}
+        public virtual SpecializationName Name {get; private set;}
 
         public bool Active { get; private set; }
 
-        private Specialization()
+        public Specialization()
         {
             this.Active = true;
         }
@@ -18,6 +18,10 @@ namespace Backoffice.Domain.Specializations
         public Specialization(SpecializationName name)
         {
             this.Id = new SpecializationId(Guid.NewGuid());
+            if (name == null)
+            {
+                throw new BusinessRuleValidationException("Error: The specialization name can't be null.");
+            }
             this.Name = name;
             this.Active = true;
         }
@@ -25,7 +29,7 @@ namespace Backoffice.Domain.Specializations
         public void ChangeName(SpecializationName name)
         {
             if (!this.Active)
-                throw new BusinessRuleValidationException("It is not possible to change the name to an inactive specialization.");
+                throw new BusinessRuleValidationException("Error: It is not possible to change the name of an inactive specialization.");
             this.Name = name;
         }
 

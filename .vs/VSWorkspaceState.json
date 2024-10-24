@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Auth",
+    "\\Auth\\Domain",
+    "\\Auth\\Domain\\Services",
+    "\\Auth\\Infrastructure",
+    "\\Auth\\Infrastructure\\Users",
+    "\\Auth\\Properties",
+    "\\HealthcareApp",
+    "\\HealthcareApp\\Controllers",
+    "\\HealthcareApp\\Properties"
+  ],
+  "SelectedNode": "\\Auth\\Infrastructure\\Users\\UserRepository.cs",
+  "PreviewInSolutionExplorer": false
+}

@@ -7,14 +7,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
 using Backoffice.Infraestructure.Categories;
+using Backoffice.Infraestructure.Users;
+using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
+using Backoffice.Domain.Users;
+using Backoffice.Domain.Staffs;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Specializations;
 using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
+using System.Text.Json.Serialization;
 
 namespace Backoffice
 {
@@ -35,10 +40,10 @@ namespace Backoffice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             //services.AddDbContext<BDContext>(opt =>
             // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
             //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
 
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
@@ -49,7 +54,8 @@ namespace Backoffice
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,6 +98,23 @@ namespace Backoffice
             services.AddTransient<SpecializationService>();
 
             services.AddTransient<ILogRepository, LogRepository>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<UserService>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
+
+            services.AddTransient<StaffMapper>();
+
+            services.AddTransient<IExternalApiServices, ExternalApiServices>();
+
+            services.AddTransient<AuthService>();
+            services.AddTransient<LogInServices>();
+            services.AddTransient<ExternalApiServices>();
+            services.AddHttpClient();
+            services.AddHttpLogging(o => { });
         }
     }
 }

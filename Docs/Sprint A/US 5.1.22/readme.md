@@ -83,7 +83,7 @@ This section presents the design adopted to solve the requirement.
 
 ![SSD_Lvl1.png](SD3.svg) 
 
-### 4.5. Applied Design Patterns
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -96,23 +96,22 @@ This section presents the design adopted to solve the requirement.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
-#### 4.6.1. Unit and Integration Tests
+#### 4.5.1. Unit and Integration Tests
 
-- Tests for Operation Type entity with valid inputs
-- Tests for Operation Type entity with invalid inputs
+- Unit and Integration tests for Operation Type entity with valid inputs
+
+
 
 - Tests for value objects with valid inputs
 - Tests for value objects with invalid inputs
 
-- Isolation tests for the controller
-- Isolation tests for the service
-- Isolation tests for the repository
-- InMemory tests for the repository
+- Isolation and Integration tests for the controller
+- Isolation and Integration tests for the service
 
 
-#### 4.6.2. Postman Tests
+#### 4.5.2. Postman Tests
 
 - Status code test
 - Response time test
