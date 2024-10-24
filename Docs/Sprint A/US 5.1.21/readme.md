@@ -29,21 +29,48 @@ Some relevant answers excerpts are here specified:
 
 
 ```
-Q: 
+Q: In a previous answer you stated that "The type of operation is associated with a given specialty".
+
+In another answer you said "a team of 1 doctor with specialization X and one nurse with specialization Y" (regarding the required staff for a said type of operation).
+
+From the specifications document and the additional document with the 10 most common types of operations, we have two specializations: orthopedics and cardiology.
+
+My question is: If the operation type already has a specialization associated, how can we have staff with different specializations?
+
+ 
+
+What do you understand by specialization? Is it cardiology/orthopedics? Or anaesthesist/circulating/...
+
+A: the operation is mainly associated with one specialization, but for a specific operation it might require a team with multiple specializations.
+
+cardiology, orthopedics, anaesthesist are specializations that either doctors or nurses can have.
+
+the circulating technician is a different type of medical professional. for now the system doesn't need to support technicians
+```
+
+```
+Q: Regarding the operation type editions, when does an edition affects an operation request or appoiment?
+
+Let's say the request status is "requested", is the edition applicable to that request? What if the request status is "planned"?
+
+The same for appoitment. I'd assume that operation type editions do not affect completed or cancelled appoitments, but what about the ones with the "scheduled" status?
+
+Can you please clarify this aspect of the system please?
+
+A: surgeries will "point" to the operation type version that is/was in force at the time of scheduling
+```
+
+```
+Q: Can you clarify? 
+"Historical data is maintained, but new operation requests will use the updated operation type information. "
 
 A: 
-```
-
-```
-Q: 
-
-A: 
-```
-
-```
-Q: 
-
-A: 
+it means that if an operation type is changed we need to keep track of its changes. For instance,
+Operation Type "A" is defined as taking 30 minutes preparation, 1h surgery and 30 minutes cleaning with a team of 1 doctor with specialization X and one nurse with specialization Y
+some operations are requested, scheduled and performed based on this definition
+after sometime, the hospital changes its procedures and defines the operation type "A" as needing 30 min prep, 30 min. surgery and 30 min. cleaning, with a team of 3 doctors and one nurse.
+new operations will be requested, scheduled and performed using this new definition,
+however, we need to keep historical data, so that if the admin wants to know the details of an operation in the past, the system must show the operation type as it was defined at the time of the operation request
 ```
 
 ```
@@ -73,7 +100,13 @@ This section presents the design adopted to solve the requirement.
 
 ### 4.3. Sequence Diagram (Level 3)
 
-![SSD_Lvl1.png](SD3.svg) 
+### 4.3.1 Patch (Level 3)
+
+![SSD_Lvl1.png](SD3Patch.svg) 
+
+### 4.3.2 Put (Level 3)
+
+![SSD_Lvl1.png](SD3Put.svg) 
 
 ### 4.4. Applied Design Patterns
 
@@ -92,10 +125,11 @@ This section presents the design adopted to solve the requirement.
 
 #### 4.5.1. Unit and Integration Tests
 
-- Isolation tests for the controller
-- Isolation tests for the service
-- Isolation tests for the repository
-- InMemory tests for the repository
+- Unit and Integration tests for Operation Type data update 
+
+- Isolation and Integration tests for the controller
+
+- Isolation and Integration tests for the service
 
 
 #### 4.5.2. Postman Tests
@@ -104,8 +138,8 @@ This section presents the design adopted to solve the requirement.
 - Response time test
 - Response Body Contains
 - Response Body data validation
-- Status Code for Invalid Input
-- Check if Resource Was deactivated
+- Status Code for Invalid Input and errors
+- Check if Resource Was updated
 
 
 
@@ -120,7 +154,7 @@ It was implemented in the branch feature/21-backend-admin-edit-existing-operatio
 
 ## 6. Integration/Demonstration
 
-
+To update a new Operation Type, run the Backoffice app and send a PUT or PATCH HTTP request with the new operation type data.
 
 ## 7. Observations
 
