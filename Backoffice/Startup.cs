@@ -8,18 +8,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
 using Backoffice.Infraestructure.Categories;
 using Backoffice.Infraestructure.Users;
+using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Categories;
+using Backoffice.Domain.Users;
+using Backoffice.Domain.Staffs;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Specializations;
 using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
-using Backoffice.Domain.Users;
-
-
 
 namespace Backoffice
 {
@@ -102,6 +102,12 @@ namespace Backoffice
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
+
+            services.AddTransient<StaffMapper>();
+
             services.AddTransient<IExternalApiServices, ExternalApiServices>();
 
             services.AddTransient<AuthService>();

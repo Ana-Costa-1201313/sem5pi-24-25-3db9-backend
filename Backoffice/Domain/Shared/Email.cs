@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backoffice.Domain.Shared
 {
     [Owned]
-    public class Email
+    public class Email : IValueObject
+
     {
         public string _Email { get; private set;}
 

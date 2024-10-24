@@ -30,9 +30,9 @@ namespace Backoffice.Domain.Shared
         {
             User user = await _userRepository.getUserByEmail(email);
             //if (user == null) return false;
-            if (user == null) throw new NullReferenceException("user é null em CheckUserCredentials1");
+            if (user == null) throw new NullReferenceException("user ï¿½ null em CheckUserCredentials1");
             if (password.Equals(user.Password.Passwd)) return true;
-            //if (password.Equals(user.Password.Passwd)) throw new Exception("password é null");
+            //if (password.Equals(user.Password.Passwd)) throw new Exception("password ï¿½ null");
             return false;
         }
 
@@ -72,7 +72,7 @@ namespace Backoffice.Domain.Shared
 
                 return resultLoginDTO;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

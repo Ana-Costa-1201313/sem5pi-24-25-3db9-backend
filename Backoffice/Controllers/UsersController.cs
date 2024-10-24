@@ -5,7 +5,6 @@ using System.Configuration;
 using System.ComponentModel;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using System.Net.Mail;
-using Backoffice.Domain.Shared;
 
 namespace Backoffice.Controllers
 {
