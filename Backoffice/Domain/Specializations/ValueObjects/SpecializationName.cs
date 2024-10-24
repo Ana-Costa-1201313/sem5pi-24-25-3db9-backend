@@ -8,9 +8,9 @@ namespace Backoffice.Domain.Specializations
     public class SpecializationName : IValueObject
     {
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
-        private SpecializationName()
+        public SpecializationName()
         {
         }
 
@@ -18,7 +18,7 @@ namespace Backoffice.Domain.Specializations
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new BusinessRuleValidationException("Error: The operation name can't be null, empty or consist in only white spaces.");
+                throw new BusinessRuleValidationException("Error: The specialization name can't be null, empty or consist in only white spaces.");
             }
             this.Name = name;
 
