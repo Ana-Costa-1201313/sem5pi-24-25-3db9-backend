@@ -128,7 +128,7 @@ namespace Backoffice.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchOperationType(Guid id, [FromBody] EditOperationTypeDto operationTypeDto)
+        public async Task<ActionResult<OperationTypeDto>> PatchOperationType(Guid id, [FromBody] EditOperationTypeDto operationTypeDto)
         {
             try
             {
@@ -167,7 +167,7 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
             try
             {
                 var updatedOperationType = await _service.Put(id, updateDto);

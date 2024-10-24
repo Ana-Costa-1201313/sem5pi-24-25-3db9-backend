@@ -26,6 +26,9 @@ namespace Backoffice.Tests
             operationTypeRepository.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
                 .ReturnsAsync((OperationTypeId id) => operationTypesDatabase.SingleOrDefault(op => op.Id.Equals(id)));
 
+            operationTypeRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<OperationTypeId>()))
+                .ReturnsAsync((OperationTypeId id) => operationTypesDatabase.SingleOrDefault(op => op.Id.Equals(id)));
+
             // Mock AddAsync
             operationTypeRepository.Setup(repo => repo.AddAsync(It.IsAny<OperationType>()))
                 .Callback<OperationType>(op => operationTypesDatabase.Add(op));
@@ -331,6 +334,286 @@ namespace Backoffice.Tests
 
             Assert.Equal("Error: The operation type is already inactive.", exception.Message);
         }
+
+        [Fact]
+        public async Task Patch_WithValidData()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>{
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")),5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Anesthesiologist")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 },
+                    new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+                }
+            };
+
+            var result = await service.Patch(opType.Id.AsGuid(), editOperationTypeDto);
+
+            Assert.Single(operationTypesDatabase);
+            Assert.Equal("Appendectomy", result.Name);
+            Assert.Equal(30, result.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(90, result.SurgeryInMinutes);
+            Assert.Equal(20, result.CleaningInMinutes);
+            Assert.Equal("Surgeon", result.RequiredStaff[0].Specialization);
+            Assert.Equal(2, result.RequiredStaff[0].Total);
+            Assert.Equal("Anesthesiologist", result.RequiredStaff[1].Specialization);
+            Assert.Equal(1, result.RequiredStaff[1].Total);
+            Assert.Equal("Nurse", result.RequiredStaff[2].Specialization);
+            Assert.Equal(3, result.RequiredStaff[2].Total);
+        }
+
+        [Fact]
+        public async Task Patch_ThrowsException_WhenSpecializationDoesNotExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                {
+            new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+            {
+                new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 },
+                new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+            }
+            };
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.Patch(opType.Id.AsGuid(), editOperationTypeDto));
+
+            Assert.Equal("Error: There is no specialization with the name Anesthesiologist.", exception.Message);
+        }
+
+        [Fact]
+        public async Task Patch_ThrowsException_WhenDuplicateSpecializationsExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                {
+            new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Anesthesiologist")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+        {
+            new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+            new RequiredStaffDto { Specialization = "Surgeon", Total = 3 },
+            new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+        }
+            };
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.Patch(opType.Id.AsGuid(), editOperationTypeDto));
+
+            Assert.Equal("Error: Can't have duplicate specializations -> Surgeon.", exception.Message);
+        }
+
+        [Fact]
+        public async Task Put_WithValidData()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>{
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")),5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Anesthesiologist")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+        {
+            new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+            new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 },
+            new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+        }
+            };
+
+            var result = await service.Put(opType.Id.AsGuid(), editOperationTypeDto);
+
+            Assert.Single(operationTypesDatabase);
+            Assert.Equal("Appendectomy", result.Name);
+            Assert.Equal(30, result.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(90, result.SurgeryInMinutes);
+            Assert.Equal(20, result.CleaningInMinutes);
+            Assert.Equal("Surgeon", result.RequiredStaff[0].Specialization);
+            Assert.Equal(2, result.RequiredStaff[0].Total);
+            Assert.Equal("Anesthesiologist", result.RequiredStaff[1].Specialization);
+            Assert.Equal(1, result.RequiredStaff[1].Total);
+            Assert.Equal("Nurse", result.RequiredStaff[2].Specialization);
+            Assert.Equal(3, result.RequiredStaff[2].Total);
+        }
+
+        [Fact]
+        public async Task Put_ThrowsException_WhenSpecializationDoesNotExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                {
+            new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+            {
+                new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 },
+                new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+            }
+            };
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.Put(opType.Id.AsGuid(), editOperationTypeDto));
+
+            Assert.Equal("Error: There is no specialization with the name Anesthesiologist.", exception.Message);
+        }
+
+        [Fact]
+        public async Task Put_ThrowsException_WhenDuplicateSpecializationsExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+
+            var opType = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                {
+            new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                }
+            );
+            operationTypesDatabase.Add(opType);
+
+            var specializationsDatabase = new List<Specialization>
+            {
+                new Specialization(new SpecializationName("Surgeon")),
+                new Specialization(new SpecializationName("Anesthesiologist")),
+                new Specialization(new SpecializationName("Nurse"))
+            };
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+        {
+            new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+            new RequiredStaffDto { Specialization = "Surgeon", Total = 3 },
+            new RequiredStaffDto { Specialization = "Nurse", Total = 3 }
+        }
+            };
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
+                await service.Put(opType.Id.AsGuid(), editOperationTypeDto));
+
+            Assert.Equal("Error: Can't have duplicate specializations -> Surgeon.", exception.Message);
+        }
+
+
 
     }
 }

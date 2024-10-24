@@ -271,6 +271,237 @@ namespace Backoffice.Tests
             Assert.Equal("Error: The operation type is already inactive.", ex.Message);
         }
 
+        [Fact]
+        public void ChangeName_ShouldUpdateName_WhenOperationTypeIsActive()
+        {
+            var operationType = new OperationType();
+            var newName = new OperationTypeName("New Operation");
+
+            operationType.ChangeName(newName);
+
+            Assert.Equal(newName, operationType.Name);
+        }
+
+        [Fact]
+        public void ChangeName_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            var newName = new OperationTypeName("New Operation");
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeName(newName));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeAnesthesiaPatientPreparationDuration_ShouldUpdateDuration_WhenValid()
+        {
+            var name = new OperationTypeName("Appendectomy");
+            var duration = new OperationTypeDuration(10, 60, 20);
+            var requiredStaff = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var operationType = new OperationType(name, duration, requiredStaff);
+
+            operationType.ChangeAnesthesiaPatientPreparationDuration(100);
+
+            Assert.Equal(TimeSpan.FromMinutes(100), operationType.Duration.AnesthesiaPatientPreparationInMinutes);
+        }
+
+        [Fact]
+        public void ChangeAnesthesiaPatientPreparationDuration_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            int validDuration = 30;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeAnesthesiaPatientPreparationDuration(validDuration));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeAnesthesiaPatientPreparationDuration_ShouldThrowException_WhenDurationIsInvalid()
+        {
+            var operationType = new OperationType();
+            int invalidDuration = 0;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeAnesthesiaPatientPreparationDuration(invalidDuration));
+            Assert.Equal("Error: The anesthesia/preparation duration must be more than 0 minutes.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeSurgeryDuration_ShouldUpdateDuration_WhenValid()
+        {
+            var name = new OperationTypeName("Appendectomy");
+            var duration = new OperationTypeDuration(10, 60, 20);
+            var requiredStaff = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var operationType = new OperationType(name, duration, requiredStaff);
+
+            operationType.ChangeSurgeryDuration(100);
+
+            Assert.Equal(TimeSpan.FromMinutes(100), operationType.Duration.SurgeryInMinutes);
+        }
+
+        [Fact]
+        public void ChangeSurgeryDuration_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            int validDuration = 60;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeSurgeryDuration(validDuration));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeSurgeryDuration_ShouldThrowException_WhenDurationIsInvalid()
+        {
+            var operationType = new OperationType();
+            int invalidDuration = 0;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeSurgeryDuration(invalidDuration));
+            Assert.Equal("Error: The surgery duration must be more than 0 minutes.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeCleaningDuration_ShouldUpdateDuration_WhenValid()
+        {
+            var name = new OperationTypeName("Appendectomy");
+            var duration = new OperationTypeDuration(10, 60, 20);
+            var requiredStaff = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var operationType = new OperationType(name, duration, requiredStaff);
+
+            operationType.ChangeCleaningDuration(100);
+
+            Assert.Equal(TimeSpan.FromMinutes(100), operationType.Duration.CleaningInMinutes);
+        }
+
+        [Fact]
+        public void ChangeCleaningDuration_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            int validDuration = 15;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeCleaningDuration(validDuration));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeCleaningDuration_ShouldThrowException_WhenDurationIsInvalid()
+        {
+            var operationType = new OperationType();
+            int invalidDuration = 0;
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeCleaningDuration(invalidDuration));
+            Assert.Equal("Error: The cleaning duration must be more than 0 minutes.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeRequiredStaff_ShouldUpdateStaff_WhenValid()
+        {
+            var name = new OperationTypeName("Appendectomy");
+            var duration = new OperationTypeDuration(10, 60, 20);
+            var requiredStaff = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var staffList = new List<OperationTypeRequiredStaff>();
+            staffList.Add(new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Brain")), 4));
+            staffList.Add(new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Leg")), 10));
+
+            var operationType = new OperationType(name, duration, requiredStaff);
+
+            operationType.ChangeRequiredStaff(staffList);
+
+            Assert.Equal(staffList, operationType.RequiredStaff);
+        }
+
+        [Fact]
+        public void ChangeRequiredStaff_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            var staffList = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeRequiredStaff(staffList));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeRequiredStaff_ShouldThrowException_WhenStaffListIsEmpty()
+        {
+            var operationType = new OperationType();
+            var emptyStaffList = new List<OperationTypeRequiredStaff>();
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeRequiredStaff(emptyStaffList));
+            Assert.Equal("Error: Required staff can't be empty.", ex.Message);
+        }
+
+        [Fact]
+        public void ChangeAll_ShouldUpdateAllFields_WhenValid()
+        {
+            var name = new OperationTypeName("Appendectomy");
+            var duration = new OperationTypeDuration(10, 60, 20);
+            var requiredStaff = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+
+            var operationType = new OperationType(name, duration, requiredStaff);
+
+            
+            var staffList = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+            var newName = new OperationTypeName("Updated Operation");
+            int anesthesiaDuration = 30;
+            int surgeryDuration = 60;
+            int cleaningDuration = 15;
+
+            operationType.ChangeAll(newName, anesthesiaDuration, surgeryDuration, cleaningDuration, staffList);
+
+            Assert.Equal(newName, operationType.Name);
+            Assert.Equal(TimeSpan.FromMinutes(anesthesiaDuration), operationType.Duration.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(TimeSpan.FromMinutes(surgeryDuration), operationType.Duration.SurgeryInMinutes);
+            Assert.Equal(TimeSpan.FromMinutes(cleaningDuration), operationType.Duration.CleaningInMinutes);
+            Assert.Equal(staffList, operationType.RequiredStaff);
+        }
+
+        [Fact]
+        public void ChangeAll_ShouldThrowException_WhenOperationTypeIsInactive()
+        {
+            var operationType = new OperationType();
+            operationType.MarkAsInative();
+            var staffList = new List<OperationTypeRequiredStaff>
+            {
+                new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+            };
+            var newName = new OperationTypeName("Updated Operation");
+
+            var ex = Assert.Throws<BusinessRuleValidationException>(() => operationType.ChangeAll(newName, 30, 60, 15, staffList));
+            Assert.Equal("Error: Can't update an inactive operation type.", ex.Message);
+        }
+
+
+
+
+
 
     }
 }

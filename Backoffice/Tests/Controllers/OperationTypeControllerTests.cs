@@ -387,7 +387,7 @@ namespace Backoffice.Tests.Controllers
                 {
                     new RequiredStaffDto { Specialization = "Surgeon", Total = 2 }
                 },
-                Active = true 
+                Active = true
             };
 
             var opType = OperationTypeMapper.ToDomain(expectedDto);
@@ -403,6 +403,210 @@ namespace Backoffice.Tests.Controllers
             var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
 
             Assert.False(returnValue.Active);
+        }
+
+        [Fact]
+        public async Task Patch_ReturnsBadRequest_WithoutAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+
+            var result = await _controller.PatchOperationType(Guid.NewGuid(), editOperationTypeDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task Put_ReturnsBadRequest_WithoutAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+
+            var result = await _controller.UpdateOperationType(Guid.NewGuid(), editOperationTypeDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated", badRequestResult.Value);
+        }
+
+        [Fact]
+        public async Task Patch_ReturnsNotFound_WithAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                        .ReturnsAsync(true);
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                        .ReturnsAsync((OperationType)null);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+            var result = await _controller.PatchOperationType(Guid.NewGuid(), editOperationTypeDto);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Put_ReturnsNotFound_WithAuthorization()
+        {
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                        .ReturnsAsync(true);
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                        .ReturnsAsync((OperationType)null);
+
+            var editOperationTypeDto = new EditOperationTypeDto
+            {
+                Name = "Appendectomy",
+                AnesthesiaPatientPreparationInMinutes = 30,
+                SurgeryInMinutes = 90,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 2 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+            var result = await _controller.UpdateOperationType(Guid.NewGuid(), editOperationTypeDto);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Put_ReturnsOk_WithAuthorization()
+        {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+
+            _mockRepo.Setup(repo => repo.GetByIdAsync(It.IsAny<OperationTypeId>()))
+                     .ReturnsAsync(operationType1);
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Surgeon"))
+                  .ReturnsAsync(new Specialization(new SpecializationName("Surgeon")));
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Anesthesiologist"))
+                                   .ReturnsAsync(new Specialization(new SpecializationName("Anesthesiologist")));
+
+            var updateDto = new EditOperationTypeDto
+            {
+                Name = "Updated Operation",
+                AnesthesiaPatientPreparationInMinutes = 40,
+                SurgeryInMinutes = 70,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 3 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+            var result = await _controller.UpdateOperationType(operationType1.Id.AsGuid(), updateDto);
+
+            var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+            var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
+
+            Assert.Equal("Updated Operation", returnValue.Name);
+            Assert.Equal(40, returnValue.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(70, returnValue.SurgeryInMinutes);
+            Assert.Equal(20, returnValue.CleaningInMinutes);
+            Assert.Equal(3, returnValue.RequiredStaff[0].Total);
+        }
+
+        [Fact]
+        public async Task Patch_ReturnsOk_WithAuthorization()
+        {
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+
+            var requiredStaff1 = new List<(string SpecializationName, int Total)>
+                {
+                    ("Surgeon", 5)
+                };
+            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+
+            _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
+                     .ReturnsAsync(operationType1);
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Surgeon"))
+                  .ReturnsAsync(new Specialization(new SpecializationName("Surgeon")));
+
+            _mockSpecializationRepo.Setup(repo => repo.GetBySpecializationName("Anesthesiologist"))
+                                   .ReturnsAsync(new Specialization(new SpecializationName("Anesthesiologist")));
+
+            var updateDto = new EditOperationTypeDto
+            {
+                Name = "Updated Operation",
+                AnesthesiaPatientPreparationInMinutes = 40,
+                SurgeryInMinutes = 70,
+                CleaningInMinutes = 20,
+                RequiredStaff = new List<RequiredStaffDto>
+                {
+                    new RequiredStaffDto { Specialization = "Surgeon", Total = 3 },
+                    new RequiredStaffDto { Specialization = "Anesthesiologist", Total = 1 }
+                }
+            };
+
+            var result = await _controller.PatchOperationType(operationType1.Id.AsGuid(), updateDto);
+
+            var okResult = Assert.IsType<ActionResult<OperationTypeDto>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+            var returnValue = Assert.IsType<OperationTypeDto>(objectResult.Value);
+
+            Assert.Equal("Updated Operation", returnValue.Name);
+            Assert.Equal(40, returnValue.AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(70, returnValue.SurgeryInMinutes);
+            Assert.Equal(20, returnValue.CleaningInMinutes);
+            Assert.Equal(3, returnValue.RequiredStaff[0].Total);
         }
     }
 }
