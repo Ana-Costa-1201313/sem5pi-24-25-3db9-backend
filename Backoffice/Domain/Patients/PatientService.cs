@@ -94,7 +94,10 @@ namespace Backoffice.Domain.Patients{
 
             patient.UpdateDetails(dto.FirstName,dto.LastName,dto.FullName,dto.Email,dto.Phone,dto.Allergies,dto.EmergencyContact);
 
+            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
+
             await _unitOfWork.CommitAsync();
+
             return _patientMapper.ToPatientDto(patient);
         }
         //Dar um patch de um patient profile
@@ -125,6 +128,8 @@ namespace Backoffice.Domain.Patients{
             if(!string.IsNullOrEmpty(dto.EmergencyContact))
             patient.ChangeEmergencyContact(dto.EmergencyContact);
 
+            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
+            
             await _unitOfWork.CommitAsync();
             return _patientMapper.ToPatientDto(patient);
         }
