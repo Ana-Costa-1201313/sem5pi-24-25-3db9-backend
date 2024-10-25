@@ -21,13 +21,13 @@
       ><path d="M-7 -7 L19 -7 L19 78 L-7 78 L-7 -7 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath6"
-      ><path d="M-80 -15 L160 -15 L160 30 L-80 30 L-80 -15 Z"
+      ><path d="M-52 -15 L104 -15 L104 30 L-52 30 L-52 -15 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath7"
       ><path d="M-70 -15 L140 -15 L140 30 L-70 30 L-70 -15 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath8"
-      ><path d="M-52 -15 L104 -15 L104 30 L-52 30 L-52 -15 Z"
+      ><path d="M-80 -15 L160 -15 L160 30 L-80 30 L-80 -15 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath9"
       ><path d="M0 0 L303 0 L303 104 L0 104 L0 0 Z"
@@ -98,17 +98,17 @@
     ><g stroke-linecap="butt" font-size="11px" transform="translate(486,86)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="black" stroke-opacity="1" stroke-miterlimit="0"
     ><rect fill="none" x="0" width="8" height="67" y="0" clip-path="url(#clipPath5)"
     /></g
-    ><g font-size="11px" transform="translate(450,2)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="11" xml:space="preserve" y="12" clip-path="url(#clipPath6)" stroke="none"
-      >: Backoffice</text
+    ><g font-size="11px" transform="translate(6,37)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
+    ><text x="10" xml:space="preserve" y="12" clip-path="url(#clipPath6)" stroke="none"
+      >Admin</text
     ></g
     ><g font-size="11px" transform="translate(204,2)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="20" xml:space="preserve" y="12" clip-path="url(#clipPath7)" stroke="none"
-      >: Web</text
+    ><text x="21" xml:space="preserve" y="12" clip-path="url(#clipPath7)" stroke="none"
+      >: Spa</text
     ></g
-    ><g font-size="11px" transform="translate(6,37)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="10" xml:space="preserve" y="12" clip-path="url(#clipPath8)" stroke="none"
-      >Admin</text
+    ><g font-size="11px" transform="translate(450,2)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
+    ><text x="11" xml:space="preserve" y="12" clip-path="url(#clipPath8)" stroke="none"
+      >: Backoffice</text
     ></g
     ><g stroke-linecap="butt" font-size="11px" transform="translate(-14,23)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="black" stroke-opacity="1"
     ><line y2="50" fill="none" x1="50" clip-path="url(#clipPath10)" x2="249" y1="50"
@@ -152,7 +152,7 @@
     ></g
     ><g font-size="8px" fill-opacity="1" fill="rgb(120,120,120)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" stroke="rgb(120,120,120)" stroke-opacity="1"
     ><text x="0" xml:space="preserve" y="10" stroke="none"
-      >Visual Paradigm Standard(Ana Costa(Instituto Superior de Engenharia do Porto))</text
+      >Visual Paradigm Standard(1201313(Instituto Superior de Engenharia do Porto))</text
     ></g
   ></g
 ></svg
