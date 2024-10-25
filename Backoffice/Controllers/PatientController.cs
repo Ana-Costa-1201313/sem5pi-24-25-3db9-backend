@@ -160,7 +160,6 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-
                 var patients = await _service.SearchPatientsAsync(name,email,dateOfBirth,medicalRecordNumber);
 
                 if(patients == null || patients.Count == 0)
