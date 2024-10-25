@@ -43,11 +43,11 @@ namespace Backoffice.Domain.Staffs
 
         public static AvailabilitySlot CreateAvailabilitySlot(string stringAvSlot)
         {
-            var times = stringAvSlot.Split('/');
+            string[] times = stringAvSlot.Split('/');
             if (times.Length == 2)
             {
-                var startTime = times[0];
-                var endTime = times[1];
+                string startTime = times[0];
+                string endTime = times[1];
 
                 return new AvailabilitySlot(startTime, endTime);
             }

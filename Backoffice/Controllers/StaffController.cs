@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Backoffice.Controllers
 {
@@ -40,20 +39,15 @@ namespace Backoffice.Controllers
             if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("email") || Request.Query.ContainsKey("specialization"))
             {
                 staffList = await _service.FilterStaffAsync(name, email, specialization);
-
-                if (staffList == null || staffList.Count == 0)
-                {
-                    return NotFound();
-                }
             }
             else
             {
                 staffList = await _service.GetAllAsync();
+            }
 
-                if (staffList == null || staffList.Count == 0)
-                {
-                    return NoContent();
-                }
+            if (staffList == null || staffList.Count == 0)
+            {
+                return NoContent();
             }
 
             return Ok(staffList);
@@ -71,7 +65,7 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var staff = await _service.GetByIdAsync(id);
+            StaffDto staff = await _service.GetByIdAsync(id);
 
             if (staff == null)
             {
@@ -95,7 +89,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var staff = await _service.AddAsync(dto);
+                StaffDto staff = await _service.AddAsync(dto);
 
                 return CreatedAtAction(nameof(GetById), new { id = staff.Id }, staff);
             }
@@ -119,7 +113,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var staff = await _service.Deactivate(id);
+                StaffDto staff = await _service.Deactivate(id);
 
                 if (staff == null)
                 {
@@ -153,7 +147,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var staff = await _service.UpdateAsync(dto);
+                StaffDto staff = await _service.UpdateAsync(dto);
 
                 if (staff == null)
                 {
@@ -187,7 +181,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var staff = await _service.PartialUpdateAsync(dto);
+                StaffDto staff = await _service.PartialUpdateAsync(dto);
 
                 if (staff == null)
                 {

@@ -1,9 +1,8 @@
-using Backoffice.Domain.Categories;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Infraestructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backoffice.Infraestructure.Categories
+namespace Backoffice.Infraestructure.OperationTypes
 {
     public class OperationTypeRepository : BaseRepository<OperationType, OperationTypeId>, IOperationTypeRepository
     {

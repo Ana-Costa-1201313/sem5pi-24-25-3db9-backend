@@ -54,7 +54,7 @@ namespace Backoffice.Domain.Staffs
             }
             else
             {
-                foreach (var slotString in dto.AvailabilitySlots)
+                foreach (string slotString in dto.AvailabilitySlots)
                 {
                     this.AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
                 }
@@ -113,7 +113,7 @@ namespace Backoffice.Domain.Staffs
             }
             else
             {
-                foreach (var slotString in dto.AvailabilitySlots)
+                foreach (string slotString in dto.AvailabilitySlots)
                 {
                     list.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
                 }

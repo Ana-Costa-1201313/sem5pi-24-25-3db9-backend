@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using Backoffice.Domain.Staffs;
+
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Specializations;
 using Microsoft.EntityFrameworkCore;
-using Backoffice.Domain.Users;
 using System.Configuration;
 using Backoffice.Domain.Logs;
 
@@ -109,7 +107,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> Deactivate(Guid id)
         {
-            var staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
+            Staff staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
 
             if (staff == null)
             {
@@ -127,7 +125,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> UpdateAsync(EditStaffDto dto)
         {
-            var staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
+            Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
 
             if (staff == null)
             {
@@ -164,7 +162,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> PartialUpdateAsync(EditStaffDto dto)
         {
-            var staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
+            Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
 
             if (staff == null)
             {

@@ -6,7 +6,7 @@ namespace Backoffice.Domain.Staffs
     {
         public StaffDto ToStaffDto(Staff staff)
         {
-            var stringAvailabilitySlots = new List<string>();
+            List<string> stringAvailabilitySlots = new List<string>();
 
             if (staff.AvailabilitySlots == null)
             {
@@ -14,7 +14,7 @@ namespace Backoffice.Domain.Staffs
             }
             else
             {
-                foreach (var availabilitySlot in staff.AvailabilitySlots)
+                foreach (AvailabilitySlot availabilitySlot in staff.AvailabilitySlots)
                 {
                     stringAvailabilitySlots.Add(availabilitySlot.ToString());
                 }

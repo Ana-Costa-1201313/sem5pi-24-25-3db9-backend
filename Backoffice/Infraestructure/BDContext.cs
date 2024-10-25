@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
 using Backoffice.Domain.Staffs;
-using Backoffice.Infraestructure.Categories;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Infraestructure.OperationTypes;
 using Backoffice.Domain.Specializations;
@@ -17,8 +15,6 @@ namespace Backoffice.Infraestructure
 {
     public class BDContext : DbContext
     {
-        public DbSet<Category> Categories { get; set; }
-
         public DbSet<OperationType> OperationTypes { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
         public DbSet<Log> Logs { get; set; }
@@ -31,7 +27,6 @@ namespace Backoffice.Infraestructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new CategoryEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
