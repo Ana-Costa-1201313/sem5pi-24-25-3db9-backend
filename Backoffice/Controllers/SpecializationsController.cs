@@ -12,10 +12,13 @@ namespace Backoffice.Controllers
     public class SpecializationsController : ControllerBase
     {
         private readonly SpecializationService _service;
+        private readonly AuthService _authService;
 
-        public SpecializationsController(SpecializationService service)
+
+        public SpecializationsController(SpecializationService service, AuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
         // GET: api/Specializations
@@ -29,6 +32,15 @@ namespace Backoffice.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SpecializationDto>> GetGetById(Guid id)
         {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             var spec = await _service.GetByIdAsync(id);
 
             if (spec == null)
@@ -45,9 +57,48 @@ namespace Backoffice.Controllers
         {
             try
             {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
                 var spec = await _service.AddAsync(dto);
 
                 return CreatedAtAction(nameof(GetGetById), new { id = spec.Id }, spec);
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<SpecializationDto>> SoftDelete(Guid id)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var cat = await _service.InactivateAsync(id);
+
+                if (cat == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(cat);
 
             }
             catch (BusinessRuleValidationException e)

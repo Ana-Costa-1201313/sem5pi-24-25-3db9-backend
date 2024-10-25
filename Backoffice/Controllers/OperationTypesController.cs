@@ -20,30 +20,6 @@ namespace Backoffice.Controllers
             _authService = authService;
         }
 
-        // GET: api/OperationTypes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OperationTypeDto>> GetGetById(Guid id)
-        {
-
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            var opType = await _service.GetByIdAsync(id);
-
-            if (opType == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(opType);
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<OperationTypeDto>>> GetOperationTypes(
             [FromQuery] string name = null,
@@ -84,6 +60,30 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
+        }
+
+        // GET: api/OperationTypes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> GetGetById(Guid id)
+        {
+
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            var opType = await _service.GetByIdAsync(id);
+
+            if (opType == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(opType);
         }
 
         // POST: api/OperationTypes
@@ -203,8 +203,5 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
-
-
-
     }
 }
