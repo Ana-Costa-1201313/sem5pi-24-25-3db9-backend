@@ -100,7 +100,7 @@ This section presents the design adopted to solve the requirement.
 - Response Body Contains fields
 - Response Body data validation
 - Status Code for Invalid deactivation
-- Check if it works correctly
+- Test the filter
 
 
 ## 5. Implementation
