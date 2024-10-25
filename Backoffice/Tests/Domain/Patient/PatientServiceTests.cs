@@ -384,6 +384,78 @@ namespace Backoffice.Tests
             Assert.Equal("Error: Patient doesn't exist !!!",exception.Message);
         }
 
+        [Fact]
+        public async Task SearhPatientsAsyncByOnlyName()
+        {
+            var patientsDataBase = new List<Patient>();
+
+            Setup(patientsDataBase);
+            mockService.CallBase = true;
+
+            PatientService service = mockService.Object;
+
+            var patientDto1 = new CreatePatientDto  
+                {
+                    FirstName = "Joao",
+                    LastName = "Mario",
+                    FullName = "Joao Mario",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1993,1,19),
+                    Email = "joaoMarioBenfica@gmail.com",
+                    Phone = "919800011",
+                    EmergencyContact = "934111011"
+                };
+            var patientDto2 = new CreatePatientDto  
+                {
+                    FirstName = "Joao",
+                    LastName = "Mario",
+                    FullName = "Joao Mario",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(2000,1,3),
+                    Email = "joaoMarioPorto@gmail.com",
+                    Phone = "919800012",
+                    EmergencyContact = "934111012"
+                };
+            var patientDto3 = new CreatePatientDto  
+                {
+                    FirstName = "Viktor",
+                    LastName = "Gyokeres",
+                    FullName = "Viktor Gyokeres",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1998,6,4),
+                    Email = "gyokeresSporting@gmail.com",
+                    Phone = "919800013",
+                    EmergencyContact = "934111013"
+                };
+
+                var patient1 = new Patient(patientDto1,"199901000001");
+                var patient2 = new Patient(patientDto2,"199901000002");
+                var patient3 = new Patient(patientDto3,"199901000003");
+
+                patientsDataBase.Add(patient1);
+                patientsDataBase.Add(patient2);
+                patientsDataBase.Add(patient3);
+
+                var searchPatientDto = new SearchPatientDto{
+                    FullName = "Viktor Gyokeres",
+                    Email = "gyokeresSporting@gmail.com",
+                    DateOfBirth = new DateTime(1998,6,4)
+                };
+             
+
+                var result = await service.SearchPatientsAsync("Joao",null,null,null);
+
+                Assert.Equal(2,result.Count);
+                Assert.DoesNotContain(searchPatientDto,result);
+                Assert.Equal("Joao Mario",result[0].FullName);
+                Assert.Equal("Joao Mario",result[1].FullName);
+                Assert.Equal(new DateTime(1993,1,19),result[0].DateOfBirth);
+                Assert.Equal(new DateTime(2000,1,3),result[1].DateOfBirth);
+        }
+        
+
+
+
     
 }
 }
