@@ -23,5 +23,7 @@ namespace Backoffice.Domain.Staffs
         public Role Role { get; set; }
 
         public string MechanographicNum { get; set; }
+
+        public bool Active { get; set; }
     }
 }

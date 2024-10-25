@@ -8,22 +8,31 @@ namespace Backoffice.Domain.Staffs
         {
             var stringAvailabilitySlots = new List<string>();
 
-            foreach (var availabilitySlot in staff.AvailabilitySlots)
+            if (staff.AvailabilitySlots == null)
             {
-                stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                stringAvailabilitySlots = null;
             }
+            else
+            {
+                foreach (var availabilitySlot in staff.AvailabilitySlots)
+                {
+                    stringAvailabilitySlots.Add(availabilitySlot.ToString());
+                }
+            }
+
 
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
                 Name = staff.Name,
-                LicenseNumber = staff.LicenseNumber,
+                LicenseNumber = staff.LicenseNumber.LicenseNum,
                 Email = staff.Email._Email,
-                Phone = staff.Phone.PhoneNum,
-                Specialization = staff.Specialization.Name.Name,
+                Phone = staff.Phone?.PhoneNum,
+                Specialization = staff.Specialization?.Name?.Name,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
-                MechanographicNum = staff.MechanographicNum.ToString()
+                MechanographicNum = staff.MechanographicNum.ToString(),
+                Active = staff.Active
             };
         }
 
@@ -31,7 +40,5 @@ namespace Backoffice.Domain.Staffs
         {
             return new Staff(dto, specialization, mecNumSeq, dns);
         }
-
-
     }
 }

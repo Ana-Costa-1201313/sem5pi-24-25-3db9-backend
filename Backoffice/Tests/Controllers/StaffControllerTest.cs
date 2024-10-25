@@ -18,7 +18,7 @@ namespace Backoffice.Tests
         Mock<IStaffRepository> _repo;
         Mock<ISpecializationRepository> _specRepo;
         Mock<IUnitOfWork> _unitOfWork;
-        Mock<ILogRepository> _mockLogRepo;
+        Mock<ILogRepository> _logRepo;
         Mock<IExternalApiServices> _mockExternal;
         Mock<AuthService> _mockAuthService;
         Mock<StaffService> mockService;
@@ -30,10 +30,10 @@ namespace Backoffice.Tests
             _repo = new Mock<IStaffRepository>();
             _specRepo = new Mock<ISpecializationRepository>();
             _unitOfWork = new Mock<IUnitOfWork>();
-            _mockLogRepo = new Mock<ILogRepository>();
+            _logRepo = new Mock<ILogRepository>();
             _mockExternal = new Mock<IExternalApiServices>();
             _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
-            mockService = new Mock<StaffService>(_unitOfWork.Object, _repo.Object, new StaffMapper(), _specRepo.Object);
+            mockService = new Mock<StaffService>(_unitOfWork.Object, _repo.Object, new StaffMapper(), _specRepo.Object, _logRepo.Object);
 
             mockController = new Mock<StaffController>(mockService.Object, _mockAuthService.Object);
 
@@ -62,8 +62,6 @@ namespace Backoffice.Tests
             mockController.CallBase = true;
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
-
-            StaffController controller = mockController.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -128,8 +126,6 @@ namespace Backoffice.Tests
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
 
-            StaffController controller = mockController.Object;
-
             var expectedList = new List<Staff>();
 
             _repo.Setup(repo => repo.GetAllWithDetailsAsync())
@@ -145,7 +141,7 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdStaff()
         {
-           Setup();
+            Setup();
 
             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                            .ReturnsAsync(true);
@@ -158,8 +154,6 @@ namespace Backoffice.Tests
             mockController.CallBase = true;
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
-
-            StaffController controller = mockController.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -191,7 +185,7 @@ namespace Backoffice.Tests
             var actualStaff = Assert.IsType<StaffDto>(objectResult.Value);
 
             Assert.Equal(staff.Name, actualStaff.Name);
-            Assert.Equal(staff.LicenseNumber, actualStaff.LicenseNumber);
+            Assert.Equal(staff.LicenseNumber.LicenseNum, actualStaff.LicenseNumber);
             Assert.Equal(staff.Specialization.Name.Name, actualStaff.Specialization);
             Assert.Equal(staff.Role, actualStaff.Role);
         }
@@ -199,7 +193,7 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdEmpty()
         {
-          Setup();
+            Setup();
 
             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                            .ReturnsAsync(true);
@@ -212,8 +206,6 @@ namespace Backoffice.Tests
             mockController.CallBase = true;
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
-
-            StaffController controller = mockController.Object;
 
             var staffId = Guid.NewGuid();
 
@@ -240,8 +232,6 @@ namespace Backoffice.Tests
             mockController.CallBase = true;
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
-
-            StaffController controller = mockController.Object;
 
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -300,8 +290,6 @@ namespace Backoffice.Tests
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
 
-            StaffController controller = mockController.Object;
-
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -345,9 +333,6 @@ namespace Backoffice.Tests
 
             mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
 
-            StaffController controller = mockController.Object;
-
-
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
             AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
@@ -372,6 +357,737 @@ namespace Backoffice.Tests
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
 
             Assert.Equal("Error: The year must be bigger than zero!", errorMessage);
+        }
+
+
+        [Fact]
+        public async Task NullNameCreateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = null,
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await mockController.Object.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task EmptyNameCreateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            var result = await mockController.Object.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a name!", errorMessage);
+        }
+
+        [Fact]
+        public async Task InvalidRoleCreateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Patient,
+                RecruitmentYear = 2024
+            };
+
+            var result = await mockController.Object.Create(dto1);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", errorMessage);
+        }
+
+        [Fact]
+        public async Task DeleteStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.Deactivate(staff.Id.AsGuid());
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal("Deactivated Staff", returnValue.Name);
+            Assert.Null(returnValue.Phone);
+            Assert.Null(returnValue.Specialization);
+            Assert.False(returnValue.Active);
+        }
+
+        [Fact]
+        public async Task InvalidDeleteStaff()
+        {
+
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            var staffId = Guid.NewGuid();
+
+            var result = await mockController.Object.Deactivate(staffId);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task DeleteInactiveStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await mockController.Object.Deactivate(staff.Id.AsGuid());
+
+            var result2 = await mockController.Object.Deactivate(staff.Id.AsGuid());
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result2.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: This Staff profile is already deactivated!", errorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.Update(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal("ana costa", returnValue.Name);
+            Assert.Equal("999999991", returnValue.Phone);
+            Assert.Equal("skin", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task NullPhoneUpdateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.Update(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: The staff must have a phone number!", errorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateInactiveStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await mockController.Object.Deactivate(staff.Id.AsGuid());
+
+            var result = await mockController.Object.Update(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: Can't update an inactive staff!", errorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateStaffEmpty()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            var staffId = new Guid("846b1792-6a40-4d97-ba61-300c934dddd3");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staffId,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            var result = await mockController.Object.Update(staffId, editDto);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999991",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal("ana costa", returnValue.Name);
+            Assert.Equal("999999991", returnValue.Phone);
+            Assert.Equal("skin", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaffSamePhone()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = null,
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+
+            Assert.Equal("ana costa", returnValue.Name);
+            Assert.Equal("999999999", returnValue.Phone);
+            Assert.Equal("skin", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task PartialUpdateStaffSameSpec()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = null,
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            var result = await mockController.Object.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnValue = Assert.IsType<StaffDto>(okResult.Value);
+
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal("ana costa", returnValue.Name);
+            Assert.Equal("999999999", returnValue.Phone);
+            Assert.Equal("skin", returnValue.Specialization);
+        }
+
+        [Fact]
+        public async Task PartialUpdateInactiveStaff()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
+
+            List<string> AvailabilitySlots2 = new List<string>();
+            AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots2.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            EditStaffDto editDto = new EditStaffDto
+            {
+                Id = staff.Id.AsGuid(),
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots2
+            };
+
+            _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
+
+            await mockController.Object.Deactivate(staff.Id.AsGuid());
+
+            var result = await mockController.Object.PartialUpdate(staff.Id.AsGuid(), editDto);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
+
+            Assert.Equal("Error: Can't update an inactive staff!", errorMessage);
         }
     }
 }
