@@ -119,6 +119,15 @@ namespace Backoffice.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<StaffDto>> Update(Guid id, EditStaffDto dto)
         {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             if (id != dto.Id)
             {
                 return BadRequest(new { Message = "The staff Id does not match the header!" });
@@ -144,6 +153,15 @@ namespace Backoffice.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<StaffDto>> PartialUpdate(Guid id, EditStaffDto dto)
         {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
             if (id != dto.Id)
             {
                 return BadRequest(new { Message = "The staff Id does not match the header!" });
