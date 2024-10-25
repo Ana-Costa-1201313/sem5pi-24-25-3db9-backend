@@ -65,9 +65,9 @@ namespace Backoffice.Tests.Controllers
             _mockRepo.Setup(repo => repo.GetAllWithDetailsAsync())
                      .ReturnsAsync(emptyList);
 
-            var result = await _controller.GetAll();
+            var result = await _controller.GetOperationTypes();
 
-            var okResult = Assert.IsType<ActionResult<IEnumerable<OperationTypeDto>>>(result);
+            var okResult = Assert.IsType<ActionResult<List<OperationTypeDto>>>(result);
 
             Assert.IsType<NoContentResult>(okResult.Result);
         }
@@ -79,7 +79,7 @@ namespace Backoffice.Tests.Controllers
             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                             .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
 
-            var result = await _controller.GetAll();
+            var result = await _controller.GetOperationTypes();
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
             Assert.Equal("Error: User not authenticated", badRequestResult.Value);
@@ -112,7 +112,7 @@ namespace Backoffice.Tests.Controllers
             _mockRepo.Setup(repo => repo.GetAllWithDetailsAsync())
                      .ReturnsAsync(listOp);
 
-            var result = await _controller.GetAll();
+            var result = await _controller.GetOperationTypes();
 
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
 
