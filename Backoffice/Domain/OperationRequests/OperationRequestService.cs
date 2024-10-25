@@ -2,6 +2,7 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.OperationRequests.ValueObjects;
 
 namespace Backoffice.Domain.OperationRequests
 {
@@ -39,9 +40,71 @@ namespace Backoffice.Domain.OperationRequests
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByPatientNameAsDoctorAsync()
+        public async Task<List<OperationRequestDto>> GetAllByPatientNameAsDoctorAsync(Guid doctorId, string patientName)
         {
-            var list = await this._repo.GetAllAsync();
+            var list = await this._repo.GetOpRequestsByPatientNameAsDoctorAsync(new StaffId(doctorId), patientName);
+
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
+            {
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
+
+            return listDto;
+            //return null;
+        }
+
+        public async Task<List<OperationRequestDto>> GetAllByPriorityAsDoctorAsync(Guid doctorId, string priority)
+        {
+            var priorityEnum = (Priority)Enum.Parse(typeof(Priority), priority, true);
+            var list = await this._repo.GetOpRequestsByPriorityAsDoctorAsync(new StaffId(doctorId), priorityEnum);
+
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
+            {
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
+
+            return listDto;
+            //return null;
+        }
+
+        public async Task<List<OperationRequestDto>> GetAllByStatusAsDoctorAsync(Guid doctorId, string status)
+        {
+            var statusEnum = (Status)Enum.Parse(typeof(Status), status, true);
+            var list = await this._repo.GetOpRequestsByStatusAsDoctorAsync(new StaffId(doctorId), statusEnum);
+
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
+            {
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
+
+            return listDto;
+            //return null;
+        }
+
+        public async Task<List<OperationRequestDto>> GetAllByOpTypeNameAsDoctorAsync(Guid doctorId, string opTypeName)
+        {
+            var list = await this._repo.GetOpRequestsByOperationTypeNameAsDoctorAsync(new StaffId(doctorId), new OperationTypeName(opTypeName));
+
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
+            {
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
+
+            return listDto;
+            //return null;
+        }
+
+        public async Task<List<OperationRequestDto>> GetAllByDoctorIdAsync(Guid doctorId)
+        {
+            var list = await this._repo.GetOpRequestsByDoctorIdAsync(new StaffId(doctorId));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -55,14 +118,14 @@ namespace Backoffice.Domain.OperationRequests
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(Guid id)
-        {/*
+        {
             var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
 
             if (opReq == null)
                 return null;
 
-            return OperationRequestMapper.ToDto(opReq);*/
-            return null;
+            return OperationRequestMapper.ToDto(opReq);
+            //return null;
         }
 
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)

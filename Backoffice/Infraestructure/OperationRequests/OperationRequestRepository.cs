@@ -28,6 +28,14 @@ namespace Backoffice.Infraestructure.OperationRequests
             return await _context.OperationRequests
                 .Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
         }
+
+        public async Task<List<OperationRequest>> GetOpRequestsByDoctorIdAsync(StaffId doctorId)
+        {
+            return await _context.OperationRequests
+                .Where(x => x.DoctorId.Equals(doctorId))
+                .ToListAsync();
+        }
+        
         public async Task<List<OperationRequest>> GetOpRequestsByPatientNameAsDoctorAsync(StaffId staffId, string patientName)
         {
             return await _context.OperationRequests

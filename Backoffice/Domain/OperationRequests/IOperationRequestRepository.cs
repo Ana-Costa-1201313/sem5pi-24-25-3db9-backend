@@ -11,6 +11,7 @@ namespace Backoffice.Domain.OperationRequests
     {
         public Task<List<OperationRequest>> GetAllOpRequestsAsync();
         public Task<OperationRequest> GetOpRequestByIdAsync(OperationRequestId id);
+        public Task<List<OperationRequest>> GetOpRequestsByDoctorIdAsync(StaffId doctorId);
         public Task<List<OperationRequest>> GetOpRequestsByPatientNameAsDoctorAsync(StaffId doctorId, string patientName);
         public Task<List<OperationRequest>> GetOpRequestsByOperationTypeNameAsDoctorAsync(StaffId doctorId, OperationTypeName operationTypeName);
         public Task<List<OperationRequest>> GetOpRequestsByPriorityAsDoctorAsync(StaffId doctorId, Priority priority);
