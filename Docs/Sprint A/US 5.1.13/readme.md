@@ -100,8 +100,13 @@ This diagram guides the realization of the functionality, for level 2 procecss v
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.13 N3 SD](US5.1.13%20N3%20SD.svg)
+SD for the PUT request:
 
+![US5.1.13 N3 SD PUT](US5.1.13%20N3%20SD%20PUT.svg)
+
+SD for the PATCH request:
+
+![US5.1.13 N3 SD PATCH](US5.1.13%20N3%20SD%20PATCH.svg)
 
 
 ### 4.4. Applied Design Patterns
