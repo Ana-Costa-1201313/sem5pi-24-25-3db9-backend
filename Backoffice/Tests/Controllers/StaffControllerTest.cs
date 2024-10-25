@@ -100,11 +100,11 @@ namespace Backoffice.Tests
 
             var result = await mockController.Object.GetAll(null, null, null);
 
-            var okResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
 
             var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
 
-            var actualList = Assert.IsAssignableFrom<IEnumerable<StaffDto>>(objectResult.Value);
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
 
             Assert.Equal(expectedList.Count, actualList.Count());
         }
@@ -133,7 +133,7 @@ namespace Backoffice.Tests
 
             var result = await mockController.Object.GetAll(null, null, null);
 
-            var noContentResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
+            var noContentResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
 
             Assert.IsType<NoContentResult>(noContentResult.Result);
         }

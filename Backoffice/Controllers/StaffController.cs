@@ -20,7 +20,7 @@ namespace Backoffice.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll(
+        public async Task<ActionResult<List<StaffDto>>> GetAll(
             [FromQuery] string name,
             [FromQuery] string email,
             [FromQuery] string specialization

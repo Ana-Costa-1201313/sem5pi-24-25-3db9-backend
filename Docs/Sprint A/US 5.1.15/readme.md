@@ -118,6 +118,8 @@ This diagram guides the realization of the functionality, for level 3 process vi
 
 The following tests are to be developed:
 - getting a staff profile by name, email, or specialization.
+- if the parameter value does not exist, the result must be empty.
+- if the parameter name does not exist, the result will ignore it.
   - if something is invalid, exceptions should be thrown
 
 All Value Objects will be tested in Unitary Tests, to check if they fullfill their requirements.

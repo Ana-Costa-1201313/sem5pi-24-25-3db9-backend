@@ -53,17 +53,19 @@ namespace Backoffice.Infraestructure.Staffs
                 query = query.Where(s => s.Name.Contains(name));
             }
 
-            if (!string.IsNullOrEmpty(email))
-            {
-                query = query.Where(s => s.Email._Email.Contains(email));
-            }
-
             if (!string.IsNullOrEmpty(specialization))
             {
                 query = query.Where(s => s.Specialization.Name.Name.Contains(specialization));
             }
 
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+
+             if (!string.IsNullOrEmpty(email))
+            {
+                result = result.Where(s => s.Email._Email.Contains(email)).ToList();
+            }
+
+            return result;
         }
     }
 }
