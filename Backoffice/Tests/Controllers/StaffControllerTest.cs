@@ -18,7 +18,7 @@ namespace Backoffice.Tests
         Mock<IStaffRepository> _repo;
         Mock<ISpecializationRepository> _specRepo;
         Mock<IUnitOfWork> _unitOfWork;
-        Mock<ILogRepository> _mockLogRepo;
+        Mock<ILogRepository> _logRepo;
         Mock<IExternalApiServices> _mockExternal;
         Mock<AuthService> _mockAuthService;
         Mock<StaffService> mockService;
@@ -30,10 +30,10 @@ namespace Backoffice.Tests
             _repo = new Mock<IStaffRepository>();
             _specRepo = new Mock<ISpecializationRepository>();
             _unitOfWork = new Mock<IUnitOfWork>();
-            _mockLogRepo = new Mock<ILogRepository>();
+            _logRepo = new Mock<ILogRepository>();
             _mockExternal = new Mock<IExternalApiServices>();
             _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
-            mockService = new Mock<StaffService>(_unitOfWork.Object, _repo.Object, new StaffMapper(), _specRepo.Object);
+            mockService = new Mock<StaffService>(_unitOfWork.Object, _repo.Object, new StaffMapper(), _specRepo.Object, _logRepo.Object);
 
             mockController = new Mock<StaffController>(mockService.Object, _mockAuthService.Object);
 

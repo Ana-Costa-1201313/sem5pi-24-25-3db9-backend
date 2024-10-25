@@ -5,6 +5,7 @@ using Backoffice.Domain.Specializations;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Users;
 using System.Configuration;
+using Backoffice.Domain.Logs;
 
 
 namespace Backoffice.Domain.Staffs
@@ -15,19 +16,18 @@ namespace Backoffice.Domain.Staffs
         private readonly IStaffRepository _repo;
         private readonly StaffMapper _staffMapper;
         private readonly ISpecializationRepository _specRepo;
+        private readonly ILogRepository _logRepo;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo)
+
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo, ILogRepository logRepo)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _staffMapper = staffMapper;
             _specRepo = specRepo;
+            _logRepo = logRepo;
         }
 
-        protected StaffService()
-        {
-
-        }
 
         public async Task<List<StaffDto>> GetAllAsync()
         {
@@ -53,7 +53,7 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public virtual async Task<StaffDto> AddAsync(CreateStaffDto dto)
+        public async Task<StaffDto> AddAsync(CreateStaffDto dto)
         {
             int mechanographicNumSeq = await this._repo.GetLastMechanographicNumAsync() + 1;
 
@@ -104,7 +104,7 @@ namespace Backoffice.Domain.Staffs
 
         public async Task<StaffDto> Deactivate(Guid id)
         {
-            var staff = await this._repo.GetByIdAsync(new StaffId(id));
+            var staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
 
             if (staff == null)
             {
@@ -112,6 +112,8 @@ namespace Backoffice.Domain.Staffs
             }
 
             staff.Deactivate();
+
+            await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was deactivated!", LogType.Deactivate, LogEntity.Staff, staff.Id));
 
             await this._unitOfWork.CommitAsync();
 

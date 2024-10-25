@@ -20,14 +20,15 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
+
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
                 Name = staff.Name,
                 LicenseNumber = staff.LicenseNumber,
                 Email = staff.Email._Email,
-                Phone = staff.Phone.PhoneNum,
-                Specialization = staff.Specialization.Name.Name,
+                Phone = staff.Phone?.PhoneNum,
+                Specialization = staff.Specialization?.Name?.Name,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString(),

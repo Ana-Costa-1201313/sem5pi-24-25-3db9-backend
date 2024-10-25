@@ -92,6 +92,15 @@ namespace Backoffice.Controllers
         {
             try
             {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
                 var staff = await _service.Deactivate(id);
 
                 if (staff == null)

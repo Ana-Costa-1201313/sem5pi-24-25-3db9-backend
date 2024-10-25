@@ -9,6 +9,8 @@ using Xunit;
 using Backoffice.Infraestructure.Staffs;
 using Backoffice.Infraestructure;
 using System.Runtime.CompilerServices;
+using Backoffice.Domain.Logs;
+
 
 namespace Backoffice.Tests
 {
@@ -20,6 +22,8 @@ namespace Backoffice.Tests
 
         Mock<ISpecializationRepository> specRepository;
 
+        Mock<ILogRepository> logRepository;
+
         Mock<StaffService> mockService;
 
         private void Setup(List<Staff> staffDb, List<Specialization> specializationsDb)
@@ -27,6 +31,7 @@ namespace Backoffice.Tests
             staffRepository = new Mock<IStaffRepository>();
             unitOfWork = new Mock<IUnitOfWork>();
             specRepository = new Mock<ISpecializationRepository>();
+            logRepository = new Mock<ILogRepository>();
 
 
             staffRepository.Setup(repo => repo.GetAllWithDetailsAsync())
@@ -45,11 +50,14 @@ namespace Backoffice.Tests
             .ReturnsAsync((Email email) => staffDb.FirstOrDefault(s => s.Email == email));
 
             specRepository.Setup(repo => repo.GetBySpecializationName(It.IsAny<string>()))
-                       .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+            .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+            logRepository.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
+            .ReturnsAsync(new Mock<Log>().Object);
 
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            mockService = new Mock<StaffService>(unitOfWork.Object, staffRepository.Object, new StaffMapper(), specRepository.Object);
+            mockService = new Mock<StaffService>(unitOfWork.Object, staffRepository.Object, new StaffMapper(), specRepository.Object, logRepository.Object);
 
         }
 
@@ -123,7 +131,7 @@ namespace Backoffice.Tests
         [Fact]
         public async Task GetByIdAsync()
         {
-             var staffDb = new List<Staff>();
+            var staffDb = new List<Staff>();
             var specializationsDb = new List<Specialization>();
 
             Setup(staffDb, specializationsDb);

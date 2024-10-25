@@ -76,7 +76,7 @@ namespace Backoffice.Domain.OperationTypes
 
             await this._repo.AddAsync(opType);
 
-            await this._repoLog.AddAsync(new Log(opType.ToJSON(), LogType.Create, LogEntity.OperationType));
+            await this._repoLog.AddAsync(new Log(opType.ToJSON(), LogType.Create, LogEntity.OperationType, opType.Id));
 
             await this._unitOfWork.CommitAsync();
 
