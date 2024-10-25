@@ -78,7 +78,7 @@ namespace Backoffice.Domain.Patients{
                 }
                 if(e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Patients.Phone"))
                 {
-                    throw new BusinessRuleValidationException("Erroe: This Phone Number is already in use !!!");
+                    throw new BusinessRuleValidationException("Error: This Phone Number is already in use !!!");
                 }
                 else
                 {
