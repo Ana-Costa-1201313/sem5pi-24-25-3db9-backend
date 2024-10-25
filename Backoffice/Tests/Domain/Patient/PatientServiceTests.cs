@@ -309,6 +309,7 @@ namespace Backoffice.Tests
                 Phone = "919888771",
                 EmergencyContact = "934111222"
             };
+
             var patient1 = new Patient(patientDto1,"202012000001");
 
             patientsDataBase.Add(patient1);
@@ -330,7 +331,59 @@ namespace Backoffice.Tests
             Assert.Equal("202012000001",result.MedicalRecordNumber);
             Assert.NotEqual("Ederson",result.FirstName);
 
+            //logRepository.Verify(logRepo => logRepo.AddAsync(It.IsAny<Log>()), Times.Once);
     }
+          [Fact]
+    public async Task DeleteAsync()
+    {
+        var patientsDataBase = new List<Patient>();
+
+            Setup(patientsDataBase);
+            mockService.CallBase = true;
+
+            PatientService service = mockService.Object;
+
+    
+            var patientDto = new CreatePatientDto
+                {
+                    FirstName = "Rico",
+                    LastName = "Lewis",
+                    FullName = "Rico Lewis",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(2004,11,21),
+                    Email = "ricoLewis@gmail.com",
+                    Phone = "919800000",
+                    EmergencyContact = "934111000"
+                };
+
+            var patient = new Patient(patientDto, "201801000001");
+            patientsDataBase.Add(patient);
+
+            var result = await service.DeleteAsync(patient.Id.AsGuid());
+
+            Assert.NotNull(result);
+            Assert.Equal("Rico Lewis",result.FullName);
+            Assert.Equal("ricoLewis@gmail.com",result.Email);
+            Assert.Equal("919800000",result.Phone);
+
+    }
+        [Fact]
+        public async Task DeleteAsyncPatientNotFound()
+        {
+             var patientsDataBase = new List<Patient>();
+
+            Setup(patientsDataBase);
+            mockService.CallBase = true;
+
+            PatientService service = mockService.Object;
+
+            var id = Guid.NewGuid();
+
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(()=> service.DeleteAsync(id));
+
+            Assert.Equal("Error: Patient doesn't exist !!!",exception.Message);
+        }
+
     
 }
 }
