@@ -128,7 +128,7 @@ namespace Backoffice.Domain.Staffs
             {
                 return null;
             }
-            
+
             Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
 
             if (specialization == null)
@@ -137,6 +137,8 @@ namespace Backoffice.Domain.Staffs
             }
 
             staff.Edit(dto, specialization);
+
+            await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
 
             try
             {
@@ -167,6 +169,8 @@ namespace Backoffice.Domain.Staffs
             }
 
             staff.PartialEdit(dto, specialization);
+
+            await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
 
             try
             {
