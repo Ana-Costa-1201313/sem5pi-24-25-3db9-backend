@@ -62,11 +62,16 @@ namespace Backoffice.Domain.Staffs
                 throw new BusinessRuleValidationException("Error: Couldn't get the number of staff members!");
             }
 
-            Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+            Specialization specialization = null;
 
-            if (specialization == null)
+            if (dto.Specialization != null)
             {
-                throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                }
             }
 
             Staff staff = _staffMapper.ToStaff(dto, specialization, mechanographicNumSeq, ReadDNS());
@@ -129,11 +134,16 @@ namespace Backoffice.Domain.Staffs
                 return null;
             }
 
-            Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+            Specialization specialization = null;
 
-            if (specialization == null)
+            if (dto.Specialization != null)
             {
-                throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                }
             }
 
             staff.Edit(dto, specialization);
@@ -161,11 +171,16 @@ namespace Backoffice.Domain.Staffs
                 return null;
             }
 
-            Specialization specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+            Specialization specialization = null;
 
-            if (specialization == null)
+            if (dto.Specialization != null)
             {
-                throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
+
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
+                }
             }
 
             staff.PartialEdit(dto, specialization);

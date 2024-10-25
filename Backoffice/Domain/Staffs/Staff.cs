@@ -47,9 +47,17 @@ namespace Backoffice.Domain.Staffs
             this.Specialization = specialization;
 
             this.AvailabilitySlots = new List<AvailabilitySlot>();
-            foreach (var slotString in dto.AvailabilitySlots)
+
+            if (dto.AvailabilitySlots == null)
             {
-                this.AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
+                this.AvailabilitySlots = null;
+            }
+            else
+            {
+                foreach (var slotString in dto.AvailabilitySlots)
+                {
+                    this.AvailabilitySlots.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
+                }
             }
 
             if (dto.Role != Role.Admin && dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
@@ -99,11 +107,18 @@ namespace Backoffice.Domain.Staffs
 
             List<AvailabilitySlot> list = new List<AvailabilitySlot>();
 
-            foreach (string s in dto.AvailabilitySlots)
+            if (dto.AvailabilitySlots == null)
             {
-                list.Add(AvailabilitySlot.CreateAvailabilitySlot(s));
+                this.AvailabilitySlots = null;
             }
-            this.AvailabilitySlots = list;
+            else
+            {
+                foreach (var slotString in dto.AvailabilitySlots)
+                {
+                    list.Add(AvailabilitySlot.CreateAvailabilitySlot(slotString));
+                }
+                this.AvailabilitySlots = list;
+            }
         }
 
         public void PartialEdit(EditStaffDto dto, Specialization specialization)
