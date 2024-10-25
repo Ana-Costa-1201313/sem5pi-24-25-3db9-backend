@@ -96,9 +96,9 @@ namespace Backoffice.Tests
 
             var expectedList = new List<Staff> { staff1, staff2 };
 
-            _repo.Setup(repo => repo.GetAllWithDetailsAsync()).ReturnsAsync(expectedList);
+            _repo.Setup(repo => repo.GetAllWithDetailsAsync(1, 5)).ReturnsAsync(expectedList);
 
-            var result = await mockController.Object.GetAll(null, null, null);
+            var result = await mockController.Object.GetAll(null, null, null, 1, 5);
 
             var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
 
@@ -128,10 +128,10 @@ namespace Backoffice.Tests
 
             var expectedList = new List<Staff>();
 
-            _repo.Setup(repo => repo.GetAllWithDetailsAsync())
+            _repo.Setup(repo => repo.GetAllWithDetailsAsync(1, 5))
             .ReturnsAsync(expectedList);
 
-            var result = await mockController.Object.GetAll(null, null, null);
+            var result = await mockController.Object.GetAll(null, null, null, 1, 5);
 
             var noContentResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
 

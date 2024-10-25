@@ -27,9 +27,9 @@ namespace Backoffice.Domain.Staffs
         }
 
 
-        public async Task<List<StaffDto>> GetAllAsync()
+        public async Task<List<StaffDto>> GetAllAsync(int pageNum, int pageSize)
         {
-            List<Staff> list = await this._repo.GetAllWithDetailsAsync();
+            List<Staff> list = await this._repo.GetAllWithDetailsAsync(pageNum, pageSize);
 
             List<StaffDto> listDto = new List<StaffDto>();
 
@@ -197,9 +197,9 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<List<StaffDto>> FilterStaffAsync(string name, string email, string specialization)
+        public async Task<List<StaffDto>> FilterStaffAsync(string name, string email, string specialization, int pageNum, int pageSize)
         {
-            List<Staff> list = await this._repo.FilterStaffAsync(name, email, specialization);
+            List<Staff> list = await this._repo.FilterStaffAsync(name, email, specialization, pageNum, pageSize);
 
             List<StaffDto> listDto = new List<StaffDto>();
 

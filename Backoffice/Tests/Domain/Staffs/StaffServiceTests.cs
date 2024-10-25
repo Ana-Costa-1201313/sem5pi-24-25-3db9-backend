@@ -34,7 +34,7 @@ namespace Backoffice.Tests
             logRepository = new Mock<ILogRepository>();
 
 
-            staffRepository.Setup(repo => repo.GetAllWithDetailsAsync())
+            staffRepository.Setup(repo => repo.GetAllWithDetailsAsync(1, 5))
             .ReturnsAsync(staffDb);
 
             staffRepository.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>()))
@@ -110,9 +110,9 @@ namespace Backoffice.Tests
             staffDb.Add(staff1);
             staffDb.Add(staff2);
 
-            var result = await service.GetAllAsync();
+            var result = await service.GetAllAsync(1, 5);
 
-            staffRepository.Verify(repo => repo.GetAllWithDetailsAsync(), Times.Once);
+            staffRepository.Verify(repo => repo.GetAllWithDetailsAsync(1, 5), Times.Once);
 
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);

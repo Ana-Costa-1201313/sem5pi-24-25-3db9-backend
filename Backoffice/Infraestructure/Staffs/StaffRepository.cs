@@ -30,10 +30,13 @@ namespace Backoffice.Infraestructure.Staffs
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Staff>> GetAllWithDetailsAsync()
+        public async Task<List<Staff>> GetAllWithDetailsAsync(int pageNum, int pageSize)
         {
             return await _context.Staff
             .Include(s => s.Specialization)
+            .OrderBy(s => s.Id)
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
         }
 
@@ -44,7 +47,7 @@ namespace Backoffice.Infraestructure.Staffs
             .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<List<Staff>> FilterStaffAsync(string name, string email, string specialization)
+        public async Task<List<Staff>> FilterStaffAsync(string name, string email, string specialization, int pageNum, int pageSize)
         {
             var query = _context.Staff.Include(s => s.Specialization).AsQueryable();
 
@@ -60,12 +63,12 @@ namespace Backoffice.Infraestructure.Staffs
 
             var result = await query.ToListAsync();
 
-             if (!string.IsNullOrEmpty(email))
+            if (!string.IsNullOrEmpty(email))
             {
                 result = result.Where(s => s.Email._Email.Contains(email)).ToList();
             }
 
-            return result;
+            return result.OrderBy(s => s.Id).Skip((pageNum - 1) * pageSize).Take(pageSize).ToList();
         }
     }
 }

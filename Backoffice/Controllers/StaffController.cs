@@ -22,7 +22,9 @@ namespace Backoffice.Controllers
         public async Task<ActionResult<List<StaffDto>>> GetAll(
             [FromQuery] string name,
             [FromQuery] string email,
-            [FromQuery] string specialization
+            [FromQuery] string specialization,
+            [FromQuery] int pageNum = 1,
+            [FromQuery] int pageSize = 5
         )
         {
             try
@@ -38,11 +40,11 @@ namespace Backoffice.Controllers
 
             if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("email") || Request.Query.ContainsKey("specialization"))
             {
-                staffList = await _service.FilterStaffAsync(name, email, specialization);
+                staffList = await _service.FilterStaffAsync(name, email, specialization, pageNum, pageSize);
             }
             else
             {
-                staffList = await _service.GetAllAsync();
+                staffList = await _service.GetAllAsync(pageNum, pageSize);
             }
 
             if (staffList == null || staffList.Count == 0)
