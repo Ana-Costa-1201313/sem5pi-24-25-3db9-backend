@@ -1,8 +1,10 @@
+using Azure.Core.Pipeline;
 using Backoffice.Controllers;
 using Backoffice.Domain.Logs;
 using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -50,9 +52,6 @@ namespace Backoffice.Tests
                 _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
                            .ReturnsAsync(true);
 
-                
-                
-
                 var patientDto1 = new CreatePatientDto
             {
                  FirstName = "Jeremy",
@@ -92,6 +91,183 @@ namespace Backoffice.Tests
             Assert.Equal(list.Count,listFinal.Count);
             
         }
+
+        [Fact]
+        public async Task GetAllNoPatients()
+        {
+             Setup();
+
+                _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+
+                var expectedList = new List<Patient>{};
+                _repo.Setup(repo => repo.GetAllAsync()).ReturnsAsync(expectedList);
+
+                var result = await patientController.GetAll();
+               
+                var noPatients = Assert.IsType<NoContentResult>(result.Result);
+        }
+        [Fact]
+        public async Task GetAllWithoutAuthorization()
+        {
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+            
+            var result = await patientController.GetAll();
+            var noAuth = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated",noAuth.Value);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync(){
+            Setup();
+
+             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+
+            var patientDto1 = new CreatePatientDto
+            {
+                 FirstName = "Kevin",
+                LastName = "DeBruyne",
+                FullName = "Kevin DeBruyne",
+                Gender = "M",
+                DateOfBirth = new DateTime(1991,6,28),
+                Email = "kevinDeBruyne@gmail.com",
+                Phone = "929888771",
+                EmergencyContact = "929111211"
+            };
+
+            var patient = new Patient(patientDto1,"200001000912");
+                _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync(patient);
+
+            var result = await patientController.GetById(patient.Id.AsGuid());
+
+            var okResult = Assert.IsType<ActionResult<PatientDto>>(result);
+            var objResult = Assert.IsType<OkObjectResult>(okResult.Result);
+            var value = Assert.IsType<PatientDto>(objResult.Value);
+
+            Assert.Equal("Kevin DeBruyne",value.FullName);
+            Assert.Equal("M",value.Gender);
+            Assert.Equal(new DateTime(1991,6,28),value.DateOfBirth);
+            Assert.Equal("kevinDeBruyne@gmail.com",value.Email);
+            Assert.Equal("929888771",value.Phone);
+            Assert.Equal("200001000912",value.MedicalRecordNumber);
+
+        }
+        [Fact]
+        public async Task GetByIdReturnNotFound()
+         {
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+            
+            var patientId = Guid.NewGuid();
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);
+            var result = await patientController.GetById(patientId);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+         }
+         [Fact]
+         public async Task GetByIdBadRequest()
+         {
+            Setup();
+             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);   
+
+            var result = await patientController.GetById(Guid.NewGuid());
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated",badRequest.Value);    
+         }
+         [Fact]
+         public async Task CreateBadRequestAuth(){
+            Setup();
+                _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+             var patientDto1 = new CreatePatientDto  
+                {
+                    FirstName = "Oscar",
+                    LastName = "Bobb",
+                    FullName = "Oscar Bobb",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(2003,7,12),
+                    Email = "oscarBobb@gmail.com",
+                    Phone = "919870011",
+                    EmergencyContact = "934171011"
+                };
+
+                var result = await patientController.Create(patientDto1);
+                var badRequestauth = Assert.IsType<BadRequestObjectResult>(result.Result);
+                Assert.Equal("Error: User not authenticated",badRequestauth.Value);
+         }
+         [Fact]
+         public async Task CreateBadRequestInvalidInput(){
+                Setup();
+                _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ReturnsAsync(true);
+
+                var patientDto1 = new CreatePatientDto  
+                {
+                    FirstName = "Mateo",
+                    LastName = "Kovacic",
+                    FullName = "Mateo Kovacic",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1994,5,6),
+                    Email = "mateoKovacic@gmail.com",
+                    Phone = "919870010",
+                    EmergencyContact = "932171011"
+                };
+                _repo.Setup(repo => repo.AddAsync(It.IsAny<Patient>())).ThrowsAsync(new BusinessRuleValidationException("Error: This email is already in use !!!"));
+                
+                var result = await patientController.Create(patientDto1);
+
+                var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+                var messageBadRequest = badRequest.Value as dynamic;
+                Assert.Equal("Error: This email is already in use !!!",(string)messageBadRequest.Message);
+         }
+         [Fact]
+         public async Task CreateWithValidInput(){
+            
+            Setup();
+             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+                    var patientDto1 = new CreatePatientDto  
+                {
+                    FirstName = "Rodri",
+                    LastName = "Hernandez",
+                    FullName = "Rodri Hernandez",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1996,6,22),
+                    Email = "rodriBallonDOr@gmail.com",
+                    Phone = "919871010",
+                    EmergencyContact = "933171011"
+                };
+                
+
+                var patient = new Patient(patientDto1,"202410000001");
+                _repo.Setup(repo => repo.AddAsync(It.IsAny<Patient>())).ReturnsAsync(patient);
+
+                _logRepo.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
+                        .ReturnsAsync(new Mock<Log>().Object);   
+
+                var result = await patientController.Create(patientDto1);
+                var actionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+                var value = Assert.IsType<PatientDto>(actionResult.Value);
+
+                Assert.NotNull(value);  
+                Assert.Equal("Rodri Hernandez",value.FullName);
+                Assert.Equal("M",value.Gender);
+                Assert.Equal(new DateTime(1996,6,22),value.DateOfBirth);
+                Assert.Equal("rodriBallonDOr@gmail.com",value.Email);
+                Assert.Equal("919871010",value.Phone);
+                Assert.Equal("202410000001",value.MedicalRecordNumber);
+         }
 
         [Fact]
         public async Task SearchPatientsByName()
