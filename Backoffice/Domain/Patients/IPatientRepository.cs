@@ -6,6 +6,7 @@ namespace Backoffice.Domain.Patients
     {
         Task<Patient> GetPatientByEmailAsync(Email email);
         Task<List<Patient>> GetPatientsByNameAsync(string name);
+        Task<Patient> GetPatientByNameAsync(string name);
         Task<List<Patient>> GetPatientsByDateOfBirth(DateTime dateOfBirth);
         Task<List<Patient>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber);
     }

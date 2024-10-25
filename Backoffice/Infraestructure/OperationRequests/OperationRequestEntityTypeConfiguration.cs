@@ -12,38 +12,31 @@ namespace Backoffice.Infraestructure.OperationRequests
 
             builder.HasKey(or => or.Id);
             builder.Property(or => or.Id)
-                .IsRequired()
                 .HasConversion(id => id.Value, value => new OperationRequestId(value));
 
             builder.Property(or => or.DeadlineDate)
-                .IsRequired()
                 .HasMaxLength(50);
 
             builder.Property(or => or.Priority)
-                .IsRequired()
                 .HasMaxLength(50);
 
             builder.Property(or => or.Status)
-                .IsRequired()
                 .HasMaxLength(50);
 
             builder.Property(or => or.Description)
                 .HasMaxLength(500);
 
             builder.HasOne(or => or.OpType)
-                .WithMany()
-                .HasForeignKey(or => or.OpTypeId)
-                .IsRequired();
+                .WithOne()
+                .HasForeignKey<OperationRequest>(or => or.OpTypeId);
 
             builder.HasOne(or => or.Patient)
-                .WithMany()
-                .HasForeignKey(or => or.PatientId)
-                .IsRequired();
+                .WithOne()
+                .HasForeignKey<OperationRequest>(or => or.PatientId);
 
             builder.HasOne(or => or.Doctor)
-                .WithMany()
-                .HasForeignKey(or => or.DoctorId)
-                .IsRequired();
+                .WithOne()
+                .HasForeignKey<OperationRequest>(or => or.DoctorId);
         }
     }
 }

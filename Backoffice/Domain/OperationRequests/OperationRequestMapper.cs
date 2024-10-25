@@ -1,6 +1,6 @@
-using System;
-using Backoffice.Domain.OperationRequests;
 using Backoffice.Domain.OperationTypes;
+using Backoffice.Domain.Patients;
+using Backoffice.Domain.Staffs;
 
 namespace Backoffice.Domain.OperationRequests
 {
@@ -16,30 +16,29 @@ namespace Backoffice.Domain.OperationRequests
                 OpTypeName = operationRequest.OpType.Name.ToString(),
                 OpTypeId = operationRequest.OpTypeId.ToString(),
                 DeadlineDate = operationRequest.DeadlineDate.ToString(),
-                Priority = operationRequest.Priority.ToString(),
+                Priority = operationRequest.Priority,
                 PatientName = operationRequest.Patient.FullName.ToString(),
                 PatientId = operationRequest.PatientId.ToString(),
                 DoctorName = operationRequest.Doctor.Name.ToString(),
                 DoctorId = operationRequest.DoctorId.ToString(),
-                Status = operationRequest.Status.ToString(),
+                Status = operationRequest.Status,
                 Description = operationRequest.Description
             };
         }
 
-        public static OperationRequest ToDomain(CreateOperationRequestDto dto)
+        public static OperationRequest ToDomain(CreateOperationRequestDto dto, OperationType operationType, Patient patient, Staff doctor)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            /*
-            return new OperationRequest
-            {
-                Id = dto.Id,
-                Name = dto.Name,
-                Description = dto.Description,
-                OperationTypeId = dto.OperationTypeId,
-                CreatedAt = dto.CreatedAt,
-                UpdatedAt = dto.UpdatedAt
-            };*/
-            return null;
+            
+            return new OperationRequest(
+                operationType,
+                DateTime.Parse(dto.DeadlineDate),
+                Enum.Parse<Priority>(dto.Priority),
+                patient,
+                doctor,
+                dto.Description
+            );
+            //return null;
         }
     }
 }

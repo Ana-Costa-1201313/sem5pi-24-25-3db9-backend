@@ -7,5 +7,7 @@ namespace Backoffice.Domain.Staffs
         Task<int> GetLastMechanographicNumAsync();
 
         Task<Staff> GetStaffByEmailAsync(Email email);
+
+        Task<Staff> GetStaffByNameAsync(string name);
     }
 }

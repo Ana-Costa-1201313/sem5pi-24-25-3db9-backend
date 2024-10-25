@@ -2,7 +2,6 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Staffs;
-using Azure;
 
 namespace Backoffice.Domain.OperationRequests
 {
@@ -26,7 +25,7 @@ namespace Backoffice.Domain.OperationRequests
         }
 
         public async Task<List<OperationRequestDto>> GetAllAsync()
-        {/*
+        {
             var list = await this._repo.GetAllAsync();
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
@@ -36,8 +35,23 @@ namespace Backoffice.Domain.OperationRequests
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
 
-            return listDto;*/
-            return null;
+            return listDto;
+            //return null;
+        }
+
+        public async Task<List<OperationRequestDto>> GetAllByPatientNameAsDoctorAsync()
+        {
+            var list = await this._repo.GetAllAsync();
+
+            List<OperationRequestDto> listDto = new List<OperationRequestDto>();
+            
+            foreach (var item in list)
+            {
+                listDto.Add(OperationRequestMapper.ToDto(item));
+            }
+
+            return listDto;
+            //return null;
         }
 
         public async Task<OperationRequestDto> GetByIdAsync(Guid id)
@@ -52,15 +66,19 @@ namespace Backoffice.Domain.OperationRequests
         }
 
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)
-        {/*
-            var OperationRequest = OperationRequestMapper.ToDomain(dto);
+        {
+            var opType = await this._optyperepo.GetByOperationTypeName(dto.OpTypeName);
+            var patient = await this._patientrepo.GetPatientByNameAsync(dto.PatientName);
+            var doctor = await this._doctorrepo.GetStaffByNameAsync(dto.DoctorName);
 
-            await this._repo.AddAsync(OperationRequest);
+            var opRequest = OperationRequestMapper.ToDomain(dto, opType, patient, doctor);
+
+            await this._repo.AddAsync(opRequest);
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationRequestMapper.ToDto(OperationRequest);*/
-            return null;
+            return OperationRequestMapper.ToDto(opRequest);
+            //return null;
         }
     }
 }

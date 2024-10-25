@@ -29,5 +29,13 @@ namespace Backoffice.Infraestructure.Staffs
                 .Select(s => s)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Staff> GetStaffByNameAsync(string name)
+        {
+            return await _context.Staff
+                .Where(s => s.Name == name)
+                .Select(s => s)
+                .FirstOrDefaultAsync();
+        }
     }
 }

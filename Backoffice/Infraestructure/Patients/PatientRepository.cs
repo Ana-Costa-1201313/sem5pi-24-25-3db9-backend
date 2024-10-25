@@ -23,6 +23,12 @@ namespace Backoffice.Infraestructure.Patients
             .ToListAsync();
         }
         
+        public async Task<Patient> GetPatientByNameAsync(string name)
+        {
+        return await _context.Patients
+            .Where(p => p.FullName.Contains(name)) 
+            .FirstOrDefaultAsync();
+        }
 
         public async Task<List<Patient>> GetPatientsByDateOfBirth(DateTime dateOfBirth)
         {

@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Backoffice.Domain.OperationRequests.ValueObjects;
 using Backoffice.Domain.OperationTypes;

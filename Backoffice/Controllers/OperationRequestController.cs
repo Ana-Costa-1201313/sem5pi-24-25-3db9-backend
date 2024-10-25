@@ -9,15 +9,32 @@ namespace Backoffice.Controllers
     public class OperationRequestController : ControllerBase
     {
         private readonly OperationRequestService _service;
-        public OperationRequestController(OperationRequestService service)
+        private readonly AuthService _authService;
+        public OperationRequestController(OperationRequestService service, AuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAll()
         {
-            return await _service.GetAllAsync();
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            var opReqList = await _service.GetAllAsync();
+
+            if (opReqList == null || opReqList.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(opReqList);
         }
 
         [HttpGet("{id}")]
@@ -38,9 +55,18 @@ namespace Backoffice.Controllers
         {
             try
             {
-                var OperationRequest = await _service.AddAsync(dto);
+                await _authService.IsAuthorized(Request, new List<string> { "Doctor", "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-                return CreatedAtAction(nameof(GetById), new { id = OperationRequest.Id }, OperationRequest);
+            try
+            {
+                var opRequest = await _service.AddAsync(dto);
+
+                return CreatedAtAction(nameof(GetById), new { id = opRequest.Id }, opRequest);
             }
             catch (BusinessRuleValidationException e)
             {
