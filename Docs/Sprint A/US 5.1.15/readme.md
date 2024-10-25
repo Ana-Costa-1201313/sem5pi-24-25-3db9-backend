@@ -101,13 +101,7 @@ This diagram guides the realization of the functionality, for level 3 process vi
 ![US5.1.15 N3 SD](US5.1.15%20N3%20SD.svg)
 
 
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-*To do*
-
-
-### 4.5. Applied Design Patterns
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -120,13 +114,19 @@ This diagram presents the classes that support the functionality.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
 The following tests are to be developed:
-- It's possible to search staff profiles by name. 
-- It's possible to search staff profiles by email. 
-- It's possible to search staff profiles by specialization. 
-- The listed staff profiles present key staff information like name, email and specialization.
+- getting a staff profile by name, email, or specialization.
+  - if something is invalid, exceptions should be thrown
+
+All Value Objects will be tested in Unitary Tests, to check if they fullfill their requirements.
+
+The Staff Service will be tested to see if the get Staff is correct.
+
+The Staff Controller will be tested to see if the get Staff and responses are correct.
+
+Postman Tests will also check the gotten Staff data and the responses, for both success and failure cases.
 
 
 ## 5. Implementation
