@@ -43,5 +43,27 @@ namespace Backoffice.Infraestructure.Staffs
             .Include(s => s.Specialization)
             .FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        public async Task<List<Staff>> FilterStaffAsync(string name, string email, string specialization)
+        {
+            var query = _context.Staff.Include(s => s.Specialization).AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(s => s.Email._Email.Contains(email));
+            }
+
+            if (!string.IsNullOrEmpty(specialization))
+            {
+                query = query.Where(s => s.Specialization.Name.Name.Contains(specialization));
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

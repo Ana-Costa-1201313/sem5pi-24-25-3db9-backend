@@ -199,10 +199,9 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-
         public async Task<List<StaffDto>> FilterStaffAsync(string name, string email, string specialization)
         {
-            List<Staff> list = await this._repo.GetAllWithDetailsAsync();
+            List<Staff> list = await this._repo.FilterStaffAsync(name, email, specialization);
 
             List<StaffDto> listDto = new List<StaffDto>();
 

@@ -8,9 +8,10 @@ namespace Backoffice.Domain.Staffs
 
         Task<Staff> GetStaffByEmailAsync(Email email);
 
-        public Task<List<Staff>> GetAllWithDetailsAsync();
+        Task<List<Staff>> GetAllWithDetailsAsync();
         
-        public Task<Staff> GetByIdWithDetailsAsync(StaffId id);
+        Task<Staff> GetByIdWithDetailsAsync(StaffId id);
 
+        Task<List<Staff>> FilterStaffAsync(string name, string email, string specialization);
     }
 }
