@@ -288,7 +288,49 @@ namespace Backoffice.Tests
             Assert.NotEqual("Ederson",result.FirstName);
 
     }
+     [Fact]
+    public async Task PatchAsync()
+    {
+        var patientsDataBase = new List<Patient>();
 
+            Setup(patientsDataBase);
+            mockService.CallBase = true;
+            
+            PatientService service = mockService.Object;
+
+            var patientDto1 = new CreatePatientDto
+            {
+                 FirstName = "Ederson",
+                LastName = "Moraes",
+                FullName = "Ederson Moraes",
+                Gender = "M",
+                DateOfBirth = new DateTime(1993,7,17),
+                Email = "edersonMoraes@gmail.com",
+                Phone = "919888771",
+                EmergencyContact = "934111222"
+            };
+            var patient1 = new Patient(patientDto1,"202012000001");
+
+            patientsDataBase.Add(patient1);
+            var editPatientDto1 = new EditPatientDto
+            {
+                    FirstName = "Nathan",
+                    LastName = "Ake",
+                    FullName = "Nathan Ake",
+                    EmergencyContact = "929292920"
+            };
+            var result = await service.PatchAsync(patient1.Id.AsGuid(),editPatientDto1);
+            Assert.NotNull(result);
+            Assert.Equal("Nathan Ake",result.FullName);
+            Assert.Equal("edersonMoraes@gmail.com",result.Email);
+            Assert.Equal("929292920",result.EmergencyContact);
+
+            Assert.Equal("919888771",result.Phone);
+            Assert.Equal(new DateTime(1993,7,17),result.DateOfBirth);
+            Assert.Equal("202012000001",result.MedicalRecordNumber);
+            Assert.NotEqual("Ederson",result.FirstName);
+
+    }
     
 }
 }
