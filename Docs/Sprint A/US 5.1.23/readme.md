@@ -89,18 +89,18 @@ This section presents the design adopted to solve the requirement.
 
 #### 4.5.1. Unit and Integration Tests
 
-- Isolation and Integration tests for the controller
-- Isolation and Integration tests for the service
+- Unit tests for the controller focusing on the filter of the operation type
+- Unit tests for the service focusing on the filter of the operation type
+- Unit tests for the repository focusing on the filter of the operation type
 
 
 #### 4.5.2. Postman Tests
 
 - Status code test
-- Response time test
-- Response Body Contains
+- Response Body Contains fields
 - Response Body data validation
-- Status Code for Invalid Input
-
+- Status Code for Invalid deactivation
+- Check if it works correctly
 
 
 ## 5. Implementation
@@ -109,7 +109,7 @@ The implementation of this US is according to the design, as can be seen in the 
 
 All commits referred the corresponding issue in GitHub, using the #27 tag, as well as a relevant commit message.
 
-It was implemented in the branch feature/22-backend-admin-.
+It was implemented in the branch feature/23-backend-admin-listSearch-operation-types.
 
 
 ## 6. Integration/Demonstration
