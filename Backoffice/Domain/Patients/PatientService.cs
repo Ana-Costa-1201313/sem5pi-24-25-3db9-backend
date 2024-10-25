@@ -17,9 +17,9 @@ namespace Backoffice.Domain.Patients{
         private readonly IPatientRepository _repo;
         private readonly PatientMapper _patientMapper;
         private readonly ILogRepository _repoLog;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper, ILogRepository repoLog, EmailService emailService){
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository, PatientMapper patientMapper, ILogRepository repoLog, IEmailService emailService){
             this._unitOfWork = unitOfWork;
             this._repo = patientRepository;
             this._patientMapper = patientMapper;

@@ -41,7 +41,7 @@ namespace Backoffice.Domain.Patients
             this.Email = new Email(dto.Email);
             this.Phone = new PhoneNumber(dto.Phone);
             this.EmergencyContact = new PhoneNumber(dto.EmergencyContact);
-            this.MedicalRecordNumber = MedicalRecordNumber;
+            this.MedicalRecordNumber = sequencialNumber;
 
         }
 
