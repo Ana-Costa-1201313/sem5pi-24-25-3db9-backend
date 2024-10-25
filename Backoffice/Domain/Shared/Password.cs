@@ -5,6 +5,7 @@ namespace Backoffice.Domain.Shared
 {
     [Owned]
     public class Password : IValueObject
+
     {
         public string Passwd { get; private set; }
 

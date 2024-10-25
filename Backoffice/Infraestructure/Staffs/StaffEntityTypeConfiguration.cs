@@ -27,6 +27,8 @@ namespace Backoffice.Infraestructure.Staffs
 
             builder.HasIndex(l => l.LicenseNumber).IsUnique();
 
+            builder.HasOne(s => s.Specialization);
+
             builder.OwnsMany(s => s.AvailabilitySlots, a =>
             {
                 a.ToTable("AvailabilitySlot");

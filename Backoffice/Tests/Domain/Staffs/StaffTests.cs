@@ -1,5 +1,6 @@
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Specializations;
 using Xunit;
 
 namespace Backoffice.Tests
@@ -15,49 +16,44 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
             };
 
-
-            string sFirstName = "ana";
-            string sLastName = "costa";
-            string sFullName = "ana costa";
+            string sName = "ana costa";
             int sLicenseNumber = 1;
             PhoneNumber sPhone = new PhoneNumber("999999999");
-            string sSpecialization = "spec";
+            string sSpecialization = "skin";
             Role sRole = Role.Nurse;
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
 
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
 
             Assert.NotNull(staff.Id);
-            Assert.Equal(sFirstName, staff.FirstName);
-            Assert.Equal(sLastName, staff.LastName);
-            Assert.Equal(sFullName, staff.FullName);
+
+            Assert.Equal(sName, staff.Name);
             Assert.Equal(sLicenseNumber, staff.LicenseNumber.LicenseNum);
             Assert.Equal(sPhone.PhoneNum, staff.Phone.PhoneNum);
-            Assert.Equal(sSpecialization, staff.Specialization);
+            Assert.Equal(sSpecialization, staff.Specialization.Name.Name);
             Assert.Equal(sRole, staff.Role);
             Assert.Equal(MecNumSequence, staff.MecNumSequence);
             Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
             Assert.Equal(Email._Email, staff.Email._Email);
         }
-
+       
 
         [Fact]
-        public void NullFirstName()
+        public void NullName()
         {
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -65,9 +61,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = null,
-                LastName = "costa",
-                FullName = "ana costa",
+               Name = null,
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -76,15 +70,16 @@ namespace Backoffice.Tests
                 RecruitmentYear = 2024
             };
 
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a first name!", exception.Message);
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
+            Assert.Equal("Error: The staff must have a name!", exception.Message);
         }
 
         [Fact]
-        public void EmptyFirstName()
+        public void EmptyName()
         {
             List<string> AvailabilitySlots = new List<string>();
             AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -92,9 +87,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "",
-                LastName = "costa",
-                FullName = "ana costa",
+              Name = "",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -102,120 +95,13 @@ namespace Backoffice.Tests
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
             };
-
-
-            int MecNumSequence = 1;
-
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a first name!", exception.Message);
-        }
-
-        [Fact]
-        public void NullLastName()
-        {
-            List<string> AvailabilitySlots = new List<string>();
-            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
-            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
-
-            CreateStaffDto dto = new CreateStaffDto
-            {
-                FirstName = "ana",
-                LastName = null,
-                FullName = "ana costa",
-                LicenseNumber = 1,
-                Phone = "999999999",
-                Specialization = "spec",
-                AvailabilitySlots = AvailabilitySlots,
-                Role = Role.Nurse,
-                RecruitmentYear = 2024
-            };
-
+            
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a last name!", exception.Message);
-        }
-
-        [Fact]
-        public void EmptyLastName()
-        {
-            List<string> AvailabilitySlots = new List<string>();
-            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
-            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
-
-            CreateStaffDto dto = new CreateStaffDto
-            {
-                FirstName = "ana",
-                LastName = "",
-                FullName = "ana costa",
-                LicenseNumber = 1,
-                Phone = "999999999",
-                Specialization = "spec",
-                AvailabilitySlots = AvailabilitySlots,
-                Role = Role.Nurse,
-                RecruitmentYear = 2024
-            };
-
-
-            int MecNumSequence = 1;
-
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a last name!", exception.Message);
-        }
-
-        [Fact]
-        public void NullFullName()
-        {
-            List<string> AvailabilitySlots = new List<string>();
-            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
-            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
-
-            CreateStaffDto dto = new CreateStaffDto
-            {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = null,
-                LicenseNumber = 1,
-                Phone = "999999999",
-                Specialization = "spec",
-                AvailabilitySlots = AvailabilitySlots,
-                Role = Role.Nurse,
-                RecruitmentYear = 2024
-            };
-
-
-            int MecNumSequence = 1;
-
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a full name!", exception.Message);
-        }
-
-        [Fact]
-        public void EmptyFullName()
-        {
-            List<string> AvailabilitySlots = new List<string>();
-            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
-            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
-
-            CreateStaffDto dto = new CreateStaffDto
-            {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "",
-                LicenseNumber = 1,
-                Phone = "999999999",
-                Specialization = "spec",
-                AvailabilitySlots = AvailabilitySlots,
-                Role = Role.Nurse,
-                RecruitmentYear = 2024
-            };
-
-
-            int MecNumSequence = 1;
-
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
-            Assert.Equal("Error: The staff must have a full name!", exception.Message);
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
+            Assert.Equal("Error: The staff must have a name!", exception.Message);
         }
 
         [Fact]
@@ -227,21 +113,20 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "99999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
             };
 
-
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -254,12 +139,10 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "199999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -268,7 +151,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The phone number is invalid!", exception.Message);
         }
 
@@ -281,9 +166,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -292,10 +175,11 @@ namespace Backoffice.Tests
                 RecruitmentYear = 2024
             };
 
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", exception.Message);
         }
 
@@ -307,12 +191,10 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -321,7 +203,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: Invalid Availability slot format!", exception.Message);
         }
 
@@ -334,12 +218,10 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = 2024
@@ -348,7 +230,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = -1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The mechanographic number must be bigger than zero!", exception.Message);
         }
 
@@ -361,12 +245,10 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
-                Specialization = "spec",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots,
                 Role = Role.Nurse,
                 RecruitmentYear = -2024
@@ -375,7 +257,9 @@ namespace Backoffice.Tests
 
             int MecNumSequence = 1;
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, MecNumSequence));
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
             Assert.Equal("Error: The year must be bigger than zero!", exception.Message);
         }
 
@@ -388,9 +272,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -404,9 +286,10 @@ namespace Backoffice.Tests
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
             List<string> AvailabilitySlots2 = new List<string>();
             AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -416,19 +299,18 @@ namespace Backoffice.Tests
             {
                 Id = staff.Id.AsGuid(),
                 Phone = "999999991",
-                Specialization = "spec2",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            staff.Edit(editDto);
+            staff.Edit(editDto, spec);
 
             Assert.NotNull(staff.Id);
-            Assert.Equal("ana", staff.FirstName);
-            Assert.Equal("costa", staff.LastName);
-            Assert.Equal("ana costa", staff.FullName);
+           
+            Assert.Equal("ana costa", staff.Name);
             Assert.Equal(1, staff.LicenseNumber.LicenseNum);
             Assert.Equal("999999991", staff.Phone.PhoneNum);
-            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal("skin", staff.Specialization.Name.Name);
             Assert.Equal(sRole, staff.Role);
             Assert.Equal(MecNumSequence, staff.MecNumSequence);
             Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
@@ -444,9 +326,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -460,9 +340,10 @@ namespace Backoffice.Tests
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
             List<string> AvailabilitySlots2 = new List<string>();
             AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -472,11 +353,11 @@ namespace Backoffice.Tests
             {
                 Id = staff.Id.AsGuid(),
                 Phone = null,
-                Specialization = "spec2",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            var exception = Assert.Throws<BusinessRuleValidationException>(() => staff.Edit(editDto));
+            var exception = Assert.Throws<BusinessRuleValidationException>(() => staff.Edit(editDto, spec));
 
             Assert.Equal("Error: The staff must have a phone number!", exception.Message);
         }
@@ -490,9 +371,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+                Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -506,9 +385,10 @@ namespace Backoffice.Tests
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
             List<string> AvailabilitySlots2 = new List<string>();
             AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -518,19 +398,18 @@ namespace Backoffice.Tests
             {
                 Id = staff.Id.AsGuid(),
                 Phone = "999999991",
-                Specialization = "spec2",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            staff.PartialEdit(editDto);
+            staff.PartialEdit(editDto, spec);
 
             Assert.NotNull(staff.Id);
-            Assert.Equal("ana", staff.FirstName);
-            Assert.Equal("costa", staff.LastName);
-            Assert.Equal("ana costa", staff.FullName);
+           
+            Assert.Equal("ana costa", staff.Name);
             Assert.Equal(1, staff.LicenseNumber.LicenseNum);
             Assert.Equal("999999991", staff.Phone.PhoneNum);
-            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal("skin", staff.Specialization.Name.Name);
             Assert.Equal(sRole, staff.Role);
             Assert.Equal(MecNumSequence, staff.MecNumSequence);
             Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);
@@ -546,9 +425,7 @@ namespace Backoffice.Tests
 
             CreateStaffDto dto = new CreateStaffDto
             {
-                FirstName = "ana",
-                LastName = "costa",
-                FullName = "ana costa",
+               Name = "ana costa",
                 LicenseNumber = 1,
                 Phone = "999999999",
                 Specialization = "spec",
@@ -562,9 +439,10 @@ namespace Backoffice.Tests
             int MecNumSequence = 1;
             MechanographicNumber MechanographicNum = new MechanographicNumber(sRole.ToString(), dto.RecruitmentYear, MecNumSequence);
             Email Email = new Email(MechanographicNum + "@healthcareapp.com");
+            Specialization spec = new Specialization(new SpecializationName("skin"));
 
 
-            var staff = new Staff(dto, MecNumSequence);
+            var staff = new Staff(dto, spec, MecNumSequence, "healthcareapp.com");
 
             List<string> AvailabilitySlots2 = new List<string>();
             AvailabilitySlots2.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
@@ -574,19 +452,17 @@ namespace Backoffice.Tests
             {
                 Id = staff.Id.AsGuid(),
                 Phone = null,
-                Specialization = "spec2",
+                Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            staff.PartialEdit(editDto);
+            staff.PartialEdit(editDto, spec);
 
             Assert.NotNull(staff.Id);
-            Assert.Equal("ana", staff.FirstName);
-            Assert.Equal("costa", staff.LastName);
-            Assert.Equal("ana costa", staff.FullName);
+            Assert.Equal("ana costa", staff.Name);
             Assert.Equal(1, staff.LicenseNumber.LicenseNum);
             Assert.Equal("999999999", staff.Phone.PhoneNum);
-            Assert.Equal("spec2", staff.Specialization);
+            Assert.Equal("skin", staff.Specialization.Name.Name);
             Assert.Equal(sRole, staff.Role);
             Assert.Equal(MecNumSequence, staff.MecNumSequence);
             Assert.Equal(MechanographicNum.MechanographicNum, staff.MechanographicNum.MechanographicNum);

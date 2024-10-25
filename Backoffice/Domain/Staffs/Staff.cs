@@ -1,14 +1,11 @@
 using Backoffice.Domain.Shared;
+using Backoffice.Domain.Specializations;
 
 namespace Backoffice.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
-        public string FirstName { get; private set; }
-
-        public string LastName { get; private set; }
-
-        public string FullName { get; private set; }
+        public string Name { get; private set; }
 
         public LicenseNumber LicenseNumber { get; private set; }
 
@@ -16,7 +13,7 @@ namespace Backoffice.Domain.Staffs
 
         public PhoneNumber Phone { get; private set; }
 
-        public string Specialization { get; private set; }
+        public Specialization Specialization { get; private set; }
 
         public List<AvailabilitySlot> AvailabilitySlots { get; private set; }
 
@@ -33,33 +30,21 @@ namespace Backoffice.Domain.Staffs
 
         }
 
-        public Staff(CreateStaffDto dto, int mecNumSeq)
+        public Staff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
         {
             this.Id = new StaffId(Guid.NewGuid());
 
-            if (string.IsNullOrEmpty(dto.FirstName))
+            if (string.IsNullOrEmpty(dto.Name))
             {
-                throw new BusinessRuleValidationException("Error: The staff must have a first name!");
+                throw new BusinessRuleValidationException("Error: The staff must have a name!");
             }
-            this.FirstName = dto.FirstName;
-
-            if (string.IsNullOrEmpty(dto.LastName))
-            {
-                throw new BusinessRuleValidationException("Error: The staff must have a last name!");
-            }
-            this.LastName = dto.LastName;
-
-            if (string.IsNullOrEmpty(dto.FullName))
-            {
-                throw new BusinessRuleValidationException("Error: The staff must have a full name!");
-            }
-            this.FullName = dto.FullName;
+            this.Name = dto.Name;
 
             this.LicenseNumber = new LicenseNumber(dto.LicenseNumber);
 
             this.Phone = new PhoneNumber(dto.Phone);
 
-            this.Specialization = dto.Specialization;
+            this.Specialization = specialization;
 
             this.AvailabilitySlots = new List<AvailabilitySlot>();
             foreach (var slotString in dto.AvailabilitySlots)
@@ -77,7 +62,7 @@ namespace Backoffice.Domain.Staffs
 
             this.MechanographicNum = new MechanographicNumber(dto.Role.ToString(), dto.RecruitmentYear, MecNumSequence);
 
-            this.Email = new Email(MechanographicNum + "@healthcareapp.com");
+            this.Email = new Email(MechanographicNum + "@" + dns);
 
             this.Active = true;
         }
@@ -89,17 +74,15 @@ namespace Backoffice.Domain.Staffs
                 throw new BusinessRuleValidationException("Error: This Staff profile is already deactivated!");
             }
 
-            this.FirstName = "Deactivated Staff";
-            this.LastName = "Deactivated Staff";
-            this.FullName = "Deactivated Staff";
+            this.Name = "Deactivated Staff";
             this.LicenseNumber = new LicenseNumber(this.Id.GetHashCode());
             this.Phone = null;
-            this.Specialization = "Deactivated Staff";
+            this.Specialization = null;
             this.AvailabilitySlots = null;
             this.Active = false;
         }
 
-        public void Edit(EditStaffDto dto)
+        public void Edit(EditStaffDto dto, Specialization specialization)
         {
             if (!this.Active)
             {
@@ -112,7 +95,7 @@ namespace Backoffice.Domain.Staffs
             }
             this.Phone = new PhoneNumber(dto.Phone);
 
-            this.Specialization = dto.Specialization;
+            this.Specialization = specialization;
 
             List<AvailabilitySlot> list = new List<AvailabilitySlot>();
 
@@ -123,7 +106,7 @@ namespace Backoffice.Domain.Staffs
             this.AvailabilitySlots = list;
         }
 
-        public void PartialEdit(EditStaffDto dto)
+        public void PartialEdit(EditStaffDto dto, Specialization specialization)
         {
             if (!this.Active)
             {
@@ -137,7 +120,7 @@ namespace Backoffice.Domain.Staffs
 
             if (dto.Specialization != null)
             {
-                this.Specialization = dto.Specialization;
+                this.Specialization = specialization;
             }
 
             if (dto.AvailabilitySlots != null)
