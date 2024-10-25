@@ -131,7 +131,7 @@ namespace Backoffice.Domain.OperationTypes
             {
                 var specializationsNamesSet = new HashSet<String>();
                 var updatedStaff = new List<OperationTypeRequiredStaff>();
-                
+
                 foreach (var rsDto in operationTypeDto.RequiredStaff)
                 {
                     var specialization = await _repoSpecialization.GetBySpecializationName(rsDto.Specialization);
@@ -197,6 +197,20 @@ namespace Backoffice.Domain.OperationTypes
 
             await _unitOfWork.CommitAsync();
             return OperationTypeMapper.ToDto(operationType);
+        }
+
+        public async Task<List<OperationTypeDto>> FilterOperationTypesAsync(string name, string specialization, bool? status)
+        {
+            var opTypes = await _repo.FilterOperationTypesAsync(name, specialization, status);
+
+            if (opTypes == null)
+            {
+                return null;
+            }
+
+            List<OperationTypeDto> listDto = opTypes.Select(opType => OperationTypeMapper.ToDto(opType)).ToList();
+
+            return listDto;
         }
 
 

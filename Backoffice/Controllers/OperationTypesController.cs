@@ -20,29 +20,29 @@ namespace Backoffice.Controllers
             _authService = authService;
         }
 
-        // GET: api/OperationTypes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
-        {
+        // // GET: api/OperationTypes
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
+        // {
 
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        //     try
+        //     {
+        //         await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ex.Message);
+        //     }
 
-            var opTypeList = await _service.GetAllAsync();
+        //     var opTypeList = await _service.GetAllAsync();
 
-            if (opTypeList == null || !opTypeList.Any())
-            {
-                return NoContent();
-            }
+        //     if (opTypeList == null || !opTypeList.Any())
+        //     {
+        //         return NoContent();
+        //     }
 
-            return Ok(opTypeList);
-        }
+        //     return Ok(opTypeList);
+        // }
 
         // GET: api/OperationTypes/5
         [HttpGet("{id}")]
@@ -66,6 +66,53 @@ namespace Backoffice.Controllers
             }
 
             return Ok(opType);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<OperationTypeDto>>> GetOperationTypes(
+            [FromQuery] string name = null,
+            [FromQuery] string specialization = null,
+            [FromQuery] bool? status = null
+        )
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+
+                List<OperationTypeDto> opTypes;
+
+                if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("specialization") || Request.Query.ContainsKey("status"))
+                {
+                    opTypes = await _service.FilterOperationTypesAsync(name, specialization, status);
+                    if (opTypes == null || opTypes.Count == 0)
+                    {
+                        return NotFound();
+                    }
+
+                }
+                else
+                {
+                    opTypes = await _service.GetAllAsync();
+                    if (opTypes == null || opTypes.Count == 0)
+                    {
+                        return NoContent();
+                    }
+                }
+
+                return Ok(opTypes);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         // POST: api/OperationTypes
