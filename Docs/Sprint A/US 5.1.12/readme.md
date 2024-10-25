@@ -123,10 +123,6 @@ This diagram guides the realization of the functionality, for level 3 process vi
 - **Onion Architecture:** concentric layers structure that puts the Domin Model as the core. Promotes modularity, flexibility and testability.
 - **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
-<<<<<<< HEAD
-=======
-
->>>>>>> Development
 
 ### 4.5. Tests
 

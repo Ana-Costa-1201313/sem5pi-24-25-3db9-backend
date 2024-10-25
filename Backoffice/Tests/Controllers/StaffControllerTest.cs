@@ -98,7 +98,7 @@ namespace Backoffice.Tests
 
             _repo.Setup(repo => repo.GetAllWithDetailsAsync()).ReturnsAsync(expectedList);
 
-            var result = await mockController.Object.GetAll();
+            var result = await mockController.Object.GetAll(null, null, null);
 
             var okResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
 
@@ -131,7 +131,7 @@ namespace Backoffice.Tests
             _repo.Setup(repo => repo.GetAllWithDetailsAsync())
             .ReturnsAsync(expectedList);
 
-            var result = await mockController.Object.GetAll();
+            var result = await mockController.Object.GetAll(null, null, null);
 
             var noContentResult = Assert.IsType<ActionResult<IEnumerable<StaffDto>>>(result);
 

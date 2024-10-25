@@ -20,7 +20,11 @@ namespace Backoffice.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll(
+            [FromQuery] string name,
+            [FromQuery] string email,
+            [FromQuery] string specialization
+        )
         {
             try
             {
@@ -31,11 +35,25 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var staffList = await _service.GetAllAsync();
+            List<StaffDto> staffList;
 
-            if (staffList == null || staffList.Count == 0)
+            if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("email") || Request.Query.ContainsKey("specialization"))
             {
-                return NoContent();
+                staffList = await _service.FilterStaffAsync(name, email, specialization);
+
+                if (staffList == null || staffList.Count == 0)
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                staffList = await _service.GetAllAsync();
+
+                if (staffList == null || staffList.Count == 0)
+                {
+                    return NoContent();
+                }
             }
 
             return Ok(staffList);
@@ -161,7 +179,7 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
             if (id != dto.Id)
             {
                 return BadRequest(new { Message = "The staff Id does not match the header!" });

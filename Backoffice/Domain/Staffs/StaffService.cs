@@ -199,6 +199,21 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
+
+        public async Task<List<StaffDto>> FilterStaffAsync(string name, string email, string specialization)
+        {
+            List<Staff> list = await this._repo.GetAllWithDetailsAsync();
+
+            List<StaffDto> listDto = new List<StaffDto>();
+
+            foreach (Staff staff in list)
+            {
+                listDto.Add(_staffMapper.ToStaffDto(staff));
+            }
+
+            return listDto;
+        }
+
         public virtual string ReadDNS()
         {
             return System.Configuration.ConfigurationManager.AppSettings["DNS_URL"] ?? throw new ConfigurationErrorsException("Error: The DNS is not configured!");
