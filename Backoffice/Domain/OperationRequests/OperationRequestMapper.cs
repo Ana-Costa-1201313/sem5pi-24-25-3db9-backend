@@ -33,7 +33,7 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequest(
                 operationType,
                 DateTime.Parse(dto.DeadlineDate),
-                Enum.Parse<Priority>(dto.Priority),
+                dto.Priority,
                 patient,
                 doctor,
                 dto.Description
