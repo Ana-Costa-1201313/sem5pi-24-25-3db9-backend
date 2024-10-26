@@ -51,6 +51,58 @@ namespace Backoffice.Controllers
             return OperationRequest;
         }
 
+        [HttpGet("list/{doctorEmail}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByFilter(string doctorEmail, [FromQuery] string parameter, [FromQuery] string value)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            List<OperationRequestDto> OperationRequests = new List<OperationRequestDto>();
+
+            try
+            {
+                switch (parameter)
+                {
+                    case "patient":
+                        OperationRequests = await _service.GetAllByPatientEmailAsDoctorAsync(doctorEmail, value);
+                        break;
+                    case "priority":
+                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        break;
+                    case "operation type":
+                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        break;
+                    case "status":
+                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        break;
+                    case "":
+                        OperationRequests = await _service.GetAllByDoctorEmailAsync(doctorEmail);
+                        break;
+                    default:
+                        return BadRequest(new { Message = "Invalid parameter!" });
+                }
+
+                //var OperationRequests = await _service.GetAllByDoctorEmailAsync(doctorEmail);
+
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
         [HttpGet("doctorGetAll/{doctorEmail}")]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllBydoctorEmail(string doctorEmail)
         {
@@ -78,7 +130,7 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
-        }
+        }/*
 
         [HttpGet("doctorGetByPatientEmail/{doctorEmail}/{patientEmail}")]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPatientEmailAsDoctor(string doctorEmail, string patientEmail)
@@ -194,7 +246,7 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
-        }
+        }*/
 
         [HttpPost]
         public async Task<ActionResult<OperationRequestDto>> Create(CreateOperationRequestDto dto)
