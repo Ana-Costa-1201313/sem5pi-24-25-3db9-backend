@@ -92,11 +92,6 @@ namespace Backoffice.Domain.Staffs
 
         public void Edit(EditStaffDto dto, Specialization specialization)
         {
-            if (!this.Active)
-            {
-                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
-            }
-
             if (dto.Phone == null)
             {
                 throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
@@ -123,11 +118,6 @@ namespace Backoffice.Domain.Staffs
 
         public void PartialEdit(EditStaffDto dto, Specialization specialization)
         {
-            if (!this.Active)
-            {
-                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
-            }
-
             if (dto.Phone != null)
             {
                 this.Phone = new PhoneNumber(dto.Phone);

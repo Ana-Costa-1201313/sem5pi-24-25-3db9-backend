@@ -15,15 +15,19 @@ namespace Backoffice.Domain.Staffs
         private readonly StaffMapper _staffMapper;
         private readonly ISpecializationRepository _specRepo;
         private readonly ILogRepository _logRepo;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _config;
 
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo, ILogRepository logRepo)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo, ILogRepository logRepo, IEmailService emailService, IConfiguration config)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _staffMapper = staffMapper;
             _specRepo = specRepo;
             _logRepo = logRepo;
+            _emailService = emailService;
+            _config = config;
         }
 
 
@@ -144,6 +148,13 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
+            if (!staff.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
+            }
+
+            string oldPhoneNum = staff.Phone.PhoneNum;
+
             staff.Edit(dto, specialization);
 
             await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
@@ -151,6 +162,23 @@ namespace Backoffice.Domain.Staffs
             try
             {
                 await this._unitOfWork.CommitAsync();
+
+                if (dto.Phone != oldPhoneNum)
+                {
+                    string message = "Your phone number has been updated from " + oldPhoneNum + " to " + dto.Phone + ".";
+                    string subject = "Phone number updated";
+
+                    string defaultEmail = _config["EmailSmtp:DefaultStaffConfirmationEmail"];
+
+                    if (!string.IsNullOrEmpty(defaultEmail))
+                    {
+                        await _emailService.SendEmail(defaultEmail, message, subject);
+                    }
+                    else
+                    {
+                        await _emailService.SendEmail(staff.Email._Email, message, subject);
+                    }
+                }
             }
             catch (DbUpdateException)
             {
@@ -181,6 +209,13 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
+            if (!staff.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
+            }
+
+            string oldPhoneNum = staff.Phone.PhoneNum;
+
             staff.PartialEdit(dto, specialization);
 
             await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
@@ -188,6 +223,23 @@ namespace Backoffice.Domain.Staffs
             try
             {
                 await this._unitOfWork.CommitAsync();
+
+                if (dto.Phone != oldPhoneNum)
+                {
+                    string message = "Your phone number has been updated from " + oldPhoneNum + " to " + dto.Phone + ".";
+                    string subject = "Phone number updated";
+
+                    string defaultEmail = _config["EmailSmtp:DefaultStaffConfirmationEmail"];
+
+                    if (!string.IsNullOrEmpty(defaultEmail))
+                    {
+                        await _emailService.SendEmail(defaultEmail, message, subject);
+                    }
+                    else
+                    {
+                        await _emailService.SendEmail(staff.Email._Email, message, subject);
+                    }
+                }
             }
             catch (DbUpdateException)
             {
