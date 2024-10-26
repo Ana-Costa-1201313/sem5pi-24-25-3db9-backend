@@ -113,7 +113,7 @@ namespace Backoffice.Domain.Patients{
             await _emailService.SendEmail(oldEmail, message, subject);
             }
 
-            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
+            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient,patient.Id));
 
             await _unitOfWork.CommitAsync();
 
@@ -164,7 +164,7 @@ namespace Backoffice.Domain.Patients{
             await _emailService.SendEmail(oldEmail, message, subject);
             }
 
-            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient));
+            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient,patient.Id));
 
             await _unitOfWork.CommitAsync();
             return _patientMapper.ToPatientDto(patient);
@@ -180,7 +180,7 @@ namespace Backoffice.Domain.Patients{
                 
             _repo.Remove(patient);
 
-            await _repoLog.AddAsync(new Log(patient.ToJSON(), LogType.Delete,LogEntity.Patient));
+            await _repoLog.AddAsync(new Log(patient.ToJSON(), LogType.Delete,LogEntity.Patient,patient.Id));
 
             await _unitOfWork.CommitAsync();
             
