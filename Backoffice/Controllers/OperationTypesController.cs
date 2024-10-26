@@ -203,5 +203,33 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
+
+        [HttpDelete("{id}/hard")]
+        public async Task<ActionResult<OperationTypeDto>> HardDelete(Guid id)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                await _service.DeleteAsync(id);
+
+                return Ok();
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return NotFound(new { Message = e.Message }); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message }); 
+            }
+        }
     }
 }

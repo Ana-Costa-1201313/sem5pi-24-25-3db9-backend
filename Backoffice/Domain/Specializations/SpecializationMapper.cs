@@ -3,9 +3,9 @@ using Backoffice.Domain.Specializations;
 
 namespace Backoffice.Domain.Specializations;
 
-public static class SpecializationMapper
+public class SpecializationMapper
 {
-    public static SpecializationDto ToDto(Specialization specialization)
+    public SpecializationDto ToDto(Specialization specialization)
     {
         return new SpecializationDto
         {
@@ -14,14 +14,14 @@ public static class SpecializationMapper
         };
     }
 
-    public static Specialization ToDomain(SpecializationDto dto)
+    public Specialization ToDomain(SpecializationDto dto)
     {
         return new Specialization(
             new SpecializationName(dto.Name)
         );
     }
 
-    public static Specialization ToDomain(CreatingSpecializationDto dto)
+    public Specialization ToDomain(CreatingSpecializationDto dto)
     {
         return new Specialization(
             new SpecializationName(dto.Name)
@@ -29,14 +29,14 @@ public static class SpecializationMapper
     }
 
     //Only for tests
-    public static Specialization ToDomainForTests(string specName)
+    public Specialization ToDomainForTests(string specName)
     {
         return new Specialization(
                 new SpecializationName(specName));
     }
 
     //Only for tests
-    public static CreatingSpecializationDto ToCreateDtoForTests(string specName)
+    public CreatingSpecializationDto ToCreateDtoForTests(string specName)
     {
         return new CreatingSpecializationDto(specName);
     }
