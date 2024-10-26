@@ -19,6 +19,9 @@ namespace Backoffice.Tests.Controllers
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly SpecializationsController _controller;
         private readonly SpecializationService _service;
+        private readonly Mock<IExternalApiServices> _mockExternal;
+        private readonly Mock<AuthService> _mockAuthService;
+
 
         public SpecializationControllerTests()
         {
@@ -28,7 +31,18 @@ namespace Backoffice.Tests.Controllers
                 _mockUnitOfWork.Object,
                 _mockRepo.Object
             );
-            _controller = new SpecializationsController(_service);
+            _mockExternal = new Mock<IExternalApiServices>();
+
+            _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
+
+            _controller = new SpecializationsController(_service, _mockAuthService.Object);
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Headers["Authorization"] = "Bearer someToken";
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
 
 

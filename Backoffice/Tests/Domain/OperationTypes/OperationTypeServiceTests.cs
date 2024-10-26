@@ -22,6 +22,17 @@ namespace Backoffice.Tests
             // Mock GetAllWithDetailsAsync
             operationTypeRepository.Setup(repo => repo.GetAllWithDetailsAsync()).ReturnsAsync(operationTypesDatabase);
 
+            // Mock FilterOperationTypesAsync
+            operationTypeRepository.Setup(repo => repo.FilterOperationTypesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool?>()))
+                .ReturnsAsync((string name, string specialization, bool? status) =>
+                    operationTypesDatabase
+                        .Where(op =>
+                            (string.IsNullOrEmpty(name) || op.Name.Name.Contains(name)) &&
+                            (string.IsNullOrEmpty(specialization) ||
+                            op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Contains(specialization))) &&
+                            (!status.HasValue || op.Active == status))
+                        .ToList());
+
             // Mock GetByIdWithDetailsAsync
             operationTypeRepository.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
                 .ReturnsAsync((OperationTypeId id) => operationTypesDatabase.SingleOrDefault(op => op.Id.Equals(id)));
@@ -613,7 +624,82 @@ namespace Backoffice.Tests
             Assert.Equal("Error: Can't have duplicate specializations -> Surgeon.", exception.Message);
         }
 
+        [Fact]
+        public async Task FilterOperationTypesAsync_ReturnsOperationType_WhenMatchingRecordsExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+            var opType1 = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                    }
+                );
 
+            var opType2 = new OperationType(
+                new OperationTypeName("SUG"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                    }
+                );
+            operationTypesDatabase.Add(opType1);
+            operationTypesDatabase.Add(opType2);
 
+            var specializationsDatabase = new List<Specialization>();
+            var expectedName = "Surgery";
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var result = await service.FilterOperationTypesAsync(expectedName, null, null);
+
+            Assert.Equal(opType1.Name.Name, result[0].Name);
+
+            Assert.Equal(20, result[0].AnesthesiaPatientPreparationInMinutes);
+            Assert.Equal(60, result[0].SurgeryInMinutes);
+            Assert.Equal(30, result[0].CleaningInMinutes);
+            Assert.Single(result[0].RequiredStaff);
+
+            var returnedStaff = result[0].RequiredStaff.First();
+            Assert.Equal("Surgeon", returnedStaff.Specialization);
+            Assert.Equal(5, returnedStaff.Total);
+        }
+
+        [Fact]
+        public async Task FilterOperationTypesAsync_ReturnsEmptyList_WhenNoMatchingRecordsExist()
+        {
+            var operationTypesDatabase = new List<OperationType>();
+            var opType1 = new OperationType(
+                new OperationTypeName("Surgery"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                    }
+                );
+
+            var opType2 = new OperationType(
+                new OperationTypeName("SUG"),
+                new OperationTypeDuration(20, 60, 30),
+                new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 5)
+                    }
+                );
+            operationTypesDatabase.Add(opType1);
+            operationTypesDatabase.Add(opType2);
+
+            var specializationsDatabase = new List<Specialization>();
+
+            var expectedName = "NOTHING";
+
+            var service = Setup(operationTypesDatabase, specializationsDatabase);
+
+            var result = await service.FilterOperationTypesAsync(expectedName, null, null);
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
     }
 }

@@ -20,11 +20,13 @@ namespace Backoffice.Controllers
             _authService = authService;
         }
 
-        // GET: api/OperationTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
+        public async Task<ActionResult<List<OperationTypeDto>>> GetOperationTypes(
+            [FromQuery] string name = null,
+            [FromQuery] string specialization = null,
+            [FromQuery] bool? status = null
+        )
         {
-
             try
             {
                 await _authService.IsAuthorized(Request, new List<string> { "Admin" });
@@ -34,14 +36,30 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var opTypeList = await _service.GetAllAsync();
-
-            if (opTypeList == null || !opTypeList.Any())
+            try
             {
-                return NoContent();
-            }
 
-            return Ok(opTypeList);
+                List<OperationTypeDto> opTypes;
+
+                if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("specialization") || Request.Query.ContainsKey("status"))
+                {
+                    opTypes = await _service.FilterOperationTypesAsync(name, specialization, status);
+                }
+                else
+                {
+                    opTypes = await _service.GetAllAsync();
+                }
+                if (opTypes == null || opTypes.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                return Ok(opTypes);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         // GET: api/OperationTypes/5
@@ -185,8 +203,5 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }
-
-
-
     }
 }
