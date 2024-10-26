@@ -13,21 +13,23 @@ namespace Backoffice.Domain.OperationTypes
         private readonly IOperationTypeRepository _repo;
         private readonly ISpecializationRepository _repoSpecialization;
         private readonly ILogRepository _repoLog;
+        private readonly OperationTypeMapper _mapper;
 
 
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo, ISpecializationRepository repoSpecification, ILogRepository repoLog)
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repo, ISpecializationRepository repoSpecification, ILogRepository repoLog, OperationTypeMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._repoSpecialization = repoSpecification;
             this._repoLog = repoLog;
+            this._mapper = mapper;
         }
 
         public async Task<List<OperationTypeDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllWithDetailsAsync();
 
-            List<OperationTypeDto> listDto = list.Select(opType => OperationTypeMapper.ToDto(opType)).ToList();
+            List<OperationTypeDto> listDto = list.Select(opType => _mapper.ToDto(opType)).ToList();
 
             return listDto;
         }
@@ -39,7 +41,7 @@ namespace Backoffice.Domain.OperationTypes
             if (opType == null)
                 return null;
 
-            return OperationTypeMapper.ToDto(opType);
+            return _mapper.ToDto(opType);
         }
 
         public async Task<OperationTypeDto> AddAsync(CreatingOperationTypeDto dto)
@@ -65,7 +67,7 @@ namespace Backoffice.Domain.OperationTypes
                 requiredStaffList.Add(requiredStaff);
             }
 
-            var opType = OperationTypeMapper.ToDomain(dto);
+            var opType = _mapper.ToDomain(dto);
 
             opType.ChangeRequiredStaff(requiredStaffList);
 
@@ -80,7 +82,7 @@ namespace Backoffice.Domain.OperationTypes
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationTypeMapper.ToDto(opType);
+            return _mapper.ToDto(opType);
         }
 
         public async Task<OperationTypeDto> InactivateAsync(Guid id)
@@ -94,7 +96,7 @@ namespace Backoffice.Domain.OperationTypes
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationTypeMapper.ToDto(opType);
+            return _mapper.ToDto(opType);
         }
 
 
@@ -154,7 +156,7 @@ namespace Backoffice.Domain.OperationTypes
 
             await _unitOfWork.CommitAsync();
 
-            return OperationTypeMapper.ToDto(operationType);
+            return _mapper.ToDto(operationType);
         }
 
         public async Task<OperationTypeDto> Put(Guid id, EditOperationTypeDto operationTypeDto)
@@ -196,7 +198,7 @@ namespace Backoffice.Domain.OperationTypes
 
 
             await _unitOfWork.CommitAsync();
-            return OperationTypeMapper.ToDto(operationType);
+            return _mapper.ToDto(operationType);
         }
 
         public async Task<List<OperationTypeDto>> FilterOperationTypesAsync(string name, string specialization, bool? status)
@@ -208,7 +210,7 @@ namespace Backoffice.Domain.OperationTypes
                 return null;
             }
 
-            List<OperationTypeDto> listDto = opTypes.Select(opType => OperationTypeMapper.ToDto(opType)).ToList();
+            List<OperationTypeDto> listDto = opTypes.Select(opType => _mapper.ToDto(opType)).ToList();
 
             return listDto;
         }

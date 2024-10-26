@@ -9,18 +9,20 @@ namespace Backoffice.Domain.Specializations
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISpecializationRepository _repo;
+        private readonly SpecializationMapper _mapper;
 
-        public SpecializationService(IUnitOfWork unitOfWork, ISpecializationRepository repo)
+        public SpecializationService(IUnitOfWork unitOfWork, ISpecializationRepository repo, SpecializationMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            this._mapper = mapper;
         }
 
         public async Task<List<SpecializationDto>> GetAllAsync()
         {
             var list = await this._repo.GetAllAsync();
 
-            List<SpecializationDto> listDto = list.ConvertAll<SpecializationDto>(specialization => SpecializationMapper.ToDto(specialization)).ToList();
+            List<SpecializationDto> listDto = list.ConvertAll<SpecializationDto>(specialization => _mapper.ToDto(specialization)).ToList();
 
             return listDto;
         }
@@ -32,12 +34,12 @@ namespace Backoffice.Domain.Specializations
             if (spec == null)
                 return null;
 
-            return SpecializationMapper.ToDto(spec);
+            return _mapper.ToDto(spec);
         }
 
         public async Task<SpecializationDto> AddAsync(CreatingSpecializationDto dto)
         {
-            var spec = SpecializationMapper.ToDomain(dto);
+            var spec = _mapper.ToDomain(dto);
 
             if (await this._repo.SpecializationNameExists(spec.Name.Name))
             {
@@ -48,7 +50,7 @@ namespace Backoffice.Domain.Specializations
 
             await this._unitOfWork.CommitAsync();
 
-            return SpecializationMapper.ToDto(spec);
+            return _mapper.ToDto(spec);
         }
 
         public async Task<SpecializationDto> InactivateAsync(Guid id)
@@ -62,7 +64,7 @@ namespace Backoffice.Domain.Specializations
 
             await this._unitOfWork.CommitAsync();
 
-            return SpecializationMapper.ToDto(spec);
+            return _mapper.ToDto(spec);
         }
     }
 }
