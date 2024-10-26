@@ -13,11 +13,6 @@ using Backoffice.Domain.Specializations;
 using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
-using Backoffice.Infraestructure.Users;
-using Backoffice.Infraestructure.Staffs;
-using Backoffice.Infraestructure.Patients;
-using Backoffice.Domain.Patients;
-
 
 namespace Backoffice.Infraestructure
 {

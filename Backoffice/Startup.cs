@@ -24,12 +24,6 @@ using Backoffice.Infraestructure.OperationRequests;
 using Backoffice.Domain.Patients;
 using Backoffice.Infraestructure.Patients;
 
-using System.Text.Json.Serialization;
-using Backoffice.Domain.Users;
-using Backoffice.Domain.Patients;
-using Backoffice.Infraestructure.Patients;
-
-
 
 namespace Backoffice
 {
