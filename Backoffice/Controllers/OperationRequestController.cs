@@ -51,8 +51,8 @@ namespace Backoffice.Controllers
             return OperationRequest;
         }
 
-        [HttpGet("doctorGetAll/{doctorId}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByDoctorId(Guid doctorId)
+        [HttpGet("doctorGetAll/{doctorEmail}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllBydoctorEmail(string doctorEmail)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
+                var OperationRequests = await _service.GetAllByDoctorEmailAsync(doctorEmail);
 
                 if (OperationRequests == null || !OperationRequests.Any())
                 {
@@ -80,8 +80,8 @@ namespace Backoffice.Controllers
             }
         }
 
-        [HttpGet("doctorGetByPatientName/{doctorId}/{patientName}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPatientNameAsDoctor(Guid doctorId, string patientName)
+        [HttpGet("doctorGetByPatientEmail/{doctorEmail}/{patientEmail}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPatientEmailAsDoctor(string doctorEmail, string patientEmail)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Backoffice.Controllers
             
             try
             {
-                var OperationRequests = await _service.GetAllByPatientNameAsDoctorAsync(doctorId, patientName);
+                var OperationRequests = await _service.GetAllByPatientEmailAsDoctorAsync(doctorEmail, patientEmail);
 
                 if (OperationRequests == null || !OperationRequests.Any())
                 {
@@ -109,8 +109,8 @@ namespace Backoffice.Controllers
             }
         }
 
-        [HttpGet("doctorGetByPriority/{doctorId}/{priority}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPriorityAsDoctor(Guid doctorId, string priority)
+        [HttpGet("doctorGetByPriority/{doctorEmail}/{priority}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPriorityAsDoctor(string doctorEmail, string priority)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorId, priority);
+                var OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, priority);
 
                 if (OperationRequests == null || !OperationRequests.Any())
                 {
@@ -138,37 +138,8 @@ namespace Backoffice.Controllers
             }
         }
 
-        [HttpGet("doctorGetByOperationTypeName/{doctorId}/{opTypeName}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByOpTypeNameAsDoctor(Guid doctorId, string opTypeName)
-        {
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
-            try
-            {
-                var OperationRequests = await _service.GetAllByOpTypeNameAsDoctorAsync(doctorId, opTypeName);
-
-                if (OperationRequests == null || !OperationRequests.Any())
-                {
-                    return NotFound();
-                }
-
-                return Ok(OperationRequests);
-            }
-            catch (BusinessRuleValidationException e)
-            {
-                return BadRequest(new { Message = e.Message });
-            }
-        }
-
-        [HttpGet("doctorGetByStatus/{doctorId}/{status}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByStatusAsDoctor(Guid doctorId, string status)
+        [HttpGet("doctorGetByOperationTypeName/{doctorEmail}/{opTypeName}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByOpTypeNameAsDoctor(string doctorEmail, string opTypeName)
         {
             try
             {
@@ -181,7 +152,36 @@ namespace Backoffice.Controllers
             
             try
             {
-                var OperationRequests = await _service.GetAllByStatusAsDoctorAsync(doctorId, status);
+                var OperationRequests = await _service.GetAllByOpTypeNameAsDoctorAsync(doctorEmail, opTypeName);
+
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpGet("doctorGetByStatus/{doctorEmail}/{status}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByStatusAsDoctor(string doctorEmail, string status)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            try
+            {
+                var OperationRequests = await _service.GetAllByStatusAsDoctorAsync(doctorEmail, status);
 
                 if (OperationRequests == null || !OperationRequests.Any())
                 {

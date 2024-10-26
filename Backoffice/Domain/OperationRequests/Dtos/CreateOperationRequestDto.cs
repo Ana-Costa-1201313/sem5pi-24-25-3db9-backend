@@ -9,8 +9,8 @@ namespace Backoffice.Domain.OperationRequests
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Priority Priority { get; set; }
-        public string PatientName { get; set; }
-        public string DoctorName { get; set; }
+        public string PatientEmail { get; set; }
+        public string DoctorEmail { get; set; }
         public string Description { get; set; }
     }
 }

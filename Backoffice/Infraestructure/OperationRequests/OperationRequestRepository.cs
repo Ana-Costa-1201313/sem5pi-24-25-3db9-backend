@@ -1,5 +1,6 @@
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.OperationRequests;
+using Backoffice.Domain.Shared;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Staffs;
@@ -29,38 +30,38 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<OperationRequest>> GetOpRequestsByDoctorIdAsync(StaffId doctorId)
+        public async Task<List<OperationRequest>> GetOpRequestsByDoctorEmailAsync(Email doctorEmail)
         {
             return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(doctorId))
+                .Where(x => x.DoctorId.Equals(doctorEmail))
                 .ToListAsync();
         }
         
-        public async Task<List<OperationRequest>> GetOpRequestsByPatientNameAsDoctorAsync(StaffId staffId, string patientName)
+        public async Task<List<OperationRequest>> GetOpRequestsByPatientEmailAsDoctorAsync(Email doctorEmail, Email patientEmail)
         {
             return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.Patient.FullName.Equals(patientName))
+                .Where(x => x.DoctorId.Equals(doctorEmail) && x.Patient.FullName.Equals(patientEmail))
                 .ToListAsync();
         }
 
-        public async Task<List<OperationRequest>> GetOpRequestsByOperationTypeNameAsDoctorAsync(StaffId staffId, OperationTypeName operationTypeName)
+        public async Task<List<OperationRequest>> GetOpRequestsByOperationTypeNameAsDoctorAsync(Email doctorEmail, OperationTypeName operationTypeName)
         {
             return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.OpType.Name.Equals(operationTypeName))
+                .Where(x => x.DoctorId.Equals(doctorEmail) && x.OpType.Name.Equals(operationTypeName))
                 .ToListAsync();
         }
 
-        public async Task<List<OperationRequest>> GetOpRequestsByPriorityAsDoctorAsync(StaffId staffId, Priority priority)
+        public async Task<List<OperationRequest>> GetOpRequestsByPriorityAsDoctorAsync(Email doctorEmail, Priority priority)
         {
             return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.Priority.Equals(priority))
+                .Where(x => x.DoctorId.Equals(doctorEmail) && x.Priority.Equals(priority))
                 .ToListAsync();
         }
 
-        public async Task<List<OperationRequest>> GetOpRequestsByStatusAsDoctorAsync(StaffId staffId, Status status)
+        public async Task<List<OperationRequest>> GetOpRequestsByStatusAsDoctorAsync(Email doctorEmail, Status status)
         {
             return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.Status.Equals(status))
+                .Where(x => x.DoctorId.Equals(doctorEmail) && x.Status.Equals(status))
                 .ToListAsync();
         }
 

@@ -40,12 +40,5 @@ namespace Backoffice.Infraestructure.Patients
         
        
         }
-
-                public async Task<Patient> GetPatientByNameAsync(string name)
-        {
-        return await _context.Patients
-            .Where(p => p.FullName.Contains(name)) 
-            .FirstOrDefaultAsync();
-        }
-}
+    }
 }

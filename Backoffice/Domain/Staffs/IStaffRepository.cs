@@ -13,7 +13,5 @@ namespace Backoffice.Domain.Staffs
         Task<Staff> GetByIdWithDetailsAsync(StaffId id);
 
         Task<List<Staff>> FilterStaffAsync(string name, string email, string specialization, int pageNum, int pageSize);
-
-        Task<Staff> GetStaffByNameAsync(string name);
     }
 }

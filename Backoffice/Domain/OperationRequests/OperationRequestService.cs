@@ -3,6 +3,7 @@ using Backoffice.Domain.Patients;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.OperationRequests.ValueObjects;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backoffice.Domain.OperationRequests
 {
@@ -40,9 +41,9 @@ namespace Backoffice.Domain.OperationRequests
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByPatientNameAsDoctorAsync(Guid doctorId, string patientName)
+        public async Task<List<OperationRequestDto>> GetAllByPatientEmailAsDoctorAsync(string doctorEmail, string patientEmail)
         {
-            var list = await this._repo.GetOpRequestsByPatientNameAsDoctorAsync(new StaffId(doctorId), patientName);
+            var list = await this._repo.GetOpRequestsByPatientEmailAsDoctorAsync(new Email(doctorEmail), new Email(patientEmail));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -51,14 +52,17 @@ namespace Backoffice.Domain.OperationRequests
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
 
+            if (listDto.IsNullOrEmpty())
+                throw new BusinessRuleValidationException("Error: No Operation Requests for the patient with the email " + patientEmail + " type found!");
+
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByPriorityAsDoctorAsync(Guid doctorId, string priority)
+        public async Task<List<OperationRequestDto>> GetAllByPriorityAsDoctorAsync(string doctorEmail, string priority)
         {
             var priorityEnum = (Priority)Enum.Parse(typeof(Priority), priority, true);
-            var list = await this._repo.GetOpRequestsByPriorityAsDoctorAsync(new StaffId(doctorId), priorityEnum);
+            var list = await this._repo.GetOpRequestsByPriorityAsDoctorAsync(new Email(doctorEmail), priorityEnum);
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -67,14 +71,17 @@ namespace Backoffice.Domain.OperationRequests
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
 
+            if (listDto.IsNullOrEmpty())
+                throw new BusinessRuleValidationException("Error: No Operation Requests with the " + priority + " priority found!");
+
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByStatusAsDoctorAsync(Guid doctorId, string status)
+        public async Task<List<OperationRequestDto>> GetAllByStatusAsDoctorAsync(string doctorEmail, string status)
         {
             var statusEnum = (Status)Enum.Parse(typeof(Status), status, true);
-            var list = await this._repo.GetOpRequestsByStatusAsDoctorAsync(new StaffId(doctorId), statusEnum);
+            var list = await this._repo.GetOpRequestsByStatusAsDoctorAsync(new Email(doctorEmail), statusEnum);
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -82,14 +89,17 @@ namespace Backoffice.Domain.OperationRequests
             {
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
+
+            if (listDto.IsNullOrEmpty())
+                throw new BusinessRuleValidationException("Error: No Operation Requests with the " + status + " status found!");
 
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByOpTypeNameAsDoctorAsync(Guid doctorId, string opTypeName)
+        public async Task<List<OperationRequestDto>> GetAllByOpTypeNameAsDoctorAsync(string doctorEmail, string opTypeName)
         {
-            var list = await this._repo.GetOpRequestsByOperationTypeNameAsDoctorAsync(new StaffId(doctorId), new OperationTypeName(opTypeName));
+            var list = await this._repo.GetOpRequestsByOperationTypeNameAsDoctorAsync(new Email(doctorEmail), new OperationTypeName(opTypeName));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -97,14 +107,17 @@ namespace Backoffice.Domain.OperationRequests
             {
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
+
+            if (listDto.IsNullOrEmpty())
+                throw new BusinessRuleValidationException("Error: No Operation Requests for the " + opTypeName + " type found!");
 
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByDoctorIdAsync(Guid doctorId)
+        public async Task<List<OperationRequestDto>> GetAllByDoctorEmailAsync(string doctorEmail)
         {
-            var list = await this._repo.GetOpRequestsByDoctorIdAsync(new StaffId(doctorId));
+            var list = await this._repo.GetOpRequestsByDoctorEmailAsync(new Email(doctorEmail));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
@@ -112,6 +125,9 @@ namespace Backoffice.Domain.OperationRequests
             {
                 listDto.Add(OperationRequestMapper.ToDto(item));
             }
+
+            if (listDto.IsNullOrEmpty())
+                throw new BusinessRuleValidationException("Error: No Operation Requests found!");
 
             return listDto;
             //return null;
@@ -122,7 +138,7 @@ namespace Backoffice.Domain.OperationRequests
             var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
 
             if (opReq == null)
-                return null;
+                throw new BusinessRuleValidationException("Error: Operation Request not found!");
 
             return OperationRequestMapper.ToDto(opReq);
             //return null;
@@ -131,8 +147,8 @@ namespace Backoffice.Domain.OperationRequests
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)
         {
             var opType = await this._optyperepo.GetByOperationTypeName(dto.OpTypeName);
-            var patient = await this._patientrepo.GetPatientByNameAsync(dto.PatientName);
-            var doctor = await this._doctorrepo.GetStaffByNameAsync(dto.DoctorName);
+            var patient = await this._patientrepo.GetPatientByEmailAsync(new Email(dto.PatientEmail));
+            var doctor = await this._doctorrepo.GetStaffByEmailAsync(new Email(dto.DoctorEmail));
 
             var opRequest = OperationRequestMapper.ToDomain(dto, opType, patient, doctor);
 

@@ -10,6 +10,5 @@ namespace Backoffice.Domain.Patients
         , string medicalRecordNumber);
 
         Task<Patient> GetLatestPatientByMonthAsync();
-        Task<Patient> GetPatientByNameAsync(string name);
     }
 }

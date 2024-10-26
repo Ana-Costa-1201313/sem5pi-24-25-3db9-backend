@@ -30,14 +30,6 @@ namespace Backoffice.Infraestructure.Staffs
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<Staff> GetStaffByNameAsync(string name)
-        {
-            return await _context.Staff
-                .Where(s => s.Name == name)
-                .Select(s => s)
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<List<Staff>> GetAllWithDetailsAsync(int pageNum, int pageSize)
         {
             return await _context.Staff
