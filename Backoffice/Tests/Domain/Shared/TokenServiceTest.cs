@@ -17,7 +17,7 @@ public class TokenServiceTests
     {
         _mockConfig = new Mock<IConfiguration>();
 
-        _mockConfig.Setup(config => config["Jwt:SecretKey"]).Returns("supersecurekey12345supersecurekey12345supersecurekey12345supersecurekey12345");  // Should be 16+ chars for HMAC-SHA256
+        _mockConfig.Setup(config => config["Jwt:SecretKey"]).Returns("supersecurekey12345supersecurekey12345supersecurekey12345supersecurekey12345");
         _mockConfig.Setup(config => config["Jwt:Issuer"]).Returns("BackOffice");
         _mockConfig.Setup(config => config["Jwt:Audience"]).Returns("BackOffice");
 

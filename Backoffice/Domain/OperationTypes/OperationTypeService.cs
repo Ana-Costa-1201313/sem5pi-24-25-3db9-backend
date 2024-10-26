@@ -215,6 +215,20 @@ namespace Backoffice.Domain.OperationTypes
             return listDto;
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            var opType = await this._repo.GetByIdAsync(new OperationTypeId(id));
+
+            if (opType == null)
+            {
+                throw new BusinessRuleValidationException("Error: Operation type with that id doesn't exist");
+            }
+
+            this._repo.Remove(opType);
+
+            await this._unitOfWork.CommitAsync();
+        }
+
 
     }
 }
