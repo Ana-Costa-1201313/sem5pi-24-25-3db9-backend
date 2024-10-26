@@ -20,7 +20,7 @@ namespace Backoffice.Domain.Shared
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(string email)
+        public virtual string GenerateJwtToken(string email)
         {
             var claims = new[]
             {
@@ -40,7 +40,7 @@ namespace Backoffice.Domain.Shared
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public string ValidateJwtToken(string token)
+        public virtual string ValidateJwtToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);
