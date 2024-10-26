@@ -10,33 +10,33 @@ namespace Backoffice.Infraestructure.OperationRequests
         {
             builder.ToTable("OperationRequests", SchemaNames.Backoffice);
 
-            builder.HasKey(or => or.Id);
-            builder.Property(or => or.Id)
+            builder.HasKey(b => b.Id);
+            builder.Property(b => b.Id)
                 .HasConversion(id => id.Value, value => new OperationRequestId(value));
 
-            builder.Property(or => or.DeadlineDate)
-                .HasMaxLength(50);
+            builder.Property(b => b.DeadlineDate)
+                .HasColumnName("DeadlineDate").IsRequired();
 
-            builder.Property(or => or.Priority)
-                .HasMaxLength(50);
+            builder.Property(b => b.Priority)
+                .HasColumnName("Priority").IsRequired();
 
-            builder.Property(or => or.Status)
-                .HasMaxLength(50);
+            builder.Property(b => b.Status)
+                .HasColumnName("Status").IsRequired();
 
-            builder.Property(or => or.Description)
-                .HasMaxLength(500);
+            builder.Property(b => b.Description)
+                .HasColumnName("Description").IsRequired();
 
-            builder.HasOne(or => or.OpType)
+            builder.HasOne(b => b.OpType)
                 .WithOne()
-                .HasForeignKey<OperationRequest>(or => or.OpTypeId);
+                .HasForeignKey<OperationRequest>(b => b.OpTypeId);
 
-            builder.HasOne(or => or.Patient)
+            builder.HasOne(b => b.Patient)
                 .WithOne()
-                .HasForeignKey<OperationRequest>(or => or.PatientId);
+                .HasForeignKey<OperationRequest>(b => b.PatientId);
 
-            builder.HasOne(or => or.Doctor)
+            builder.HasOne(b => b.Doctor)
                 .WithOne()
-                .HasForeignKey<OperationRequest>(or => or.DoctorId);
+                .HasForeignKey<OperationRequest>(b => b.DoctorId);
         }
     }
 }
