@@ -341,6 +341,78 @@ namespace Backoffice.Tests
                 var actionResult = Assert.IsType<NotFoundResult>(result.Result);
         }
 
+
+        [Fact]
+        public async Task Patch_ReturnsOk_WhenDataIsValid()
+        {
+   
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+            .ReturnsAsync(true);
+
+    
+            var existingPatient = new Patient(new CreatePatientDto
+        {
+            FirstName = "Ederson",
+            LastName = "Moraes",
+            FullName = "Ederson Moraes",
+            Gender = "M",
+            DateOfBirth = new DateTime(1993, 7, 17),
+            Email = "edersonMoraes@gmail.com",
+            Phone = "919888771",
+            EmergencyContact = "934111222"
+        }, "202012000001");
+
+    
+            _repo.Setup(repo => repo.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+
+            var editPatientDto = new EditPatientDto
+            {
+                FirstName = "Nathan",
+                LastName = "Ake",
+                FullName = "Nathan Ake",
+                Email = "nathanAke@gmail.com",
+                EmergencyContact = "929292920"
+            };
+            
+
+            var result = await patientController.Patch(existingPatient.Id.AsGuid(),editPatientDto);
+
+            var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+            var value = Assert.IsType<PatientDto>(actionResult.Value);
+
+            Assert.NotNull(value);
+            Assert.Equal("Nathan Ake",value.FullName);
+            Assert.Equal("919888771",value.Phone);
+            Assert.Equal("nathanAke@gmail.com",value.Email);
+    
+        }
+           [Fact]
+        public async Task Patch_ReturnsNotFound_WhenPatientDoesNotExist()
+        {
+   
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+            .ReturnsAsync(true);
+
+            var nonExistentPatientId = Guid.NewGuid(); 
+
+            var editPatientDto = new EditPatientDto
+                {
+                    FirstName = "Nathan",
+                    LastName = "Ake",
+                    FullName = "Nathan Ake"
+                    
+                };
+
+    
+                _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);
+
+    
+                var result = await patientController.Patch(nonExistentPatientId, editPatientDto);
+
+                var actionResult = Assert.IsType<NotFoundResult>(result.Result);
+        }
         [Fact]
         public async Task SearchPatientsByName()
         {
