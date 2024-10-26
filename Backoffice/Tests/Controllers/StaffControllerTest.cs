@@ -91,14 +91,212 @@ namespace Backoffice.Tests
 
             Specialization spec = new Specialization(new SpecializationName("skin"));
 
-            var staff1 = new Staff(dto1, spec, 1, "hotmail.com");
-            var staff2 = new Staff(dto2, spec, 2, "hotmail.com");
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
 
             var expectedList = new List<Staff> { staff1, staff2 };
 
             _repo.Setup(repo => repo.GetAllWithDetailsAsync(1, 5)).ReturnsAsync(expectedList);
 
             var result = await mockController.Object.GetAll(null, null, null, 1, 5);
+
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
+        }
+
+        [Fact]
+        public async Task GetAllStaffWithPageSize()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto3 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 3,
+                Phone = "999999979",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto4 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 4,
+                Phone = "999999969",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto5 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 5,
+                Phone = "999999959",
+                Specialization = "heart",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
+            var staff3 = new Staff(dto3, spec, 3, "healthcareapp.com");
+            var staff4 = new Staff(dto4, spec, 4, "healthcareapp.com");
+            var staff5 = new Staff(dto5, spec, 5, "healthcareapp.com");
+
+            var expectedList = new List<Staff> { staff1, staff2, staff3 };
+
+            _repo.Setup(repo => repo.GetAllWithDetailsAsync(1, 3)).ReturnsAsync(expectedList);
+
+            var result = await mockController.Object.GetAll(null, null, null, 1, 3);
+
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
+        }
+
+        [Fact]
+        public async Task GetAllAsyncWithPageNumAndPageSize()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto3 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 3,
+                Phone = "999999979",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto4 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 4,
+                Phone = "999999969",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto5 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 5,
+                Phone = "999999959",
+                Specialization = "heart",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
+            var staff3 = new Staff(dto3, spec, 3, "healthcareapp.com");
+            var staff4 = new Staff(dto4, spec, 4, "healthcareapp.com");
+            var staff5 = new Staff(dto5, spec, 5, "healthcareapp.com");
+
+            var expectedList = new List<Staff> { staff4, staff5 };
+
+            _repo.Setup(repo => repo.GetAllWithDetailsAsync(2, 3)).ReturnsAsync(expectedList);
+
+            var result = await mockController.Object.GetAll(null, null, null, 2, 3);
 
             var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
 
@@ -172,7 +370,7 @@ namespace Backoffice.Tests
 
             Specialization spec = new Specialization(new SpecializationName("skin"));
 
-            var staff = new Staff(dto1, spec, 1, "hotmail.com");
+            var staff = new Staff(dto1, spec, 1, "healthcareapp.com");
 
             _repo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<StaffId>())).ReturnsAsync(staff);
 
@@ -358,7 +556,6 @@ namespace Backoffice.Tests
 
             Assert.Equal("Error: The year must be bigger than zero!", errorMessage);
         }
-
 
         [Fact]
         public async Task NullNameCreateStaff()
@@ -1088,6 +1285,313 @@ namespace Backoffice.Tests
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
 
             Assert.Equal("Error: Can't update an inactive staff!", errorMessage);
+        }
+
+        [Fact]
+        public async Task FilterStaffByNameAsync()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
+
+            var expectedList = new List<Staff> { staff1 };
+
+            _repo.Setup(repo => repo.FilterStaffAsync("ana costa", null, null, 1, 5)).ReturnsAsync(expectedList);
+
+            var result = await mockController.Object.GetAll("ana costa", null, null, 1, 5);
+
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
+        }
+
+        [Fact]
+        public async Task FilterStaffByNameAndPageSizeAsync()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto3 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 3,
+                Phone = "999999979",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto4 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 4,
+                Phone = "999999969",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto5 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 5,
+                Phone = "999999959",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto6 = new CreateStaffDto
+            {
+                Name = "joana silva",
+                LicenseNumber = 6,
+                Phone = "999999949",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto7 = new CreateStaffDto
+            {
+                Name = "joana silva",
+                LicenseNumber = 7,
+                Phone = "999999939",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
+            var staff3 = new Staff(dto3, spec, 3, "healthcareapp.com");
+            var staff4 = new Staff(dto4, spec, 4, "healthcareapp.com");
+            var staff5 = new Staff(dto5, spec, 5, "healthcareapp.com");
+            var staff6 = new Staff(dto6, spec, 6, "healthcareapp.com");
+            var staff7 = new Staff(dto7, spec, 7, "healthcareapp.com");
+
+            var expectedList = new List<Staff> { staff2, staff3, staff4 };
+
+            _repo.Setup(repo => repo.FilterStaffAsync("maria silva", null, null, 1, 3)).ReturnsAsync(expectedList);
+
+            var result = await mockController.Object.GetAll("maria silva", null, null, 1, 3);
+
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
+        }
+
+        [Fact]
+        public async Task FilterStaffBySpecAndPageNum()
+        {
+            Setup();
+
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _specRepo.Setup(specRepo => specRepo.GetBySpecializationName(It.IsAny<string>()))
+                        .ReturnsAsync(new Specialization(new SpecializationName("skin")));
+
+            mockService.CallBase = true;
+            mockController.CallBase = true;
+
+            mockService.Setup(servico => servico.ReadDNS()).Returns("myhealthcareapp.com");
+
+            List<string> AvailabilitySlots = new List<string>();
+            AvailabilitySlots.Add("2024 - 10 - 10T12: 00:00 / 2024 - 10 - 11T15: 00:00");
+            AvailabilitySlots.Add("2024 - 10 - 14T12: 00:00 / 2024 - 10 - 19T15: 00:00");
+
+            CreateStaffDto dto1 = new CreateStaffDto
+            {
+                Name = "ana costa",
+                LicenseNumber = 1,
+                Phone = "999999999",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Nurse,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto2 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 2,
+                Phone = "999999989",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto3 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 3,
+                Phone = "999999979",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto4 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 4,
+                Phone = "999999969",
+                Specialization = "heart",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto5 = new CreateStaffDto
+            {
+                Name = "maria silva",
+                LicenseNumber = 5,
+                Phone = "999999959",
+                Specialization = "heart",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto6 = new CreateStaffDto
+            {
+                Name = "joana silva",
+                LicenseNumber = 6,
+                Phone = "999999949",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            CreateStaffDto dto7 = new CreateStaffDto
+            {
+                Name = "joana silva",
+                LicenseNumber = 7,
+                Phone = "999999939",
+                Specialization = "skin",
+                AvailabilitySlots = AvailabilitySlots,
+                Role = Role.Doctor,
+                RecruitmentYear = 2024
+            };
+
+            Specialization spec = new Specialization(new SpecializationName("skin"));
+            Specialization spec2 = new Specialization(new SpecializationName("heart"));
+
+            var staff1 = new Staff(dto1, spec, 1, "healthcareapp.com");
+            var staff2 = new Staff(dto2, spec, 2, "healthcareapp.com");
+            var staff3 = new Staff(dto3, spec, 3, "healthcareapp.com");
+            var staff4 = new Staff(dto4, spec2, 4, "healthcareapp.com");
+            var staff5 = new Staff(dto5, spec2, 5, "healthcareapp.com");
+            var staff6 = new Staff(dto6, spec, 6, "healthcareapp.com");
+            var staff7 = new Staff(dto7, spec, 7, "healthcareapp.com");
+
+            var expectedList = new List<Staff> { staff4, staff5 };
+
+            _repo.Setup(repo => repo.FilterStaffAsync(null, null, "heart", 2, 3)).ReturnsAsync(expectedList);
+
+            var result = await mockController.Object.GetAll(null, null, "heart", 2, 3);
+
+            var okResult = Assert.IsType<ActionResult<List<StaffDto>>>(result);
+
+            var objectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var actualList = Assert.IsAssignableFrom<List<StaffDto>>(objectResult.Value);
+
+            Assert.Equal(expectedList.Count, actualList.Count());
         }
     }
 }

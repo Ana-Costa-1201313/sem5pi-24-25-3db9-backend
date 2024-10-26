@@ -38,7 +38,7 @@ namespace Backoffice.Controllers
 
             List<StaffDto> staffList;
 
-            if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("email") || Request.Query.ContainsKey("specialization"))
+            if (name != null || email != null || specialization != null)
             {
                 staffList = await _service.FilterStaffAsync(name, email, specialization, pageNum, pageSize);
             }
