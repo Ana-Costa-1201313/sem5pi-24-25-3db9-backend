@@ -81,6 +81,27 @@ namespace Backoffice
             {
                 endpoints.MapControllers();
             });
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<BDContext>();
+                var dbBootstrap = serviceScope.ServiceProvider.GetRequiredService<DbBootstrap>();
+
+                if (!dbContext.Users.Any())
+                {
+                    dbBootstrap.UserBootstrap();
+                }
+
+                if (!dbContext.Specializations.Any())
+                {
+                    dbBootstrap.SpecializationBootstrap();
+                }
+
+                if (!dbContext.Staff.Any())
+                {
+                    dbBootstrap.StaffBootstrap();
+                }
+            }
         }
 
         public void ConfigureMyServices(IServiceCollection services)
@@ -111,6 +132,8 @@ namespace Backoffice
             services.AddTransient<ExternalApiServices>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
+
+            services.AddTransient<DbBootstrap>();
         }
     }
 }
