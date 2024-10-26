@@ -20,6 +20,13 @@ using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
 
+using System.Text.Json.Serialization;
+using Backoffice.Domain.Users;
+using Backoffice.Domain.Patients;
+using Backoffice.Infraestructure.Patients;
+
+
+
 namespace Backoffice
 {
     public class Startup
@@ -99,6 +106,9 @@ namespace Backoffice
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
 
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<PatientService>();
+
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
 
@@ -114,6 +124,7 @@ namespace Backoffice
             services.AddTransient<TokenService>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
+
         }
     }
 }
