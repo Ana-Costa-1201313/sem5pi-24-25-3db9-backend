@@ -14,17 +14,21 @@ namespace Backoffice.Domain.Users
 
         private readonly IEmailService _emailService;
         private readonly ExternalApiServices _externalApiServices;
+        private readonly TokenService _tokenService;
+        private readonly IConfiguration _config;
 
         // passar isto para o configurations file
         private readonly string emailBody = $"https://localhost:5001/api/Users/";
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo, TokenService tokenService, IConfiguration config)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._emailService = emailService;
             this._externalApiServices = externalApiServices;
             this._staffRepo = staffRepo;
+            this._tokenService = tokenService;
+            this._config = config;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -91,7 +95,8 @@ namespace Backoffice.Domain.Users
             {
                 await _emailService.SendEmail(dto.Email, emailBody + messageBodyParameters, messageSubject);
             }
-            catch (SmtpException ex) {
+            catch (SmtpException ex)
+            {
                 Console.WriteLine(ex.Message);
             }
             return new UserDto
@@ -147,6 +152,59 @@ namespace Backoffice.Domain.Users
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public async Task<UserDto> SendPasswordResetLink(string email)
+        {
+
+            var user = await this._repo.getUserByEmail(email);
+
+            if (user == null)
+            {
+                throw new BusinessRuleValidationException("Error: Email doesn't exist.");
+            }
+
+            if (!user.Active)
+            {
+                throw new BusinessRuleValidationException("Error: User inactive.");
+            }
+
+            if (!(user.Role == Role.Admin || user.Role == Role.Doctor || user.Role == Role.Nurse || user.Role == Role.Technician))
+            {
+                throw new BusinessRuleValidationException("Error: User with this role can't ask for a password reset");
+            }
+
+            var token = _tokenService.GenerateJwtToken(email);
+            var url = $"{_config["AppSettings:PasswordResetUrl"]}?token={token}";
+
+            await _emailService.SendEmail(user.Email._Email, url, "Reset Password");
+
+            return new UserDto
+            {
+                Id = user.Id.AsGuid(),
+                Role = user.Role,
+                Email = user.Email.ToString(),
+                Active = user.Active
+            };
+        }
+
+        public async Task<UserDto> NewPassword(string token, string password)
+        {
+            var email = this._tokenService.ValidateJwtToken(token);
+
+            var user = await this._repo.getUserByEmail(email);
+
+            user.ResetPassword(password);
+
+            await _unitOfWork.CommitAsync();
+
+            return new UserDto
+            {
+                Id = user.Id.AsGuid(),
+                Role = user.Role,
+                Email = user.Email.ToString(),
+                Active = user.Active
+            };
         }
     }
 }
