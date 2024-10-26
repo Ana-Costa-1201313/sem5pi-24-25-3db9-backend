@@ -35,7 +35,6 @@ namespace Backoffice.Infraestructure.Patients
 
              builder.Property(b => b.Allergies)
             .HasColumnName("Allergies")
-            .IsRequired()
             .HasConversion(
                 v => string.Join(',', v),   // Converte a lista de alergias para uma string separada por vírgulas ao salvar na bd
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));   // Converte a string de volta para uma lista ao carregar na bd
