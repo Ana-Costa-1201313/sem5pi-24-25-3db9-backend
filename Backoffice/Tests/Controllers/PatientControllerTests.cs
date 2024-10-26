@@ -270,6 +270,78 @@ namespace Backoffice.Tests
          }
 
         [Fact]
+        public async Task UpdateWithValidInput(){
+                 Setup();
+                _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+            var existingPatient = new Patient(new CreatePatientDto
+                 {
+                    FirstName = "Ederson",
+                    LastName = "Moraes",
+                    FullName = "Ederson Moraes",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1993, 7, 17),
+                    Email = "edersonMoraes@gmail.com",
+                    Phone = "919888771",
+                    EmergencyContact = "934111222"
+                    }, "202012000001");
+
+                    _repo.Setup(repo => repo.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+
+               var editPatientDto1 = new EditPatientDto
+            {
+                    FirstName = "Nathan",
+                    LastName = "Ake",
+                    FullName = "Nathan Ake",
+                    Email = "nathanAke@gmail.com",
+                    Phone = "919191910",
+                    EmergencyContact = "929292920"
+            };
+
+            var result = await patientController.Update(existingPatient.Id.AsGuid(),editPatientDto1);
+
+            var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+            var value = Assert.IsType<PatientDto>(actionResult.Value);
+
+            Assert.NotNull(value);
+            Assert.Equal("Nathan Ake",value.FullName);
+            Assert.Equal("nathanAke@gmail.com", value.Email);
+            Assert.Equal("919191910", value.Phone);
+            Assert.Equal(new DateTime(1993, 7, 17), value.DateOfBirth);
+            Assert.Equal("202012000001", value.MedicalRecordNumber);
+
+        }
+
+            [Fact]
+        public async Task Update_ReturnsNotFound_WhenPatientDoesNotExist()
+        {
+   
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+            .ReturnsAsync(true);
+
+            var nonExistentPatientId = Guid.NewGuid(); 
+
+            var editPatientDto = new EditPatientDto
+                {
+                    FirstName = "Nathan",
+                    LastName = "Ake",
+                    FullName = "Nathan Ake",
+                    Email = "nathanAke@gmail.com",
+                    Phone = "919191910",
+                    EmergencyContact = "929292920"
+                };
+
+    
+                _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);
+
+    
+                var result = await patientController.Update(nonExistentPatientId, editPatientDto);
+
+                var actionResult = Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
         public async Task SearchPatientsByName()
         {
                 Setup();
