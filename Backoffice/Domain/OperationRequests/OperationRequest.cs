@@ -78,6 +78,27 @@ namespace Backoffice.Domain.OperationRequests
             this.Status = Status.Picked;
         }
 
+        public void UpdateOperationRequest(DateTime deadlineDate, Priority? priority, string description)
+        {
+            if (deadlineDate == DateTime.MinValue)
+            {
+                throw new BusinessRuleValidationException("Error: The deadline date can't be the default value.");
+            }
+            this.DeadlineDate = deadlineDate;
+
+            if (!priority.HasValue)
+            {
+                throw new BusinessRuleValidationException("Error: The priority can't be null.");
+            }
+            this.Priority = priority.Value;
+
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                throw new BusinessRuleValidationException("Error: The description can't be null or empty.");
+            }
+            this.Description = description;
+        }
+
         public string ToJSON()
         {
             var jsonRepresentation = new

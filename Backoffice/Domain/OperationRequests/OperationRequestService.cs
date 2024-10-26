@@ -143,5 +143,37 @@ namespace Backoffice.Domain.OperationRequests
             return OperationRequestMapper.ToDto(opRequest);
             //return null;
         }
+
+        public async Task<OperationRequestDto> PatchAsync(Guid id, EditOperationRequestDto dto)
+        {
+            var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
+
+            if (opReq == null)
+                throw new BusinessRuleValidationException("Error: Operation Request not found!");
+
+            var deadlineDate = DateTime.Parse(dto.DeadlineDate);
+
+            opReq.UpdateOperationRequest(deadlineDate, dto.Priority, dto.Description);
+
+            await this._unitOfWork.CommitAsync();
+
+            return OperationRequestMapper.ToDto(opReq);
+            //return null;
+        }
+
+        public async Task<OperationRequestDto> DeleteAsync(Guid id)
+        {
+            var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
+
+            if (opReq == null)
+                return null;
+
+            await this._repo.DeleteOpRequestAsync(opReq.Id);
+
+            await this._unitOfWork.CommitAsync();
+
+            return OperationRequestMapper.ToDto(opReq);
+            //return null;
+        }
     }
 }

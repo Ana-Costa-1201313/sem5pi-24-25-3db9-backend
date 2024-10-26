@@ -63,14 +63,21 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
-
-            if (OperationRequests == null || !OperationRequests.Any())
+            try
             {
-                return NotFound();
-            }
+                var OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
 
-            return Ok(OperationRequests);
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpGet("doctorGetByPatientName/{doctorId}/{patientName}")]
@@ -85,14 +92,21 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
             
-            var OperationRequests = await _service.GetAllByPatientNameAsDoctorAsync(doctorId, patientName);
-
-            if (OperationRequests == null || !OperationRequests.Any())
+            try
             {
-                return NotFound();
-            }
+                var OperationRequests = await _service.GetAllByPatientNameAsDoctorAsync(doctorId, patientName);
 
-            return Ok(OperationRequests);
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpGet("doctorGetByPriority/{doctorId}/{priority}")]
@@ -106,15 +120,22 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
-            var OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorId, priority);
 
-            if (OperationRequests == null || !OperationRequests.Any())
+            try
             {
-                return NotFound();
-            }
+                var OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorId, priority);
 
-            return Ok(OperationRequests);
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpGet("doctorGetByOperationTypeName/{doctorId}/{opTypeName}")]
@@ -129,14 +150,21 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
             
-            var OperationRequests = await _service.GetAllByOpTypeNameAsDoctorAsync(doctorId, opTypeName);
-
-            if (OperationRequests == null || !OperationRequests.Any())
+            try
             {
-                return NotFound();
-            }
+                var OperationRequests = await _service.GetAllByOpTypeNameAsDoctorAsync(doctorId, opTypeName);
 
-            return Ok(OperationRequests);
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpGet("doctorGetByStatus/{doctorId}/{status}")]
@@ -151,14 +179,21 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
             
-            var OperationRequests = await _service.GetAllByStatusAsDoctorAsync(doctorId, status);
-
-            if (OperationRequests == null || !OperationRequests.Any())
+            try
             {
-                return NotFound();
-            }
+                var OperationRequests = await _service.GetAllByStatusAsDoctorAsync(doctorId, status);
 
-            return Ok(OperationRequests);
+                if (OperationRequests == null || !OperationRequests.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(OperationRequests);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         [HttpPost]
@@ -183,6 +218,57 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<OperationRequestDto>> Update(Guid id, [FromBody] EditOperationRequestDto dto)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var opRequest = await _service.PatchAsync(id, dto );
+
+                if (opRequest == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(opRequest);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            var opRequest = await _service.DeleteAsync(id);
+
+            if (opRequest == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(opRequest);
         }
     }
 }

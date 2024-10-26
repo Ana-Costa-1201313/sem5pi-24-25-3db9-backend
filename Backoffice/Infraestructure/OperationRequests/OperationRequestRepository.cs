@@ -63,5 +63,23 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .Where(x => x.DoctorId.Equals(staffId) && x.Status.Equals(status))
                 .ToListAsync();
         }
+
+        public async Task<List<OperationRequest>> DeleteOpRequestAsync(OperationRequestId id)
+        {
+            var entity = await _context.OperationRequests
+                .Where(x => id.Equals(x.Id))
+                .FirstOrDefaultAsync()
+            ;
+
+            if (entity != null)
+            {
+                _context.OperationRequests.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+
+            return await _context.OperationRequests
+                .ToListAsync()
+            ;
+        }
     }
 }
