@@ -27,16 +27,19 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .HasColumnName("Description").IsRequired();
 
             builder.HasOne(b => b.OpType)
-                .WithOne()
-                .HasForeignKey<OperationRequest>(b => b.OpTypeId);
+                .WithMany()
+                .HasForeignKey(b => b.OpTypeId)
+                .OnDelete(DeleteBehavior.Restrict);;
 
             builder.HasOne(b => b.Patient)
-                .WithOne()
-                .HasForeignKey<OperationRequest>(b => b.PatientId);
+                .WithMany()
+                .HasForeignKey(b => b.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);;
 
             builder.HasOne(b => b.Doctor)
-                .WithOne()
-                .HasForeignKey<OperationRequest>(b => b.DoctorId);
+                .WithMany()
+                .HasForeignKey(b => b.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

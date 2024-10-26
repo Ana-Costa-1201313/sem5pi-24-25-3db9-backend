@@ -14,7 +14,7 @@ This task appears in the start of the project's development, to be able to reque
 - Doctors can create an operation request by selecting the patient, operation type, priority, and suggested deadline.
 - The system validates that the operation type matches the doctor’s specialization.
 - The operation request includes:
-    - Patient ID
+  - Patient ID
   - Doctor ID
   - Operation Type
   - Deadline
