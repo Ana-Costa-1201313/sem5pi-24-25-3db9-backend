@@ -60,9 +60,9 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
-            if (dto.Role != Role.Admin && dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
+            if (dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
             {
-                throw new BusinessRuleValidationException("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!");
+                throw new BusinessRuleValidationException("Error: The staff role must be one of the following: Doctor, Nurse or Tech!");
             }
             this.Role = dto.Role;
 

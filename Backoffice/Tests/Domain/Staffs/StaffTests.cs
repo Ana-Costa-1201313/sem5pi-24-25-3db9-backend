@@ -180,7 +180,7 @@ namespace Backoffice.Tests
             int MecNumSequence = 1;
 
             var exception = Assert.Throws<BusinessRuleValidationException>(() => new Staff(dto, spec, MecNumSequence, "healthcareapp.com"));
-            Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", exception.Message);
+            Assert.Equal("Error: The staff role must be one of the following: Doctor, Nurse or Tech!", exception.Message);
         }
 
         [Fact]

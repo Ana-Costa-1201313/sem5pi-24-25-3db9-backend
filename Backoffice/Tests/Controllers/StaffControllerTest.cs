@@ -683,7 +683,7 @@ namespace Backoffice.Tests
 
             var errorMessage = badRequestResult.Value.GetType().GetProperty("Message")?.GetValue(badRequestResult.Value, null);
 
-            Assert.Equal("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!", errorMessage);
+            Assert.Equal("Error: The staff role must be one of the following: Doctor, Nurse or Tech!", errorMessage);
         }
 
         [Fact]
