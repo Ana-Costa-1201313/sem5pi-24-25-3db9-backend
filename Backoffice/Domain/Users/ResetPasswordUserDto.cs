@@ -1,6 +1,6 @@
 namespace Backoffice.Domain.Users
 {
-    public class ResetPassowordUserDto
+    public class ResetPasswordUserDto
     {
         public string Email { get; set; }
     }

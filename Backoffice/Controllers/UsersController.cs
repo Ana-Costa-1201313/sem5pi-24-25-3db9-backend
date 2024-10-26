@@ -104,7 +104,7 @@ namespace Backoffice.Controllers
 
 
         [HttpPost("reset-password")]
-        public async Task<ActionResult> RequestPasswordReset(ResetPassowordUserDto dto)
+        public async Task<ActionResult> RequestPasswordReset(ResetPasswordUserDto dto)
         {
             //Auth not needed
             try
