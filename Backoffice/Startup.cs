@@ -109,6 +109,7 @@ namespace Backoffice
             services.AddTransient<AuthService>();
             services.AddTransient<LogInServices>();
             services.AddTransient<ExternalApiServices>();
+            services.AddTransient<TokenService>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
         }
