@@ -1,0 +1,26 @@
+@startuml US8_Nivel2
+autonumber
+
+actor "Admin" as admin
+participant "<<Component>>\nWeb" as web
+participant "BE" as be
+
+activate admin
+    admin -> web : wants to create a patient profile
+    activate web
+        web --> admin : request patient data
+        admin -> web : provides patient data
+        web -> be : POST /patients
+        activate be
+            alt profile not created
+                be --> web : informs error
+            else success
+                be --> web : shows created patient profile
+            end
+        deactivate be
+    
+    web --> admin : shows result
+    deactivate web
+deactivate admin
+
+@enduml
