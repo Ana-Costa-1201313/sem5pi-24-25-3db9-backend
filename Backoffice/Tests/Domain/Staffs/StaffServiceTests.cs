@@ -632,7 +632,7 @@ namespace Backoffice.Tests
                 Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
-            var result = await service.UpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, false);
 
             staffRepository.Verify(repo => repo.GetByIdWithDetailsAsync(staff1.Id), Times.Once);
 
@@ -693,7 +693,7 @@ namespace Backoffice.Tests
             await service.Deactivate(staff1.Id.AsGuid());
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                 await service.UpdateAsync(editDto));
+                 await service.UpdateAsync(editDto, false));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
 
@@ -747,7 +747,7 @@ namespace Backoffice.Tests
             };
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                await service.UpdateAsync(editDto));
+                await service.UpdateAsync(editDto, false));
 
             Assert.Equal("Error: The staff must have a phone number!", exception.Message);
         }
@@ -798,7 +798,7 @@ namespace Backoffice.Tests
                 Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
-            var result = await service.PartialUpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, true);
 
             staffRepository.Verify(repo => repo.GetByIdWithDetailsAsync(staff1.Id), Times.Once);
 
@@ -860,7 +860,7 @@ namespace Backoffice.Tests
             await service.Deactivate(staff1.Id.AsGuid());
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                 await service.PartialUpdateAsync(editDto));
+                 await service.UpdateAsync(editDto, true));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
 
@@ -913,7 +913,7 @@ namespace Backoffice.Tests
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            var result = await service.PartialUpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, true);
 
             Assert.NotNull(result);
 

@@ -127,7 +127,7 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<StaffDto> UpdateAsync(EditStaffDto dto)
+        public async Task<StaffDto> UpdateAsync(EditStaffDto dto, bool partial)
         {
             Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
 
@@ -155,68 +155,14 @@ namespace Backoffice.Domain.Staffs
 
             string oldPhoneNum = staff.Phone.PhoneNum;
 
-            staff.Edit(dto, specialization);
-
-            await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
-
-            try
+            if (partial)
             {
-                await this._unitOfWork.CommitAsync();
-
-                if (dto.Phone != oldPhoneNum)
-                {
-                    string message = "Your phone number has been updated from " + oldPhoneNum + " to " + dto.Phone + ".";
-                    string subject = "Phone number updated";
-
-                    string defaultEmail = _config["EmailSmtp:DefaultStaffConfirmationEmail"];
-
-                    if (!string.IsNullOrEmpty(defaultEmail))
-                    {
-                        await _emailService.SendEmail(defaultEmail, message, subject);
-                    }
-                    else
-                    {
-                        await _emailService.SendEmail(staff.Email._Email, message, subject);
-                    }
-                }
+                staff.PartialEdit(dto, specialization);
             }
-            catch (DbUpdateException)
+            else
             {
-                throw new BusinessRuleValidationException("Error: This phone number is already in use!");
+                staff.Edit(dto, specialization);
             }
-
-            return _staffMapper.ToStaffDto(staff);
-        }
-
-        public async Task<StaffDto> PartialUpdateAsync(EditStaffDto dto)
-        {
-            Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
-
-            if (staff == null)
-            {
-                return null;
-            }
-
-            Specialization specialization = null;
-
-            if (dto.Specialization != null)
-            {
-                specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
-
-                if (specialization == null)
-                {
-                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
-                }
-            }
-
-            if (!staff.Active)
-            {
-                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
-            }
-
-            string oldPhoneNum = staff.Phone.PhoneNum;
-
-            staff.PartialEdit(dto, specialization);
 
             await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
 
