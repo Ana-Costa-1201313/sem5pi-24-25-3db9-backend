@@ -131,12 +131,15 @@ namespace Backoffice
             services.AddTransient<StaffService>();
 
             services.AddTransient<StaffMapper>();
+            services.AddTransient<OperationTypeMapper>();
+            services.AddTransient<SpecializationMapper>();
 
             services.AddTransient<IExternalApiServices, ExternalApiServices>();
 
             services.AddTransient<AuthService>();
             services.AddTransient<LogInServices>();
             services.AddTransient<ExternalApiServices>();
+            services.AddTransient<TokenService>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
 

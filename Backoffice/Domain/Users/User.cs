@@ -37,5 +37,10 @@ namespace Backoffice.Domain.Users
 
             this.Active = true;
         }
+
+        public void ResetPassword(string password)
+        {
+            this.Password = new Password(password);
+        }
     }
 }

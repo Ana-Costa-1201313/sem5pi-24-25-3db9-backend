@@ -1,16 +1,23 @@
-@startuml
+@startuml US9_Nivel2
 autonumber
 
-participant "BE" as be
+actor "Admin" as admin
+participant ": SPA" as spa
+participant "BackOffice" as bo
 
-[-> be: PATCH /patient/{id}
+activate admin
+activate spa
+admin -> spa : Requests to Edit Patient profile
+spa --> admin : Requests specific patient data
 
-activate be
-    alt patient profile not found/invalid parameters
-        [<-- be : 422: Unprocessable Content
-    else patient profile edited successfully
-        [<-- be : 201: Edited
-    end
-deactivate be
+admin-> spa : Provides updated patient data
+
+spa -> bo : Updates Patient profile
+activate bo
+bo --> spa : success message
+deactivate bo
+spa --> admin : success message
+deactivate spa
+deactivate admin
 
 @enduml

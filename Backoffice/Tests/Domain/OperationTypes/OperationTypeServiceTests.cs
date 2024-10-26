@@ -12,6 +12,8 @@ namespace Backoffice.Tests
 {
     public class OperationTypeServiceTests
     {
+        private readonly OperationTypeMapper _mapper = new OperationTypeMapper();
+
         private OperationTypeService Setup(List<OperationType> operationTypesDatabase, List<Specialization> specializationsDatabase)
         {
             var operationTypeRepository = new Mock<IOperationTypeRepository>();
@@ -59,7 +61,7 @@ namespace Backoffice.Tests
 
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            return new OperationTypeService(unitOfWork.Object, operationTypeRepository.Object, specializationRepository.Object, logRepository.Object);
+            return new OperationTypeService(unitOfWork.Object, operationTypeRepository.Object, specializationRepository.Object, logRepository.Object, _mapper);
         }
 
         [Fact]
@@ -73,14 +75,14 @@ namespace Backoffice.Tests
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
                 {
                     ("Surgeon", 2),
                     ("Cardio", 3)
                 };
-            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
+            var operationType2 = _mapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
 
             operationTypesDatabase.Add(operationType1);
@@ -120,14 +122,14 @@ namespace Backoffice.Tests
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
                 {
                     ("Surgeon", 2),
                     ("Cardio", 3)
                 };
-            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
+            var operationType2 = _mapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
             operationTypesDatabase.Add(operationType1);
             operationTypesDatabase.Add(operationType2);
@@ -156,14 +158,14 @@ namespace Backoffice.Tests
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
                 {
                     ("Surgeon", 2),
                     ("Cardio", 3)
                 };
-            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
+            var operationType2 = _mapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
             operationTypesDatabase.Add(operationType1);
 
@@ -188,7 +190,7 @@ namespace Backoffice.Tests
                 {
                     ("Surgeon", 2)
                 };
-            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
+            var dto = _mapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
 
 
             var result = await service.AddAsync(dto);
@@ -219,7 +221,7 @@ namespace Backoffice.Tests
                 {
                     ("Cardio", 2)
                 };
-            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
+            var dto = _mapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
 
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
@@ -244,7 +246,7 @@ namespace Backoffice.Tests
                     ("Cardio", 2),
                     ("Cardio", 2)
                 };
-            var dto = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
+            var dto = _mapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff);
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
 
@@ -267,14 +269,14 @@ namespace Backoffice.Tests
                 {
                     ("Surgeon", 2)
                 };
-            var dto1 = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var dto1 = _mapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff1);
 
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
                 {
                     ("Surgeon", 2)
                 };
-            var dto2 = OperationTypeMapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff2);
+            var dto2 = _mapper.ToCreateDtoForTests("Surgery", 30, 60, 15, requiredStaff2);
 
 
             await service.AddAsync(dto1);
@@ -296,7 +298,7 @@ namespace Backoffice.Tests
                 ("Surgeon", 2)
             };
 
-            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            var operationType = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
             operationTypesDatabase.Add(operationType);
 
             Assert.True(operationType.Active);
@@ -335,7 +337,7 @@ namespace Backoffice.Tests
                 ("Surgeon", 2)
             };
 
-            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            var operationType = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
             operationTypesDatabase.Add(operationType);
 
             Assert.True(operationType.Active);
