@@ -52,7 +52,13 @@ This section presents the design adopted to solve the requirement.
 
 ### 4.3. Sequence Diagram (Level 3)
 
-![SSD_Lvl1.png](SD3.svg) 
+### 4.3.1 Reset Password
+
+![SSD_Lvl1.png](SD3ResetPassword.svg) 
+
+### 4.3.2 New Password
+
+![SSD_Lvl1.png](SD3NewPassword.svg) 
 
 ### 4.4. Applied Design Patterns
 
@@ -71,8 +77,6 @@ This section presents the design adopted to solve the requirement.
 
 #### 4.5.1. Unit and Integration Tests
 
-- Unit tests for User entity reset password
-- Unit tests for the controller focusing on the reset password of the user 
 - Unit tests for the service focusing on the reset password of the user
 
 
