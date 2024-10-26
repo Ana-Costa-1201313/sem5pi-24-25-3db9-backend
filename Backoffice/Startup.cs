@@ -19,6 +19,10 @@ using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
+using Backoffice.Domain.Patients;
+using Backoffice.Infraestructure.Patients;
+
+
 
 namespace Backoffice
 {
@@ -119,6 +123,9 @@ namespace Backoffice
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<PatientService>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();

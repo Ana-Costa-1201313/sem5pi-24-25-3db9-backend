@@ -1,0 +1,16 @@
+@startuml US_Delete_Nivel1
+autonumber
+
+actor "Admin" as admin
+participant "<<system>>\nSystem HealthcareApp" as sys
+
+admin -> sys : DELETE /patient/{id}
+activate sys
+alt patient profile not found
+    admin <-- sys : 404 Not Found
+else patient profile deleted successfully
+    admin <-- sys : 200 OK
+end
+deactivate sys
+
+@enduml
