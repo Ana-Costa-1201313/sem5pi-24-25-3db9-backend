@@ -22,6 +22,7 @@ namespace Backoffice.Infraestructure.Users
             builder.Property(e => e.Email).HasConversion(new EmailConverter());
             builder.HasIndex(e => e.Email).IsUnique();
 
+
         }
     }
 }

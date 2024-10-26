@@ -12,35 +12,40 @@ namespace Backoffice.Infraestructure.Patients
         {
             _context = context;
         }
+
+        public async Task<List<Patient>> SearchPatientsAsync(string name, string email,DateTime? dateOfBirth, string medicalRecordNumber)
+        {
+            var query = _context.Patients.AsQueryable();
+
+            if(!string.IsNullOrEmpty(name))
+                query = query.Where(p => p.FullName.Contains(name));
+            if(!string.IsNullOrEmpty(email))
+                query = query.Where(p => p.Email._Email == email);
+            if(dateOfBirth.HasValue)
+                query = query.Where(p => p.DateOfBirth == dateOfBirth);
+            if(!string.IsNullOrEmpty(medicalRecordNumber))
+                query = query.Where(p=> p.MedicalRecordNumber == medicalRecordNumber);
+
+                return await query.ToListAsync();
+        }
+
+
         public async Task<Patient> GetPatientByEmailAsync(Email email){
             return await _context.Patients.Where(p => p.Email == email).FirstOrDefaultAsync();
         }
         
-        public async Task<List<Patient>> GetPatientsByNameAsync(string name)
+        public async Task<Patient> GetLatestPatientByMonthAsync()
         {
-        return await _context.Patients
-            .Where(p => p.FullName.Contains(name)) 
-            .ToListAsync();
-        }
+            return await _context.Patients.OrderByDescending(p=> p.MedicalRecordNumber).FirstOrDefaultAsync();
         
-        public async Task<Patient> GetPatientByNameAsync(string name)
+       
+        }
+
+                public async Task<Patient> GetPatientByNameAsync(string name)
         {
         return await _context.Patients
             .Where(p => p.FullName.Contains(name)) 
             .FirstOrDefaultAsync();
         }
-
-        public async Task<List<Patient>> GetPatientsByDateOfBirth(DateTime dateOfBirth)
-        {
-            return await _context.Patients
-            .Where(p => p.DateOfBirth == dateOfBirth)
-            .ToListAsync();
-        }
-
-        public async Task<List<Patient>> GetPatientsByMedicalRecordNumber(int medicalRecordNumber){
-            return await _context.Patients
-            .Where(p=> p.MedicalRecordNumber == medicalRecordNumber)
-            .ToListAsync();
-        }
-        }
+}
 }

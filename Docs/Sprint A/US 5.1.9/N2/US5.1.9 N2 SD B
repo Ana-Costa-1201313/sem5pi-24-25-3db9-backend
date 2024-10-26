@@ -1,0 +1,17 @@
+@startuml
+autonumber
+actor "Admin" as admin
+participant "BE" as be
+activate admin
+
+admin -> be: PATCH /patient/{id}
+
+activate be
+    alt patient profile not found/invalid parameters
+        admin<-- be : 422: Unprocessable Content
+    else patient profile edited successfully
+        admin<-- be : 201: Edited
+    end
+deactivate be
+deactivate admin
+@enduml

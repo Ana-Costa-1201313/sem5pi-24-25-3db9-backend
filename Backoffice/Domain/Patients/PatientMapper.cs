@@ -14,12 +14,13 @@ public class PatientMapper{
             DateOfBirth = patient.DateOfBirth,
             Email = patient.Email._Email,
             Phone = patient.Phone.PhoneNum,
+            EmergencyContact = patient.EmergencyContact.PhoneNum,
             Allergies = patient.Allergies,
             MedicalRecordNumber = patient.MedicalRecordNumber
         };
     }
-    public Patient ToPatient(CreatePatientDto dto){
-        return new Patient(dto);
+    public Patient ToPatient(CreatePatientDto dto,string medicalRecordNumber){
+        return new Patient(dto,medicalRecordNumber);
     }
 
     public SearchPatientDto ToSearchPatientDto(Patient patient){

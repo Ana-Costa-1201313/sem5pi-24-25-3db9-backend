@@ -13,6 +13,10 @@ using Backoffice.Domain.Specializations;
 using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
+using Backoffice.Infraestructure.Users;
+using Backoffice.Infraestructure.Staffs;
+using Backoffice.Infraestructure.Patients;
+using Backoffice.Domain.Patients;
 
 
 namespace Backoffice.Infraestructure
@@ -34,6 +38,7 @@ namespace Backoffice.Infraestructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationRequestEntityTypeConfiguration());

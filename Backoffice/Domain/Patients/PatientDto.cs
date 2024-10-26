@@ -10,7 +10,8 @@ namespace Backoffice.Domain.Patients
         public DateTime DateOfBirth { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public string EmergencyContact{get;set;}
         public string[] Allergies { get; set; }
-        public int MedicalRecordNumber { get; set; }
+        public string MedicalRecordNumber { get; set; }
     }
 }

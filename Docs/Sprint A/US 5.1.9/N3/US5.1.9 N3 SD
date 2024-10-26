@@ -1,4 +1,4 @@
-@startuml US8_Nivel3
+@startuml US_Patch_Nivel3
 autonumber
 
 actor "Admin" as admin
@@ -10,39 +10,38 @@ participant "IPatientRepository" as repo
 participant "DBDriver" as db
 participant "PatientMapper" as map
 participant "dto:\nPatientDto" as dto
+participant "dto:\nEditPatientDto" as editDto
 
 activate admin
-    admin -> r : POST /patients
+    admin -> r : PATCH /patient/{id}
     activate r
-        r -> ctrl : Create(CreatePatientDto)
+        r -> ctrl : Patch(id, EditPatientDto)
         activate ctrl
-            ctrl -> svc : AddAsync(CreatePatientDto, medicalRecordNumber)
+            ctrl -> svc : PatchAsync(id, EditPatientDto)
             activate svc
-                svc --> patient : create()
+                svc -> repo : GetByIdAsync(id)
+                activate repo
+                    repo -> db : find(id)
+                    activate db
+                    deactivate db
+                deactivate repo
 
-                alt patient profile not created
-                    svc --> ctrl : error
-                    
+                alt patient profile not found
+                    svc --> ctrl : null
                     ctrl --> r : informs error
-                    admin <-- r : 422: Unprocessable Content
-                else patient profile created successfully
-                    svc -> repo : AddAsync(patient)
-                    activate repo
-                        repo -> db : save
-                        activate db
-                        deactivate db
-                    deactivate repo
-
+                    admin <-- r : 404: Not Found
+                else patient profile found
+                    svc --> patient : update details
                     svc -> map : ToPatientDto(patient)
                     activate map
                         map --> dto : create(patient)
                     deactivate map
-
+                    
                     svc --> ctrl : dto
             deactivate svc
             ctrl --> r : dto
         deactivate ctrl
-    admin <-- r : 201: Created
+    admin <-- r : 200: OK
     deactivate r
 end
 deactivate admin
