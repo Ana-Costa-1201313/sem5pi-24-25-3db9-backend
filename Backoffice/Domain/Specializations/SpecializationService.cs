@@ -50,5 +50,19 @@ namespace Backoffice.Domain.Specializations
 
             return SpecializationMapper.ToDto(spec);
         }
+
+        public async Task<SpecializationDto> InactivateAsync(Guid id)
+        {
+            var spec = await this._repo.GetByIdAsync(new SpecializationId(id));
+
+            if (spec == null)
+                return null;
+
+            spec.MarkAsInative();
+
+            await this._unitOfWork.CommitAsync();
+
+            return SpecializationMapper.ToDto(spec);
+        }
     }
 }

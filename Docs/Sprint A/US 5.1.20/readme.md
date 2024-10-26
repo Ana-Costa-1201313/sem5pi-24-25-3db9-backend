@@ -101,31 +101,26 @@ This diagram presents the classes that support the functionality.
 
 #### 4.6.1. Unit and Integration Tests
 
-- Tests for Operation Type entity with valid inputs
-- Tests for Operation Type entity with invalid inputs
+- Unit Tests for Operation Type entity with valid inputs
+- Unit Tests for Operation Type entity with invalid inputs
 
-- Tests for value objects with valid inputs
-- Tests for value objects with invalid inputs
+- Unit Tests for value objects with valid inputs
+- Unit Tests for value objects with invalid inputs
 
-- Isolation tests for the controller
-- Isolation tests for the service
-- Isolation tests for the repository
-- InMemory tests for the repository
+- Unit tests for the controller focusing on the creation of the operation type
+- Unit tests for the service focusing on the creation of the operation type
+- Unit tests for the repository
 
 
 #### 4.6.2. Postman Tests
 
 - Status code test
-- Response time test
-- Content-Type header test
-- Response Body Contains ...
+- Response Body Contains fields
 - Response Body data validation
 - Status Code for Invalid Input
 - Check if Resource Was Created
-- Check for Duplicate Resource Creation
 - Check if Data is Persisted
-
-
+- Status Code for Invalid Input and errors
 
 ## 5. Implementation
 

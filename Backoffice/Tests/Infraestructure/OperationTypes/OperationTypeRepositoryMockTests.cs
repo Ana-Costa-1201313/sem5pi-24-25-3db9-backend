@@ -131,4 +131,163 @@ public class OperationTypeRepositoryMockTests
         Assert.Null(result);
         _mockOperationTypeRepository.Verify(repo => repo.GetByIdWithDetailsAsync(operationTypeId), Times.Once);
     }
+
+    [Fact]
+    public async Task TestFilterOperationTypesAsync_ReturnsMatchingOperationTypes()
+    {
+        var operationTypesDatabase = new List<OperationType>
+            {
+                new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(30, 60, 15),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+                    }),
+                new OperationType(new OperationTypeName("Anesthesia"), new OperationTypeDuration(15, 30, 5),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Anesthesiologist")), 5)
+                    }),
+                new OperationType(new OperationTypeName("General Surgery"), new OperationTypeDuration(40, 80, 20),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 1)
+                    })
+            };
+
+        var nameFilter = "Surgery";
+        var specializationFilter = "Surgeon";
+        bool? statusFilter = null;
+
+        _mockOperationTypeRepository.Setup(repo => repo.FilterOperationTypesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool?>()))
+            .ReturnsAsync((string name, string specialization, bool? status) =>
+                operationTypesDatabase
+                    .Where(op => (string.IsNullOrEmpty(name) || op.Name.Name.Contains(name, StringComparison.OrdinalIgnoreCase)) &&
+                                 (string.IsNullOrEmpty(specialization) || op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Equals(specialization, StringComparison.OrdinalIgnoreCase))) &&
+                                 (!status.HasValue || op.Active == status))
+                    .ToList());
+
+
+        var result = await _mockOperationTypeRepository.Object.FilterOperationTypesAsync(nameFilter, specializationFilter, statusFilter);
+
+
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, op => op.Name.Name == "Surgery");
+        Assert.Contains(result, op => op.Name.Name == "General Surgery");
+        Assert.DoesNotContain(result, op => op.Name.Name == "Anesthesia");
+    }
+
+    [Fact]
+    public async Task TestFilterOperationTypesAsync_NoMatchingOperationTypes()
+    {
+
+        var operationTypesDatabase = new List<OperationType>
+            {
+                new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(30, 60, 15),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+                    })
+            };
+
+        var nameFilter = "NonExistent";
+        string specializationFilter = null;
+        bool? statusFilter = null;
+
+        _mockOperationTypeRepository.Setup(repo => repo.FilterOperationTypesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool?>()))
+            .ReturnsAsync((string name, string specialization, bool? status) =>
+                operationTypesDatabase
+                    .Where(op => (string.IsNullOrEmpty(name) || op.Name.Name.Contains(name, StringComparison.OrdinalIgnoreCase)) &&
+                                 (string.IsNullOrEmpty(specialization) || op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Equals(specialization, StringComparison.OrdinalIgnoreCase))) &&
+                                 (!status.HasValue || op.Active == status))
+                    .ToList());
+
+
+        var result = await _mockOperationTypeRepository.Object.FilterOperationTypesAsync(nameFilter, specializationFilter, statusFilter);
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task TestFilterOperationTypesAsync_WithStatusFilter()
+    {
+        var operationTypesDatabase = new List<OperationType>
+            {
+            new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(30, 60, 15),
+                new List<OperationTypeRequiredStaff>
+                {
+                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+                }),
+
+            new OperationType(new OperationTypeName("Anesthesia"), new OperationTypeDuration(15, 30, 5),
+                new List<OperationTypeRequiredStaff>
+                {
+                    new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Anesthesiologist")), 5)
+                })
+            };
+
+        operationTypesDatabase[1].MarkAsInative();
+
+        string nameFilter = null;
+        string specializationFilter = null;
+        bool? statusFilter = false;
+
+        _mockOperationTypeRepository.Setup(repo => repo.FilterOperationTypesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool?>()))
+            .ReturnsAsync((string name, string specialization, bool? status) =>
+                operationTypesDatabase
+                    .Where(op => (string.IsNullOrEmpty(name) || op.Name.Name.Contains(name, StringComparison.OrdinalIgnoreCase)) &&
+                                 (string.IsNullOrEmpty(specialization) || op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Equals(specialization, StringComparison.OrdinalIgnoreCase))) &&
+                                 (!status.HasValue || op.Active == status))
+                    .ToList());
+
+        var result = await _mockOperationTypeRepository.Object.FilterOperationTypesAsync(nameFilter, specializationFilter, statusFilter);
+
+        Assert.NotNull(result);
+        Assert.Single(result);
+        Assert.Equal("Anesthesia", result[0].Name.Name);
+    }
+
+    [Fact]
+    public async Task TestFilterOperationTypesAsync_ReturnsOperationTypesBySpecialization()
+    {
+        var operationTypesDatabase = new List<OperationType>
+            {
+                new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(30, 60, 15),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 2)
+                    }),
+                new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(15, 30, 5),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Anesthesiologist")), 5)
+                    }),
+                new OperationType(new OperationTypeName("Surgery"), new OperationTypeDuration(40, 80, 20),
+                    new List<OperationTypeRequiredStaff>
+                    {
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Surgeon")), 1),
+                        new OperationTypeRequiredStaff(new Specialization(new SpecializationName("Nurse")), 1)
+                    })
+            };
+
+        string nameFilter = null;
+        var specializationFilter = "Surgeon";
+        bool? statusFilter = null;
+
+        _mockOperationTypeRepository.Setup(repo => repo.FilterOperationTypesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool?>()))
+            .ReturnsAsync((string name, string specialization, bool? status) =>
+                operationTypesDatabase
+                    .Where(op => (string.IsNullOrEmpty(name) || op.Name.Name.Contains(name, StringComparison.OrdinalIgnoreCase)) &&
+                                 (string.IsNullOrEmpty(specialization) || op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Equals(specialization, StringComparison.OrdinalIgnoreCase))) &&
+                                 (!status.HasValue || op.Active == status))
+                    .ToList());
+
+        var result = await _mockOperationTypeRepository.Object.FilterOperationTypesAsync(nameFilter, specializationFilter, statusFilter);
+
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, op => op.Name.Name == "Surgery");
+    }
 }
+

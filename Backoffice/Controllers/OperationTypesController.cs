@@ -20,11 +20,13 @@ namespace Backoffice.Controllers
             _authService = authService;
         }
 
-        // GET: api/OperationTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperationTypeDto>>> GetAll()
+        public async Task<ActionResult<List<OperationTypeDto>>> GetOperationTypes(
+            [FromQuery] string name = null,
+            [FromQuery] string specialization = null,
+            [FromQuery] bool? status = null
+        )
         {
-
             try
             {
                 await _authService.IsAuthorized(Request, new List<string> { "Admin" });
@@ -34,14 +36,30 @@ namespace Backoffice.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var opTypeList = await _service.GetAllAsync();
-
-            if (opTypeList == null || !opTypeList.Any())
+            try
             {
-                return NoContent();
-            }
 
-            return Ok(opTypeList);
+                List<OperationTypeDto> opTypes;
+
+                if (Request.Query.ContainsKey("name") || Request.Query.ContainsKey("specialization") || Request.Query.ContainsKey("status"))
+                {
+                    opTypes = await _service.FilterOperationTypesAsync(name, specialization, status);
+                }
+                else
+                {
+                    opTypes = await _service.GetAllAsync();
+                }
+                if (opTypes == null || opTypes.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                return Ok(opTypes);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
         }
 
         // GET: api/OperationTypes/5
@@ -95,11 +113,70 @@ namespace Backoffice.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> PatchOperationType(Guid id, [FromBody] EditOperationTypeDto operationTypeDto)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var updatedOperationType = await _service.Patch(id, operationTypeDto);
+
+                if (updatedOperationType == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedOperationType);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<OperationTypeDto>> UpdateOperationType(Guid id, [FromBody] EditOperationTypeDto updateDto)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var updatedOperationType = await _service.Put(id, updateDto);
+
+                if (updatedOperationType == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedOperationType);
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
         // Inactivate: api/OperationTypes/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<OperationTypeDto>> SoftDelete(Guid id)
         {
-            
+
             try
             {
                 await _authService.IsAuthorized(Request, new List<string> { "Admin" });

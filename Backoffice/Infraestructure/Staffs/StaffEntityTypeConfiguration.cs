@@ -14,6 +14,8 @@ namespace Backoffice.Infraestructure.Staffs
 
             builder.Property(r => r.Role).HasConversion(new RoleConverter());
 
+            builder.Property(l => l.LicenseNumber).HasConversion(new LicenseNumberConverter());
+
             builder.Property(s => s.Phone).HasConversion(new PhoneNumberConverter());
             builder.HasIndex(s => s.Phone).IsUnique();
 
@@ -24,6 +26,8 @@ namespace Backoffice.Infraestructure.Staffs
             builder.HasIndex(e => e.Email).IsUnique();
 
             builder.HasIndex(l => l.LicenseNumber).IsUnique();
+
+            builder.HasOne(s => s.Specialization);
 
             builder.OwnsMany(s => s.AvailabilitySlots, a =>
             {

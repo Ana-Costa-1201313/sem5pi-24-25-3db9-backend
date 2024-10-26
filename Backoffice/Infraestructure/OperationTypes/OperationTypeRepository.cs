@@ -1,9 +1,8 @@
-using Backoffice.Domain.Categories;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Infraestructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backoffice.Infraestructure.Categories
+namespace Backoffice.Infraestructure.OperationTypes
 {
     public class OperationTypeRepository : BaseRepository<OperationType, OperationTypeId>, IOperationTypeRepository
     {
@@ -29,15 +28,42 @@ namespace Backoffice.Infraestructure.Categories
             .ThenInclude(s => s.Specialization)
             .FirstOrDefaultAsync(rs => rs.Id == id);
         }
-        
-        public async Task<OperationType> GetByOperationTypeName(string name){
+
+        public async Task<OperationType> GetByOperationTypeName(string name)
+        {
             return await this._context.OperationTypes.Where(x => name.Equals(x.Name.Name)).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> OperationTypeNameExists(string name){
-            
+        public async Task<bool> OperationTypeNameExists(string name)
+        {
+
             OperationType operationType = await GetByOperationTypeName(name);
             return operationType != null;
+        }
+
+        public async Task<List<OperationType>> FilterOperationTypesAsync(string name, string specialization, bool? status)
+        {
+            var query = _context.OperationTypes
+                    .Include(op => op.RequiredStaff)
+                    .ThenInclude(rs => rs.Specialization)
+                    .AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(op => op.Name.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(specialization))
+            {
+                query = query.Where(op => op.RequiredStaff.Any(rs => rs.Specialization.Name.Name.Contains(specialization)));
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(op => op.Active == status.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
     }

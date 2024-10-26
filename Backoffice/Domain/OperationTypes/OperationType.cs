@@ -52,6 +52,88 @@ namespace Backoffice.Domain.OperationTypes
             this.Active = false;
         }
 
+        public void ChangeName(OperationTypeName name)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            this.Name = name;
+        }
+
+        public void ChangeAnesthesiaPatientPreparationDuration(int duration)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            if (duration <= 0)
+            {
+                throw new BusinessRuleValidationException("Error: The anesthesia/preparation duration must be more than 0 minutes.");
+            }
+            this.Duration.AnesthesiaPatientPreparationInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeSurgeryDuration(int duration)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            if (duration <= 0)
+            {
+                throw new BusinessRuleValidationException("Error: The surgery duration must be more than 0 minutes.");
+            }
+            this.Duration.SurgeryInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeCleaningDuration(int duration)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            if (duration <= 0)
+            {
+                throw new BusinessRuleValidationException("Error: The cleaning duration must be more than 0 minutes.");
+            }
+            this.Duration.CleaningInMinutes = TimeSpan.FromMinutes(duration);
+        }
+
+        public void ChangeRequiredStaff(List<OperationTypeRequiredStaff> requiredStaff)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            if (!requiredStaff.Any())
+            {
+                throw new BusinessRuleValidationException("Error: Required staff can't be empty.");
+            }
+
+            List<OperationTypeRequiredStaff> list = new List<OperationTypeRequiredStaff>();
+
+            foreach (OperationTypeRequiredStaff rs in requiredStaff)
+            {
+                list.Add(rs);
+            }
+            this.RequiredStaff = list;
+        }
+
+        public void ChangeAll(OperationTypeName name, int duration1, int duration2, int duration3, List<OperationTypeRequiredStaff> requiredStaff)
+        {
+            if (!this.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive operation type.");
+            }
+            ChangeName(name);
+            ChangeAnesthesiaPatientPreparationDuration(duration1);
+            ChangeSurgeryDuration(duration2);
+            ChangeCleaningDuration(duration3);
+            ChangeRequiredStaff(requiredStaff);
+        }
+
+
         public string ToJSON()
         {
             var jsonRepresentation = new

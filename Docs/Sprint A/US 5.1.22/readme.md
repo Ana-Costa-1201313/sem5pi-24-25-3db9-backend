@@ -100,27 +100,19 @@ This section presents the design adopted to solve the requirement.
 
 #### 4.5.1. Unit and Integration Tests
 
-- Unit and Integration tests for Operation Type entity with valid inputs
-
-
-
-- Tests for value objects with valid inputs
-- Tests for value objects with invalid inputs
-
-- Isolation and Integration tests for the controller
-- Isolation and Integration tests for the service
+- Unit tests for Operation Type entity status
+- Unit tests for the controller focusing on the deactivation of the operation type
+- Unit tests for the service focusing on the deactivation of the operation type
 
 
 #### 4.5.2. Postman Tests
 
 - Status code test
-- Response time test
-- Response Body Contains
+- Response Body Contains fields
 - Response Body data validation
-- Status Code for Invalid Input
+- Status Code for Invalid deactivation
 - Check if Resource Was deactivated
-
-
+- Check if Data is Persisted
 
 ## 5. Implementation
 

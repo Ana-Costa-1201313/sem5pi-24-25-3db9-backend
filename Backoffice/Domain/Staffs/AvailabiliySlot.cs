@@ -40,5 +40,21 @@ namespace Backoffice.Domain.Staffs
         {
             return StartTime.ToString("g") + " - " + EndTime.ToString("g");
         }
+
+        public static AvailabilitySlot CreateAvailabilitySlot(string stringAvSlot)
+        {
+            string[] times = stringAvSlot.Split('/');
+            if (times.Length == 2)
+            {
+                string startTime = times[0];
+                string endTime = times[1];
+
+                return new AvailabilitySlot(startTime, endTime);
+            }
+            else
+            {
+                throw new BusinessRuleValidationException("Error: Invalid Availability slot format!");
+            }
+        }
     }
 }

@@ -1,10 +1,12 @@
+using Backoffice.Domain.Specializations;
+
 namespace Backoffice.Domain.Staffs
 {
     public class StaffMapper
     {
         public StaffDto ToStaffDto(Staff staff)
         {
-            var stringAvailabilitySlots = new List<string>();
+            List<string> stringAvailabilitySlots = new List<string>();
 
             if (staff.AvailabilitySlots == null)
             {
@@ -12,20 +14,21 @@ namespace Backoffice.Domain.Staffs
             }
             else
             {
-                foreach (var availabilitySlot in staff.AvailabilitySlots)
+                foreach (AvailabilitySlot availabilitySlot in staff.AvailabilitySlots)
                 {
                     stringAvailabilitySlots.Add(availabilitySlot.ToString());
                 }
             }
 
+
             return new StaffDto
             {
                 Id = staff.Id.AsGuid(),
                 Name = staff.Name,
-                LicenseNumber = staff.LicenseNumber,
+                LicenseNumber = staff.LicenseNumber.LicenseNum,
                 Email = staff.Email._Email,
                 Phone = staff.Phone?.PhoneNum,
-                Specialization = staff.Specialization,
+                Specialization = staff.Specialization?.Name?.Name,
                 AvailabilitySlots = stringAvailabilitySlots,
                 Role = staff.Role,
                 MechanographicNum = staff.MechanographicNum.ToString(),
@@ -33,10 +36,9 @@ namespace Backoffice.Domain.Staffs
             };
         }
 
-        public Staff ToStaff(CreateStaffDto dto, int mecNumSeq, string dns) {
-            return new Staff(dto, mecNumSeq, dns);
+        public Staff ToStaff(CreateStaffDto dto, Specialization specialization, int mecNumSeq, string dns)
+        {
+            return new Staff(dto, specialization, mecNumSeq, dns);
         }
-
-
     }
 }

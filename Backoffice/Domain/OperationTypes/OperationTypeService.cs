@@ -67,6 +67,8 @@ namespace Backoffice.Domain.OperationTypes
 
             var opType = OperationTypeMapper.ToDomain(dto);
 
+            opType.ChangeRequiredStaff(requiredStaffList);
+
             if (await this._repo.OperationTypeNameExists(opType.Name.Name))
             {
                 throw new BusinessRuleValidationException("Error: This operation type name is already being used.");
@@ -74,7 +76,7 @@ namespace Backoffice.Domain.OperationTypes
 
             await this._repo.AddAsync(opType);
 
-            await this._repoLog.AddAsync(new Log(opType.ToJSON(), LogType.Create, LogEntity.OperationType));
+            await this._repoLog.AddAsync(new Log(opType.ToJSON(), LogType.Create, LogEntity.OperationType, opType.Id));
 
             await this._unitOfWork.CommitAsync();
 
@@ -94,6 +96,123 @@ namespace Backoffice.Domain.OperationTypes
 
             return OperationTypeMapper.ToDto(opType);
         }
+
+
+        public async Task<OperationTypeDto> Patch(Guid id, EditOperationTypeDto operationTypeDto)
+        {
+            var operationType = await _repo.GetByIdWithDetailsAsync(new OperationTypeId(id));
+
+            if (operationType == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(operationTypeDto.Name))
+            {
+                operationType.ChangeName(new OperationTypeName(operationTypeDto.Name));
+            }
+
+            if (operationTypeDto.AnesthesiaPatientPreparationInMinutes != 0)
+            {
+                operationType.ChangeAnesthesiaPatientPreparationDuration(operationTypeDto.AnesthesiaPatientPreparationInMinutes);
+            }
+
+            if (operationTypeDto.SurgeryInMinutes != 0)
+            {
+                operationType.ChangeSurgeryDuration(operationTypeDto.SurgeryInMinutes);
+            }
+
+            if (operationTypeDto.CleaningInMinutes != 0)
+            {
+                operationType.ChangeCleaningDuration(operationTypeDto.CleaningInMinutes);
+            }
+
+            if (operationTypeDto.RequiredStaff != null && operationTypeDto.RequiredStaff.Any())
+            {
+                var specializationsNamesSet = new HashSet<String>();
+                var updatedStaff = new List<OperationTypeRequiredStaff>();
+
+                foreach (var rsDto in operationTypeDto.RequiredStaff)
+                {
+                    var specialization = await _repoSpecialization.GetBySpecializationName(rsDto.Specialization);
+                    if (specialization == null)
+                    {
+                        throw new BusinessRuleValidationException("Error: There is no specialization with the name " + rsDto.Specialization + ".");
+                    }
+
+                    if (!specializationsNamesSet.Add(rsDto.Specialization))
+                    {
+                        throw new BusinessRuleValidationException("Error: Can't have duplicate specializations -> " + rsDto.Specialization + ".");
+                    }
+
+                    var requiredStaff = new OperationTypeRequiredStaff(specialization, rsDto.Total);
+                    updatedStaff.Add(requiredStaff);
+                }
+
+                operationType.ChangeRequiredStaff(updatedStaff);
+            }
+
+            await _unitOfWork.CommitAsync();
+
+            return OperationTypeMapper.ToDto(operationType);
+        }
+
+        public async Task<OperationTypeDto> Put(Guid id, EditOperationTypeDto operationTypeDto)
+        {
+            var operationType = await _repo.GetByIdAsync(new OperationTypeId(id));
+
+            if (operationType == null)
+            {
+                return null;
+            }
+
+            var specializationsNamesSet = new HashSet<String>();
+            var updatedStaff = new List<OperationTypeRequiredStaff>();
+
+            foreach (var rsDto in operationTypeDto.RequiredStaff)
+            {
+                var specialization = await _repoSpecialization.GetBySpecializationName(rsDto.Specialization);
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + rsDto.Specialization + ".");
+                }
+
+                if (!specializationsNamesSet.Add(rsDto.Specialization))
+                {
+                    throw new BusinessRuleValidationException("Error: Can't have duplicate specializations -> " + rsDto.Specialization + ".");
+                }
+
+                var requiredStaff = new OperationTypeRequiredStaff(specialization, rsDto.Total);
+                updatedStaff.Add(requiredStaff);
+            }
+
+            operationType.ChangeAll(
+                new OperationTypeName(operationTypeDto.Name),
+                operationTypeDto.AnesthesiaPatientPreparationInMinutes,
+                operationTypeDto.SurgeryInMinutes,
+                operationTypeDto.CleaningInMinutes,
+                updatedStaff);
+
+
+
+            await _unitOfWork.CommitAsync();
+            return OperationTypeMapper.ToDto(operationType);
+        }
+
+        public async Task<List<OperationTypeDto>> FilterOperationTypesAsync(string name, string specialization, bool? status)
+        {
+            var opTypes = await _repo.FilterOperationTypesAsync(name, specialization, status);
+
+            if (opTypes == null)
+            {
+                return null;
+            }
+
+            List<OperationTypeDto> listDto = opTypes.Select(opType => OperationTypeMapper.ToDto(opType)).ToList();
+
+            return listDto;
+        }
+
 
     }
 }

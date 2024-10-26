@@ -26,8 +26,9 @@ namespace Backoffice.Infraestructure.OperationTypes
 
                 rs.HasKey("SpecializationId", "OperationTypeId");
 
-                rs.Property(rs => rs.SpecializationId)
-                    .HasColumnName("SpecializationId")
+                rs.HasOne(staff => staff.Specialization)
+                    .WithMany()  
+                    .HasForeignKey(staff => staff.SpecializationId)
                     .IsRequired();
 
                 rs.Property(staff => staff.Total)

@@ -6,12 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Backoffice.Infraestructure;
-using Backoffice.Infraestructure.Categories;
 using Backoffice.Infraestructure.Users;
 using Backoffice.Infraestructure.Staffs;
+using Backoffice.Infraestructure.OperationTypes;
 using Backoffice.Infraestructure.Shared;
 using Backoffice.Domain.Shared;
-using Backoffice.Domain.Categories;
 using Backoffice.Domain.Users;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.OperationTypes;
@@ -91,9 +90,6 @@ namespace Backoffice
         public void ConfigureMyServices(IServiceCollection services)
         {
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            services.AddTransient<ICategoryRepository, CategoryRepository>();
-            services.AddTransient<CategoryService>();
 
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
             services.AddTransient<OperationTypeService>();

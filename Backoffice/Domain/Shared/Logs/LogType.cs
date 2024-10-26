@@ -5,6 +5,7 @@ namespace Backoffice.Domain.Logs
        Create,
        Update,
        Inactive,
-       Delete
+       Delete,
+       Deactivate
     }
 }

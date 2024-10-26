@@ -100,16 +100,16 @@ This diagram guides the realization of the functionality, for level 2 procecss v
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.13 N3 SD](US5.1.13%20N3%20SD.svg)
+SD for the PUT request:
+
+![US5.1.13 N3 SD PUT](US5.1.13%20N3%20SD%20PUT.svg)
+
+SD for the PATCH request:
+
+![US5.1.13 N3 SD PATCH](US5.1.13%20N3%20SD%20PATCH.svg)
 
 
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-*To do*
-
-
-### 4.5. Applied Design Patterns
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -122,7 +122,7 @@ This diagram presents the classes that support the functionality.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
 The following tests are to be developed:
 - updating an existing staff with new data

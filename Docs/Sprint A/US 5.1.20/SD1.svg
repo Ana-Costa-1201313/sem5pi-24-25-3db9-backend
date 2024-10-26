@@ -15,10 +15,10 @@
       ><path d="M-7 -7 L19 -7 L19 131 L-7 131 L-7 -7 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath4"
-      ><path d="M-114 -30 L228 -30 L228 60 L-114 60 L-114 -30 Z"
+      ><path d="M-52 -15 L104 -15 L104 30 L-52 30 L-52 -15 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath5"
-      ><path d="M-52 -15 L104 -15 L104 30 L-52 30 L-52 -15 Z"
+      ><path d="M-114 -30 L228 -30 L228 60 L-114 60 L-114 -30 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath6"
       ><path d="M0 0 L375 0 L375 104 L0 104 L0 0 Z"
@@ -76,15 +76,15 @@
     ><g stroke-linecap="butt" font-size="11px" transform="translate(307,73)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="black" stroke-opacity="1" stroke-miterlimit="0"
     ><rect fill="none" x="0" width="8" height="120" y="0" clip-path="url(#clipPath3)"
     /></g
-    ><g font-size="11px" transform="translate(254,2)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="17" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
-      >&lt;&lt;system C4&gt;&gt;</text
-      ><text x="18" xml:space="preserve" y="27" clip-path="url(#clipPath4)" stroke="none"
-      >HealthCareApp</text
-    ></g
     ><g font-size="11px" transform="translate(6,37)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
-    ><text x="10" xml:space="preserve" y="12" clip-path="url(#clipPath5)" stroke="none"
+    ><text x="10" xml:space="preserve" y="12" clip-path="url(#clipPath4)" stroke="none"
       >Admin</text
+    ></g
+    ><g font-size="11px" transform="translate(254,2)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke="black" stroke-opacity="1"
+    ><text x="17" xml:space="preserve" y="12" clip-path="url(#clipPath5)" stroke="none"
+      >&lt;&lt;system C4&gt;&gt;</text
+      ><text x="18" xml:space="preserve" y="27" clip-path="url(#clipPath5)" stroke="none"
+      >HealthCareApp</text
     ></g
     ><g stroke-linecap="butt" font-size="11px" transform="translate(-14,23)" fill-opacity="1" fill="black" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="black" stroke-opacity="1"
     ><line y2="50" fill="none" x1="50" clip-path="url(#clipPath7)" x2="321" y1="50"

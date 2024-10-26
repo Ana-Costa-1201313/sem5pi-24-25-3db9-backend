@@ -124,7 +124,6 @@ This diagram guides the realization of the functionality, for level 3 process vi
 - **Inversion of Control:** the responsability of object creation and dependency management belongs to a framework or external entity, so that the class doesn't need to. Promotes flexibility and decoupling.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
-
 ### 4.5. Tests
 
 The following tests are to be developed:
