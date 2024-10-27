@@ -34,41 +34,53 @@ namespace Backoffice.Domain.OperationRequests
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByPatientEmailAsDoctorAsync(string doctorEmail, string patientEmail)
+        public async Task<List<OperationRequestDto>> GetAllByPatientIdAsDoctorAsync(string doctorId, string patientId)
         {
-            var list = await this._repo.GetOpRequestsByPatientEmailAsDoctorAsync(new Email(doctorEmail), new Email(patientEmail));
+            var list = await this._repo.GetOpRequestsByPatientIdAsDoctorAsync(new StaffId(doctorId), new PatientId(patientId));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             if (listDto.IsNullOrEmpty())
-                throw new BusinessRuleValidationException("Error: No Operation Requests for the patient with the email " + patientEmail + " type found!");
+                throw new BusinessRuleValidationException("Error: No Operation Requests for the patient with the Id " + patientId + " type found!");
 
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByPriorityAsDoctorAsync(string doctorEmail, string priority)
+        public async Task<List<OperationRequestDto>> GetAllByPriorityAsDoctorAsync(string doctorId, string priority)
         {
             var priorityEnum = (Priority)Enum.Parse(typeof(Priority), priority, true);
-            var list = await this._repo.GetOpRequestsByPriorityAsDoctorAsync(new Email(doctorEmail), priorityEnum);
+            var list = await this._repo.GetOpRequestsByPriorityAsDoctorAsync(new StaffId(doctorId), priorityEnum);
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             if (listDto.IsNullOrEmpty())
@@ -78,16 +90,20 @@ namespace Backoffice.Domain.OperationRequests
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByStatusAsDoctorAsync(string doctorEmail, string status)
+        public async Task<List<OperationRequestDto>> GetAllByStatusAsDoctorAsync(string doctorId, string status)
         {
             var statusEnum = (Status)Enum.Parse(typeof(Status), status, true);
-            var list = await this._repo.GetOpRequestsByStatusAsDoctorAsync(new Email(doctorEmail), statusEnum);
+            var list = await this._repo.GetOpRequestsByStatusAsDoctorAsync(new StaffId(doctorId), statusEnum);
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             if (listDto.IsNullOrEmpty())
@@ -97,33 +113,41 @@ namespace Backoffice.Domain.OperationRequests
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByOpTypeNameAsDoctorAsync(string doctorEmail, string opTypeName)
+        public async Task<List<OperationRequestDto>> GetAllByOpTypeIdAsDoctorAsync(string doctorId, string opTypeId)
         {
-            var list = await this._repo.GetOpRequestsByOperationTypeNameAsDoctorAsync(new Email(doctorEmail), new OperationTypeName(opTypeName));
+            var list = await this._repo.GetOpRequestsByOperationTypeIdAsDoctorAsync(new StaffId(doctorId), new OperationTypeId(opTypeId));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             if (listDto.IsNullOrEmpty())
-                throw new BusinessRuleValidationException("Error: No Operation Requests for the " + opTypeName + " type found!");
+                throw new BusinessRuleValidationException("Error: No Operation Requests for the " + opTypeId + " type found!");
 
             return listDto;
             //return null;
         }
 
-        public async Task<List<OperationRequestDto>> GetAllByDoctorEmailAsync(string doctorEmail)
+        public async Task<List<OperationRequestDto>> GetAllByDoctorIdAsync(string doctorId)
         {
-            var list = await this._repo.GetOpRequestsByDoctorEmailAsync(new Email(doctorEmail));
+            var list = await this._repo.GetOpRequestsByDoctorIdAsync(new StaffId(doctorId));
 
             List<OperationRequestDto> listDto = new List<OperationRequestDto>();
             
             foreach (var item in list)
             {
-                listDto.Add(OperationRequestMapper.ToDto(item));
+                OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(item.OpTypeId).Result.Name;
+                string patientName = _patientrepo.GetByIdAsync(item.PatientId).Result.FullName.ToString();
+                string doctorName = _doctorrepo.GetByIdAsync(item.DoctorId).Result.Name.ToString();
+
+                listDto.Add(OperationRequestMapper.ToDto(item, operationTypeName, patientName, doctorName));
             }
 
             if (listDto.IsNullOrEmpty())
@@ -140,7 +164,11 @@ namespace Backoffice.Domain.OperationRequests
             if (opReq == null)
                 throw new BusinessRuleValidationException("Error: Operation Request not found!");
 
-            return OperationRequestMapper.ToDto(opReq);
+            OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
+            string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
+            string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
             //return null;
         }
 
@@ -156,7 +184,11 @@ namespace Backoffice.Domain.OperationRequests
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationRequestMapper.ToDto(opRequest);
+            OperationTypeName operationTypeName = opType.Name;
+            string patientName = patient.FullName.ToString();
+            string doctorName = doctor.Name.ToString();
+
+            return OperationRequestMapper.ToDto(opRequest, operationTypeName, patientName, doctorName);
             //return null;
         }
 
@@ -164,16 +196,48 @@ namespace Backoffice.Domain.OperationRequests
         {
             var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
 
+            Priority prio = Priority.Null;
+
             if (opReq == null)
                 throw new BusinessRuleValidationException("Error: Operation Request not found!");
 
+                // Only update DeadlineDate if it's provided
+            if (string.IsNullOrEmpty(dto.DeadlineDate))
+            {
+                dto.DeadlineDate = opReq.DeadlineDate.ToString();
+            }
+
+            // Only update Priority if it's provided (default enum value is not null)
+            if (dto.Priority == null)
+            {
+                prio = opReq.Priority;
+            } else{
+                try{
+                    prio = (Priority)Enum.Parse(typeof(Priority), dto.Priority, true);
+                }
+                catch (ArgumentException)
+                {
+                    throw new BusinessRuleValidationException("Error: Invalid Priority value provided!");
+                }
+            }
+
+            // Only update Description if it's provided
+            if (string.IsNullOrEmpty(dto.Description))
+            {
+                dto.Description = opReq.Description;
+            }
+
             var deadlineDate = DateTime.Parse(dto.DeadlineDate);
 
-            opReq.UpdateOperationRequest(deadlineDate, dto.Priority, dto.Description);
+            opReq.UpdateOperationRequest(deadlineDate, prio, dto.Description);
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationRequestMapper.ToDto(opReq);
+            OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
+            string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
+            string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
             //return null;
         }
 
@@ -188,7 +252,11 @@ namespace Backoffice.Domain.OperationRequests
 
             await this._unitOfWork.CommitAsync();
 
-            return OperationRequestMapper.ToDto(opReq);
+            OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
+            string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
+            string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
             //return null;
         }
     }

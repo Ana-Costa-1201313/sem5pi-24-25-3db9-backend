@@ -6,25 +6,25 @@ namespace Backoffice.Domain.OperationRequests
 {
     public static class OperationRequestMapper
     {
-        public static OperationRequestDto ToDto(OperationRequest operationRequest)
-        {
-            if (operationRequest == null) throw new ArgumentNullException(nameof(operationRequest));
+public static OperationRequestDto ToDto(OperationRequest operationRequest, OperationTypeName opTypeName, string patientName, string doctorName)
+{
+    if (operationRequest == null) throw new ArgumentNullException(nameof(operationRequest));
 
-            return new OperationRequestDto
-            {
-                Id = operationRequest.Id.AsGuid(),
-                OpTypeName = operationRequest.OpType.Name.ToString(),
-                OpTypeId = operationRequest.OpTypeId.ToString(),
-                DeadlineDate = operationRequest.DeadlineDate.ToString(),
-                Priority = operationRequest.Priority.ToString(),
-                PatientName = operationRequest.Patient.FullName.ToString(),
-                PatientId = operationRequest.PatientId.ToString(),
-                DoctorName = operationRequest.Doctor.Name.ToString(),
-                DoctorId = operationRequest.DoctorId.ToString(),
-                Status = operationRequest.Status.ToString(),
-                Description = operationRequest.Description
-            };
-        }
+    return new OperationRequestDto
+    {
+        Id = operationRequest.Id?.AsGuid() ?? Guid.Empty,
+        OpTypeName = opTypeName,
+        OpTypeId = operationRequest.OpTypeId?.AsGuid() ?? Guid.Empty,
+        DeadlineDate = operationRequest.DeadlineDate.ToString(),
+        Priority = operationRequest.Priority.ToString(),
+        PatientName = patientName,
+        PatientId = operationRequest.PatientId?.AsGuid() ?? Guid.Empty,
+        DoctorName = doctorName,
+        DoctorId = operationRequest.DoctorId?.AsGuid() ?? Guid.Empty,
+        Status = operationRequest.Status.ToString(),
+        Description = operationRequest.Description ?? string.Empty
+    };
+}
 
         public static OperationRequest ToDomain(CreateOperationRequestDto dto, OperationType operationType, Patient patient, Staff doctor)
         {

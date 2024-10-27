@@ -51,8 +51,8 @@ namespace Backoffice.Controllers
             return OperationRequest;
         }
 
-        [HttpGet("list/{doctorEmail}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByFilter(string doctorEmail, [FromQuery] string parameter, [FromQuery] string value)
+        [HttpGet("list/{doctorId}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetByFilter(string doctorId, [FromQuery] string parameter, [FromQuery] string value)
         {
             try
             {
@@ -70,19 +70,19 @@ namespace Backoffice.Controllers
                 switch (parameter)
                 {
                     case "patient":
-                        OperationRequests = await _service.GetAllByPatientEmailAsDoctorAsync(doctorEmail, value);
+                        OperationRequests = await _service.GetAllByPatientIdAsDoctorAsync(doctorId, value);
                         break;
                     case "priority":
-                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorId, value);
                         break;
                     case "operation type":
-                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        OperationRequests = await _service.GetAllByOpTypeIdAsDoctorAsync(doctorId, value);
                         break;
                     case "status":
-                        OperationRequests = await _service.GetAllByPriorityAsDoctorAsync(doctorEmail, value);
+                        OperationRequests = await _service.GetAllByStatusAsDoctorAsync(doctorId, value);
                         break;
                     case "":
-                        OperationRequests = await _service.GetAllByDoctorEmailAsync(doctorEmail);
+                        OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
                         break;
                     default:
                         return BadRequest(new { Message = "Invalid parameter!" });
@@ -103,8 +103,8 @@ namespace Backoffice.Controllers
             }
         }
 
-        [HttpGet("doctorGetAll/{doctorEmail}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllBydoctorEmail(string doctorEmail)
+        [HttpGet("doctorGetAll/{doctorId}")]
+        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByDoctorId(string doctorId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                var OperationRequests = await _service.GetAllByDoctorEmailAsync(doctorEmail);
+                var OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
 
                 if (OperationRequests == null || !OperationRequests.Any())
                 {
