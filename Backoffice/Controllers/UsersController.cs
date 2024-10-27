@@ -105,6 +105,49 @@ namespace Backoffice.Controllers
             }
         }
 
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult> RequestPasswordReset(ResetPasswordUserDto dto)
+        {
+            //Auth not needed
+            try
+            {
+                var user = await _service.SendPasswordResetLink(dto.Email);
+
+                return Ok("Password reset link sent to " + user.Email);
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpPatch("new-password")]
+        public async Task<ActionResult> ResetPassword([FromQuery] string token, [FromBody] NewPasswordUserDto dto)
+        {
+            //Auth not needed
+            try
+            {
+                var user = await _service.NewPassword(token, dto.Password);
+
+                return Ok("Password from " + user.Email + " was changed successfully.");
+
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
         [HttpPut("createPatient")]
         public async Task<ActionResult<UserDto>> CreatePatient([FromBody]CreatePatientRequestDto createPatientRequestDto)
         {

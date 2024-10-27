@@ -102,10 +102,10 @@
       ><path d="M0 0 L0 184 L104 184 L104 0 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath33"
-      ><path d="M0 0 L243 0 L243 224 L0 224 L0 0 Z"
+      ><path d="M0 0 L243 0 L243 212 L0 212 L0 0 Z"
       /></clipPath
       ><clipPath clipPathUnits="userSpaceOnUse" id="clipPath34"
-      ><path d="M0 0 L0 224 L243 224 L243 0 Z"
+      ><path d="M0 0 L0 212 L243 212 L243 0 Z"
       /></clipPath
     ></defs
     ><g fill="white" text-rendering="geometricPrecision" fill-opacity="1" stroke-opacity="1" stroke="white"
@@ -271,23 +271,17 @@
       /><line clip-path="url(#clipPath32)" stroke-dashoffset="0" fill="none" x1="50" x2="56" y1="50" y2="62" stroke-dasharray="none"
     /></g
     ><g fill-opacity="1" text-rendering="geometricPrecision" stroke="black" stroke-linecap="butt" transform="translate(187,260)" stroke-opacity="1" fill="black" stroke-dasharray="5" font-family="sans-serif" stroke-linejoin="round" font-size="11px" stroke-dashoffset="1" image-rendering="optimizeQuality"
-    ><line y2="170" fill="none" x1="189" clip-path="url(#clipPath34)" x2="189" y1="50"
-      /><line y2="170" fill="none" x1="189" clip-path="url(#clipPath34)" x2="50" y1="170"
-      /><line clip-path="url(#clipPath34)" stroke-dashoffset="0" fill="none" x1="50" x2="62" y1="170" y2="176" stroke-dasharray="none"
-      /><line clip-path="url(#clipPath34)" stroke-dashoffset="0" fill="none" x1="50" x2="62" y1="170" y2="164" stroke-dasharray="none"
+    ><line y2="158" fill="none" x1="50" clip-path="url(#clipPath34)" x2="189" y1="158"
+      /><line y2="50" fill="none" x1="189" clip-path="url(#clipPath34)" x2="189" y1="158"
     /></g
-    ><g font-size="10px" fill-opacity="1" fill="rgb(120,120,120)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" stroke="rgb(120,120,120)" stroke-opacity="1"
-    ><text x="258" xml:space="preserve" y="631" stroke="none"
-      >Powered ByVisual Paradigm Community Edition</text
-      ><image font-size="12px" x="482" y="619" fill="white" width="16" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABJ0lEQVR4XmNgwAPO
-GBs3nzYx6UIXJwoANdcA8X8obkaXxwvQNIPxWSOjFnR1WAGa5mVAL6wg2iVomlcD
-MettFRV2IL2OoCHImoHOPfCfgYEJJrcqNJQZJIYk3wKUZ0TWnItkAwg/OW1q6oIk
-bwPED9DUVMANAJqoCcSn0BS8B2LHk2ZmwlA2stwFoHo9uAEgAAwsB6DESTSFb4HY
-DYgrkcTOAtW6omgGCuoC8Qsg7gbivWiGvDkD8UItEB8G2twJpF+eMjU1hRtwVVub
-DSjYDNXQgcWQz0ANBkA6H8rvBsUOkhsgAGh6PVRBO5ohx4FyfTA5dH0oAOi/BqhC
-kEsOA/EJULQB6X8ENcMAkiFtQNwI1dyBrg4vQPIO2CB0eaIA1AU96OLIAAAk1QNN
-F+NelwAAAABJRU5ErkJggg==" height="16" stroke="white" preserveAspectRatio="none"
+    ><g stroke-linecap="butt" font-size="11px" transform="translate(187,260)" fill-opacity="1" fill="rgb(122,207,245)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" font-family="sans-serif" stroke-linejoin="round" stroke="rgb(122,207,245)" stroke-opacity="1"
+    ><polygon points=" 50 158 62 164 62 152" stroke="none" clip-path="url(#clipPath34)"
+      /><polygon fill="none" clip-path="url(#clipPath34)" points=" 50 158 62 164 62 152" stroke="black"
     /></g
+    ><g font-size="8px" fill-opacity="1" fill="rgb(120,120,120)" text-rendering="geometricPrecision" image-rendering="optimizeQuality" stroke="rgb(120,120,120)" stroke-opacity="1"
+    ><text x="0" xml:space="preserve" y="10" stroke="none"
+      >Visual Paradigm Standard(1201313(Instituto Superior de Engenharia do Porto))</text
+    ></g
   ></g
 ></svg
 >

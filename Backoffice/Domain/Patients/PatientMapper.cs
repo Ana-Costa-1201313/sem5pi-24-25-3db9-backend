@@ -1,4 +1,4 @@
-using Backoffice.Domain.Patient;
+using Backoffice.Domain.Patients;
 
 namespace Backoffice.Domain.Patients;
 

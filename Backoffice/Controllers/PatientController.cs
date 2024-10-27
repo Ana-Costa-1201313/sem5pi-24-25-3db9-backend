@@ -1,4 +1,3 @@
-using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;

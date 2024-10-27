@@ -60,9 +60,9 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
-            if (dto.Role != Role.Admin && dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
+            if (dto.Role != Role.Doctor && dto.Role != Role.Nurse && dto.Role != Role.Technician)
             {
-                throw new BusinessRuleValidationException("Error: The staff role must be one of the following: Admin, Doctor, Nurse or Tech!");
+                throw new BusinessRuleValidationException("Error: The staff role must be one of the following: Doctor, Nurse or Tech!");
             }
             this.Role = dto.Role;
 
@@ -92,11 +92,6 @@ namespace Backoffice.Domain.Staffs
 
         public void Edit(EditStaffDto dto, Specialization specialization)
         {
-            if (!this.Active)
-            {
-                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
-            }
-
             if (dto.Phone == null)
             {
                 throw new BusinessRuleValidationException("Error: The staff must have a phone number!");
@@ -123,11 +118,6 @@ namespace Backoffice.Domain.Staffs
 
         public void PartialEdit(EditStaffDto dto, Specialization specialization)
         {
-            if (!this.Active)
-            {
-                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
-            }
-
             if (dto.Phone != null)
             {
                 this.Phone = new PhoneNumber(dto.Phone);

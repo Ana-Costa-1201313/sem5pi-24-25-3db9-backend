@@ -19,9 +19,10 @@ using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
+using Backoffice.Domain.OperationRequests;
+using Backoffice.Infraestructure.OperationRequests;
 using Backoffice.Domain.Patients;
 using Backoffice.Infraestructure.Patients;
-
 
 
 namespace Backoffice
@@ -51,7 +52,7 @@ namespace Backoffice
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
+        
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
@@ -85,6 +86,32 @@ namespace Backoffice
             {
                 endpoints.MapControllers();
             });
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<BDContext>();
+                var dbBootstrap = serviceScope.ServiceProvider.GetRequiredService<DbBootstrap>();
+
+                if (!dbContext.Users.Any())
+                {
+                    dbBootstrap.UserBootstrap();
+                }
+
+                if (!dbContext.Specializations.Any())
+                {
+                    dbBootstrap.SpecializationBootstrap();
+                }
+
+                if (!dbContext.Staff.Any())
+                {
+                    dbBootstrap.StaffBootstrap();
+                }
+
+                if (!dbContext.OperationTypes.Any())
+                {
+                    dbBootstrap.OperationTypeBootstrap();
+                }
+            }
         }
 
         public void ConfigureMyServices(IServiceCollection services)
@@ -104,22 +131,31 @@ namespace Backoffice
             services.AddTransient<UserService>();
 
             services.AddTransient<IPatientRepository, PatientRepository>();
-            services.AddTransient<IPatientService, PatientService>();
-            services.AddTransient<PatientMapper>();
+            services.AddTransient<PatientService>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
-
             services.AddTransient<StaffMapper>();
+            services.AddTransient<OperationTypeMapper>();
+            services.AddTransient<SpecializationMapper>();
+
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<PatientService>();
+            services.AddTransient<PatientMapper>();
+
+            services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+            services.AddTransient<OperationRequestService>();
 
             services.AddTransient<IExternalApiServices, ExternalApiServices>();
 
             services.AddTransient<AuthService>();
             services.AddTransient<LogInServices>();
             services.AddTransient<ExternalApiServices>();
+            services.AddTransient<TokenService>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
 
+            services.AddTransient<DbBootstrap>();
         }
     }
 }

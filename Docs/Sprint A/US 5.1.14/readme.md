@@ -73,6 +73,13 @@ It will boil down to a design decision. From the functional perspective, it's no
   - **Answer:** The username is the "official" email address of the user. for backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "D180023@myhospital.com". The system must allow for an easy configuration of the DNS domain (e.g., environment variable). For patients, the username is the email address provided in the patient record and used as identity in the external IAM. for instance patient Carlos Silva has provided his email csilva98@gmail.com the first time he entered the hospital. That email address will be his username when he self-registers in the system
   
 
+
+### 3.1. Domain Model excerpt
+![DM Staff](DM%20Staff.png)
+
+
+### 3.2. HTTP requests
+
 The following **HTTP requests** will be implemented:
 - GET by ID (to check a specific staff member)
 - DELETE (to deactivate the staff member profile)

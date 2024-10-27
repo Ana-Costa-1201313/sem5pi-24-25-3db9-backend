@@ -1,7 +1,6 @@
 using Azure.Core.Pipeline;
 using Backoffice.Controllers;
 using Backoffice.Domain.Logs;
-using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -412,6 +411,62 @@ namespace Backoffice.Tests
                 var result = await patientController.Patch(nonExistentPatientId, editPatientDto);
 
                 var actionResult = Assert.IsType<NotFoundResult>(result.Result);
+        }
+        [Fact]
+        public async Task Delete_WithoutAuthorization()
+        {
+            Setup();
+             _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                            .ThrowsAsync(new UnauthorizedAccessException("Error: User not authenticated"));
+
+            var result = await patientController.HardDelete(Guid.NewGuid());
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Error: User not authenticated", badRequest.Value);
+        }
+
+        [Fact] 
+        public async Task Delete_NotFound(){
+            Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+
+            _repo.Setup(repo => repo.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);
+
+            var result = await patientController.HardDelete(Guid.NewGuid());
+            Assert.IsType<NotFoundResult>(result.Result);
+
+        }
+        [Fact]
+        public async Task DeletePatient(){
+             Setup();
+            _mockAuthService.Setup(auth => auth.IsAuthorized(It.IsAny<HttpRequest>(), It.IsAny<List<string>>()))
+                           .ReturnsAsync(true);
+                    var patientId = Guid.NewGuid();
+                    var patientDto1 = new CreatePatientDto  
+                {
+                    FirstName = "Matheus",
+                    LastName = "Nunes",
+                    FullName = "Matheus Nunes",
+                    Gender = "M",
+                    DateOfBirth = new DateTime(1996,6,22),
+                    Email = "matheusNunes@gmail.com",
+                    Phone = "919271010",
+                    EmergencyContact = "933121011"
+                };
+                var patient = new Patient(patientDto1,"200001000001");
+
+                _repo.Setup(repo => repo.GetByIdAsync(patient.Id)).ReturnsAsync(patient);
+
+                var result = await patientController.HardDelete(patient.Id.AsGuid());
+
+                var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+                var value = Assert.IsType<PatientDto>(actionResult.Value);
+
+                Assert.Equal("Matheus Nunes",value.FullName);
+                Assert.Equal("M",value.Gender);
+                Assert.Equal("matheusNunes@gmail.com",value.Email);
+                
+
         }
         [Fact]
         public async Task SearchPatientsByName()

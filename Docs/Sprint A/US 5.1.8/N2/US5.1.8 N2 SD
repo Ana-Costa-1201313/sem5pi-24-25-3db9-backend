@@ -1,26 +1,24 @@
-@startuml US8_Nivel1
+@startuml US8_Nivel2
 autonumber
 
-actor "<<Admin>>\nAdmin" as admin
-participant "<<Component>>\nWeb" as web
-participant "BE" as be
+actor "Admin" as admin
+participant ": SPA" as spa
+participant "BackOffice" as bo
 
 activate admin
-    admin -> web : wants to create a patient profile
-    activate web
-        web --> admin : request patient data
-        admin -> web : provides patient data
-        web -> be : POST /patients
-        activate be
-            alt patient profile not created
-                be --> web : 422: Unprocessable Content
-            else patient profile created successfully
-                be --> web : 201: Created
-            end
-        deactivate be
-    
-    web --> admin : shows result
-    deactivate web
+activate spa 
+admin -> spa : Requests to Create a new Patient profile
+spa --> admin : Requests the patient data
+
+admin-> spa : Inserts the patient data
+
+spa -> bo : Creates new Patient profile
+activate bo
+bo --> spa : success message
+deactivate bo
+spa --> admin : sucess message
+deactivate spa
 deactivate admin
+
 
 @enduml

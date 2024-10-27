@@ -11,6 +11,9 @@ namespace Backoffice.Infraestructure.Users
         {
             builder.ToTable("Users", SchemaNames.Backoffice);
             builder.HasKey(b => b.Id);
+            builder.Property(b => b.Id)
+                .HasConversion(id => id.Value, value => new UserId(value));
+
             builder.OwnsOne(u => u.Password);
             builder.Property(r => r.Role).HasConversion(new RoleConverter());
 

@@ -25,6 +25,15 @@ namespace Backoffice.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SpecializationDto>>> GetAll()
         {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             return await _service.GetAllAsync();
         }
 

@@ -25,6 +25,7 @@ namespace Backoffice.Tests.Controllers
         private readonly Mock<AuthService> _mockAuthService;
         private readonly OperationTypesController _controller;
         private readonly OperationTypeService _service;
+        private readonly OperationTypeMapper _mapper;
 
         public OperationTypesControllerTests()
         {
@@ -34,14 +35,15 @@ namespace Backoffice.Tests.Controllers
             _mockLogRepo = new Mock<ILogRepository>();
 
             _mockExternal = new Mock<IExternalApiServices>();
-
+            _mapper = new OperationTypeMapper();
             _mockAuthService = new Mock<AuthService>(_mockExternal.Object);
 
             _service = new OperationTypeService(
                 _mockUnitOfWork.Object,
                 _mockRepo.Object,
                 _mockSpecializationRepo.Object,
-                _mockLogRepo.Object
+                _mockLogRepo.Object,
+                _mapper
             );
 
             _controller = new OperationTypesController(_service, _mockAuthService.Object);
@@ -124,7 +126,7 @@ namespace Backoffice.Tests.Controllers
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
 
             var requiredStaff2 = new List<(string SpecializationName, int Total)>
@@ -132,7 +134,7 @@ namespace Backoffice.Tests.Controllers
                     ("Surgeon", 2),
                     ("Cardio", 3)
                 };
-            var operationType2 = OperationTypeMapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
+            var operationType2 = _mapper.ToDomainForTests("Embolectomy", 30, 60, 15, requiredStaff2);
 
 
             var listOp = new List<OperationType> { operationType1, operationType2 };
@@ -185,7 +187,7 @@ namespace Backoffice.Tests.Controllers
                 ("Surgeon", 5)
             };
 
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             var listOp = new List<OperationType>
             {
@@ -237,7 +239,7 @@ namespace Backoffice.Tests.Controllers
                             ("Surgeon", 5)
                         };
 
-            var operationType = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
+            var operationType = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff);
 
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
@@ -346,7 +348,7 @@ namespace Backoffice.Tests.Controllers
             };
 
             _mockRepo.Setup(repo => repo.AddAsync(It.IsAny<OperationType>()))
-                        .ReturnsAsync(OperationTypeMapper.ToDomain(createdDto));
+                        .ReturnsAsync(_mapper.ToDomain(createdDto));
 
             _mockSpecializationRepo.Setup(repo => repo.SpecializationNameExists(It.IsAny<string>()))
                            .ReturnsAsync(true);
@@ -470,7 +472,7 @@ namespace Backoffice.Tests.Controllers
                 Active = true
             };
 
-            var opType = OperationTypeMapper.ToDomain(expectedDto);
+            var opType = _mapper.ToDomain(expectedDto);
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
                      .ReturnsAsync(opType);
@@ -605,7 +607,7 @@ namespace Backoffice.Tests.Controllers
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             _mockRepo.Setup(repo => repo.GetByIdAsync(It.IsAny<OperationTypeId>()))
                      .ReturnsAsync(operationType1);
@@ -652,7 +654,7 @@ namespace Backoffice.Tests.Controllers
                 {
                     ("Surgeon", 5)
                 };
-            var operationType1 = OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            var operationType1 = _mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
 
             _mockRepo.Setup(repo => repo.GetByIdWithDetailsAsync(It.IsAny<OperationTypeId>()))
                      .ReturnsAsync(operationType1);
