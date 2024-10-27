@@ -82,6 +82,8 @@ All commits referred the corresponding issue in GitHub, using the #23 tag, as we
 
 ## 6. Integration/Demonstration
 
+To list operation requests, run the Backoffice app and send a GET HTTP request with the filter parameter and value.
+If no parameter is given, all operation requests made by the user are listed.
 
 ## 7. Observations
 

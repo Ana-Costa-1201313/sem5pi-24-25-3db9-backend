@@ -15,7 +15,7 @@ public static OperationRequestDto ToDto(OperationRequest operationRequest, Opera
         Id = operationRequest.Id?.AsGuid() ?? Guid.Empty,
         OpTypeName = opTypeName,
         OpTypeId = operationRequest.OpTypeId?.AsGuid() ?? Guid.Empty,
-        DeadlineDate = operationRequest.DeadlineDate.ToString(),
+        DeadlineDate = operationRequest.DeadlineDate.ToString("yyyy-MM-ddTHH:mm:ss"),
         Priority = operationRequest.Priority.ToString(),
         PatientName = patientName,
         PatientId = operationRequest.PatientId?.AsGuid() ?? Guid.Empty,
@@ -40,5 +40,30 @@ public static OperationRequestDto ToDto(OperationRequest operationRequest, Opera
             );
             //return null;
         }
+
+        public static OperationRequest ToDomainTests(OperationType operationType, DateTime deadlineDate, Priority priority, Patient patient, Staff doctor, string description)
+        {
+            return new OperationRequest(
+                operationType,
+                deadlineDate,
+                priority,
+                patient,
+                doctor,
+                description
+            );
+        }/*
+        {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            
+            return new OperationRequest(
+                operationType,
+                DateTime.Parse(dto.DeadlineDate),
+                Enum.TryParse<Priority>(dto.Priority, out var priority) ? priority : (Priority?)null,
+                patient,
+                doctor,
+                dto.Description
+            );
+            //return null;
+        }*/
     }
 }
