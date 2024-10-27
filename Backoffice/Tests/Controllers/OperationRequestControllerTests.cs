@@ -58,7 +58,8 @@ namespace YourNamespace.Tests.Controllers
                 {
                     ("Surgeon", 5)
                 };
-            return OperationTypeMapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
+            OperationTypeMapper mapper = new OperationTypeMapper();
+            return mapper.ToDomainForTests("Surgery", 30, 60, 15, requiredStaff1);
         }
 
         private Patient CreateMockPatient()
