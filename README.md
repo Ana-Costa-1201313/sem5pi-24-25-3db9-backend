@@ -1,5 +1,3 @@
-# Project HealthcareApp
-
 ## 1. Description of the Project
 
 This application is a prototype system for cirurgic requests, appointment,and resource management. 
@@ -27,14 +25,9 @@ Run one of the following scripts in the Terminal:
 
 *Note:* This project uses .NET version 8.0.
 
-To use the database, configure a Microsoft SQL Server database:
-- for a local database, simply run the "build" and the "updateDB" scripts. A .db file will be created in your user folder.
-- for the remote DEI database, install the SQL extension, create a new database and follow these steps:
-  - server name = vsgate-s1.dei.isep.ipp.pt,10513
-  - leave the name empty
-  - choose SQL login
-  - user ID and password put the ones in the Startup.cs ConfigureServices method
-  - name it as you like, like BD.
+To configure the database:
+- for a local database(SQLite), simply run the "build" and the "updateDB" scripts. A .db file will be created in your user folder.
+- for the remote DEI database(Microsoft SQL), check the credentials.
 
 *Note:* in the Startup.cs ConfigureServices method, comment the database configuration you are not using.
 
@@ -48,6 +41,7 @@ As an alternative, click with the mouse's right button and select "run tests".
 
 ## 5. How to Run
 
-Run the "run" script, that builds and runs the application, giving the HTTP/s URLs;
+Run the "run" script, that builds and runs the application, giving the HTTP/s URLs.
+Run the "runAuth" script, that builds and run the auth module application.
 
 *Example:* open the terminal and type ./run.bat
