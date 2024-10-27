@@ -50,6 +50,11 @@ namespace Backoffice.Domain.OperationTypes
             var requiredStaffList = new List<OperationTypeRequiredStaff>();
             var specializationNamesSet = new HashSet<string>();
 
+            if (dto.RequiredStaff == null)
+            {
+                throw new BusinessRuleValidationException("Error: Required Staff can't be null.");
+            }
+
             foreach (var staff in dto.RequiredStaff)
             {
                 if (!await this._repoSpecialization.SpecializationNameExists(staff.Specialization))
