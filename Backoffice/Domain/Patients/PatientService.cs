@@ -229,9 +229,20 @@ namespace Backoffice.Domain.Patients{
         {
             Patient p = await _repo.GetPatientByEmailAsync(new Email(email));
 
-            if (p != null) throw new NullReferenceException("Patient Profile does not exist");
-
-            _repo.Remove(p);
+            if (p == null) throw new NullReferenceException("Patient Profile does not exist");
+            try
+            {
+                _repo.Remove(p);
+            await _unitOfWork.CommitAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                throw new BusinessRuleValidationException($"Error: Can't save this patient data !!!\n{e.Message}");
+            }
+            catch 
+            {
+                throw new BusinessRuleValidationException($"Error: Can't save this patient data !!!");
+            }
         }
     }
 }

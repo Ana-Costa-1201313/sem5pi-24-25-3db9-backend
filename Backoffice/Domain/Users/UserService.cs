@@ -20,12 +20,12 @@ namespace Backoffice.Domain.Users
         private readonly TokenService _tokenService;
         private readonly IConfiguration _config;
 
-        private readonly IPatientService _patientService;
+        private readonly PatientService _patientService;
 
         // passar isto para o configurations file
         private readonly string emailBody = $"https://localhost:5001/api/Users/";
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo, IPatientService patientService,TokenService tokenService, IConfiguration config)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo, PatientService patientService,TokenService tokenService, IConfiguration config)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
@@ -267,11 +267,16 @@ namespace Backoffice.Domain.Users
             if (user == null || patientProfile == null)
                 throw new BusinessRuleValidationException("Error: User/Patient doesn't exist !!!");
 
-            _repo.Remove(user);
+                _repo.Remove(user);
+            try
+            {
+                _patientService.DeletePacientProfileAsync(email);
+            }
+            catch (Exception e) {
+                throw new BusinessRuleValidationException($"Error: Cant delete patient {e.Message} !!!");
+            }
 
-            _patientService.DeletePacientProfileAsync(email);
-
-            await _unitOfWork.CommitAsync();
+            //await _unitOfWork.CommitAsync();
 
             return true;
         }

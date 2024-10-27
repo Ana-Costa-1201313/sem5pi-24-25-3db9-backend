@@ -9,10 +9,10 @@ namespace Backoffice.Controllers
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly IPatientService _service;
+        private readonly PatientService _service;
         private readonly AuthService _authService;
 
-        public PatientController(IPatientService service, AuthService authService)
+        public PatientController(PatientService service, AuthService authService)
         {
             _service = service;
             _authService = authService;

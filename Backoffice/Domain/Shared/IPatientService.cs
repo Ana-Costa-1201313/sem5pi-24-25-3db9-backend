@@ -1,5 +1,4 @@
 using Backoffice.Domain.Patients;
-using Backoffice.Domain.Patient;
 
 namespace Backoffice.Domain.Shared
 {
