@@ -73,6 +73,18 @@ It will boil down to a design decision. From the functional perspective, it's no
   - **Answer:** The username is the "official" email address of the user. for backoffice users, this is the mechanographic number of the collaborator, e.g., D240003 or N190345, and the DNS domain of the system. For instance, Doctor Manuela Fernandes has email "D180023@myhospital.com". The system must allow for an easy configuration of the DNS domain (e.g., environment variable). For patients, the username is the email address provided in the patient record and used as identity in the external IAM. for instance patient Carlos Silva has provided his email csilva98@gmail.com the first time he entered the hospital. That email address will be his username when he self-registers in the system
 
 
+**Observations:**
+
+Only the staff phone number can be edited, since the email is generated automatically by the system upon profile creation.
+
+The confirmation email after updating the staff phone number will be sent by default to an email configured in the appsettings.json file, since the staff's email doesn't exist in the accademic context of this project. In future releases, to actually send the email to the staff's real email, the email in the config file can be deleted and the code will adapt to the change.
+
+### 3.1. Domain Model excerpt
+![DM Staff](DM%20Staff.png)
+
+
+### 3.2. HTTP requests
+
 The following **HTTP requests** will be implemented:
 - GET (to check available staff member)
 - PUT (to edit a specific staff member)

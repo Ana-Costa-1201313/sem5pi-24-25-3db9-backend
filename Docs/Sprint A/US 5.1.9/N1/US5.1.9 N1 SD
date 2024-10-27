@@ -1,18 +1,18 @@
-@startuml
+@startuml US9_Nivel1
 autonumber
 
-participant "<<system>>\nSystem HealthcareApp" as sys
+actor "Admin" as admin
+participant "HealthcareApp" as sys
 
-[-> sys: PATCH /patient/{id}
-
-activate sys
-alt patient profile not found/invalid parameters
-    [<-- sys : 422 Error
-else patient profile edited successfully
-    [<-- sys  : 201 Edited
-end
+activate admin
+   admin -> sys : Requests to Edit Patient profile
+   activate sys
+   sys --> admin : Shows list of patients
+   admin -> sys : Selects a patient
+   sys --> admin : Requests specific patient data
+   admin -> sys : Provides updated patient data
+   sys --> admin : success message
 deactivate sys
-
-
+deactivate admin
 
 @enduml

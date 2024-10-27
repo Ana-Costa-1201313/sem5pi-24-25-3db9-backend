@@ -15,15 +15,19 @@ namespace Backoffice.Domain.Staffs
         private readonly StaffMapper _staffMapper;
         private readonly ISpecializationRepository _specRepo;
         private readonly ILogRepository _logRepo;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _config;
 
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo, ILogRepository logRepo)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repo, StaffMapper staffMapper, ISpecializationRepository specRepo, ILogRepository logRepo, IEmailService emailService, IConfiguration config)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _staffMapper = staffMapper;
             _specRepo = specRepo;
             _logRepo = logRepo;
+            _emailService = emailService;
+            _config = config;
         }
 
 
@@ -83,18 +87,26 @@ namespace Backoffice.Domain.Staffs
             }
             catch (DbUpdateException e)
             {
+                if (e.InnerException != null)
+                {
+                    var message = e.InnerException.Message;
 
-                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Phone"))
-                {
-                    throw new BusinessRuleValidationException("Error: This phone number is already in use!");
-                }
-                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Email"))
-                {
-                    throw new BusinessRuleValidationException("Error: This email is already in use!");
-                }
-                else if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.LicenseNumber"))
-                {
-                    throw new BusinessRuleValidationException("Error: This License number is already in use!");
+                    if (message.Contains("UNIQUE constraint failed: Staff.Phone") || message.Contains("IX_Staff_Phone"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This phone number is already in use!");
+                    }
+                    else if (message.Contains("UNIQUE constraint failed: Staff.Email") || message.Contains("IX_Staff_Email"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This email is already in use!");
+                    }
+                    else if (message.Contains("UNIQUE constraint failed: Staff.LicenseNumber") || message.Contains("IX_Staff_LicenseNumber"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This License number is already in use!");
+                    }
+                    else
+                    {
+                        throw new BusinessRuleValidationException("Error: Can't save this data!");
+                    }
                 }
                 else
                 {
@@ -123,44 +135,23 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<StaffDto> UpdateAsync(EditStaffDto dto)
+        public async Task<StaffDto> Delete(Guid id)
         {
-            Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
+            Staff staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
 
             if (staff == null)
             {
                 return null;
             }
 
-            Specialization specialization = null;
+            this._repo.Remove(staff);
 
-            if (dto.Specialization != null)
-            {
-                specialization = await _specRepo.GetBySpecializationName(dto.Specialization);
-
-                if (specialization == null)
-                {
-                    throw new BusinessRuleValidationException("Error: There is no specialization with the name " + dto.Specialization + ".");
-                }
-            }
-
-            staff.Edit(dto, specialization);
-
-            await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
-
-            try
-            {
-                await this._unitOfWork.CommitAsync();
-            }
-            catch (DbUpdateException)
-            {
-                throw new BusinessRuleValidationException("Error: This phone number is already in use!");
-            }
+            await this._unitOfWork.CommitAsync();
 
             return _staffMapper.ToStaffDto(staff);
         }
 
-        public async Task<StaffDto> PartialUpdateAsync(EditStaffDto dto)
+        public async Task<StaffDto> UpdateAsync(EditStaffDto dto, bool partial)
         {
             Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));
 
@@ -181,13 +172,44 @@ namespace Backoffice.Domain.Staffs
                 }
             }
 
-            staff.PartialEdit(dto, specialization);
+            if (!staff.Active)
+            {
+                throw new BusinessRuleValidationException("Error: Can't update an inactive staff!");
+            }
+
+            string oldPhoneNum = staff.Phone.PhoneNum;
+
+            if (partial)
+            {
+                staff.PartialEdit(dto, specialization);
+            }
+            else
+            {
+                staff.Edit(dto, specialization);
+            }
 
             await this._logRepo.AddAsync(new Log("The staff with id " + staff.Id.AsGuid() + " was edited!", LogType.Update, LogEntity.Staff, staff.Id));
 
             try
             {
                 await this._unitOfWork.CommitAsync();
+
+                if (dto.Phone != oldPhoneNum)
+                {
+                    string message = "Your phone number has been updated from " + oldPhoneNum + " to " + dto.Phone + ".";
+                    string subject = "Phone number updated";
+
+                    string defaultEmail = _config["EmailSmtp:DefaultStaffConfirmationEmail"];
+
+                    if (!string.IsNullOrEmpty(defaultEmail))
+                    {
+                        await _emailService.SendEmail(defaultEmail, message, subject);
+                    }
+                    else
+                    {
+                        await _emailService.SendEmail(staff.Email._Email, message, subject);
+                    }
+                }
             }
             catch (DbUpdateException)
             {

@@ -3,9 +3,9 @@ using Backoffice.Domain.Specializations;
 
 namespace Backoffice.Domain.OperationTypes;
 
-public static class OperationTypeMapper
+public class OperationTypeMapper
 {
-    public static OperationTypeDto ToDto(OperationType operationType)
+    public OperationTypeDto ToDto(OperationType operationType)
     {
         return new OperationTypeDto
         {
@@ -23,7 +23,7 @@ public static class OperationTypeMapper
         };
     }
 
-    public static OperationType ToDomain(OperationTypeDto dto)
+    public OperationType ToDomain(OperationTypeDto dto)
     {
         return new OperationType(
             new OperationTypeName(dto.Name),
@@ -33,7 +33,7 @@ public static class OperationTypeMapper
         );
     }
 
-    public static OperationType ToDomain(CreatingOperationTypeDto dto)
+    public OperationType ToDomain(CreatingOperationTypeDto dto)
     {
         return new OperationType(
             new OperationTypeName(dto.Name),
@@ -44,7 +44,7 @@ public static class OperationTypeMapper
     }
 
     //Only for tests
-    public static OperationType ToDomainForTests(string OpTypeName,
+    public OperationType ToDomainForTests(string OpTypeName,
                                             int OpTypeDurationPhase1,
                                             int OpTypeDurationPhase2,
                                             int OpTypeDurationPhase3,
@@ -64,7 +64,7 @@ public static class OperationTypeMapper
     }
 
     //Only for tests
-    public static CreatingOperationTypeDto ToCreateDtoForTests(string opTypeName,
+    public CreatingOperationTypeDto ToCreateDtoForTests(string opTypeName,
                                                     int opTypeDurationPhase1,
                                                     int opTypeDurationPhase2,
                                                     int opTypeDurationPhase3,

@@ -12,9 +12,10 @@ namespace Backoffice.Infraestructure.Specializations
             builder.HasKey(b => b.Id);
             builder.Property(b => b.Id)
                 .HasConversion(id => id.Value, value => new SpecializationId(value));
-            builder.OwnsOne(b => b.Name, n => 
+            builder.OwnsOne(b => b.Name, n =>
             {
-                n.Property( c => c.Name).HasColumnName("Name").IsRequired();
+                n.Property(c => c.Name).HasColumnName("Name").IsRequired();
+                n.HasIndex(c => c.Name).IsUnique();
             });
             builder.Property<bool>(b => b.Active);
         }

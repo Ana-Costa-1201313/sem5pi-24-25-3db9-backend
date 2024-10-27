@@ -10,7 +10,7 @@ using Backoffice.Domain.Users;
 namespace Backoffice.Domain.Patients{
 
 
-    public class PatientService{
+    public class PatientService : IPatientService{
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
@@ -224,7 +224,7 @@ namespace Backoffice.Domain.Patients{
             var patient = await _repo.GetByIdAsync(new PatientId(id));
 
             if(patient == null)
-                throw new BusinessRuleValidationException("Error: Patient doesn't exist !!!");
+                return null;
                 
             _repo.Remove(patient);
 
@@ -274,7 +274,25 @@ namespace Backoffice.Domain.Patients{
 
         }
 
+        public async void DeletePacientProfileAsync(string email)
+        {
+            Patient p = await _repo.GetPatientByEmailAsync(new Email(email));
 
+            if (p == null) throw new NullReferenceException("Patient Profile does not exist");
+            try
+            {
+                _repo.Remove(p);
+            await _unitOfWork.CommitAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                throw new BusinessRuleValidationException($"Error: Can't save this patient data !!!\n{e.Message}");
+            }
+            catch 
+            {
+                throw new BusinessRuleValidationException($"Error: Can't save this patient data !!!");
+            }
+        }
     }
 }
 

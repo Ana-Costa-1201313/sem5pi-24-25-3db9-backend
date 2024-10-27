@@ -21,15 +21,18 @@ namespace Backoffice.Tests.Controllers
         private readonly SpecializationService _service;
         private readonly Mock<IExternalApiServices> _mockExternal;
         private readonly Mock<AuthService> _mockAuthService;
+        private readonly SpecializationMapper _mapper;
 
 
         public SpecializationControllerTests()
         {
             _mockRepo = new Mock<ISpecializationRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mapper = new SpecializationMapper();
             _service = new SpecializationService(
                 _mockUnitOfWork.Object,
-                _mockRepo.Object
+                _mockRepo.Object,
+                _mapper
             );
             _mockExternal = new Mock<IExternalApiServices>();
 
@@ -51,7 +54,7 @@ namespace Backoffice.Tests.Controllers
         public async Task GetById_ReturnsOkResult_WithSpecialization()
         {
 
-            var spec = SpecializationMapper.ToDomainForTests("Surgeon");
+            var spec = _mapper.ToDomainForTests("Surgeon");
 
 
             _mockRepo.Setup(repo => repo.GetByIdAsync(It.IsAny<SpecializationId>()))
@@ -69,8 +72,8 @@ namespace Backoffice.Tests.Controllers
         [Fact]
         public async Task GetAll_ReturnsOkResult_WithSpecializations()
         {
-            var spec = SpecializationMapper.ToDomainForTests("Surgeon");
-            var spec2 = SpecializationMapper.ToDomainForTests("Cardio");
+            var spec = _mapper.ToDomainForTests("Surgeon");
+            var spec2 = _mapper.ToDomainForTests("Cardio");
 
             var listSpec = new List<Specialization> { spec, spec2 };
 

@@ -1,16 +1,18 @@
-@startuml US_Delete_Nivel1
+@startuml US10_Nivel1
 autonumber
 
 actor "Admin" as admin
-participant "<<system>>\nSystem HealthcareApp" as sys
+participant "HealthcareApp" as sys
 
-admin -> sys : DELETE /patient/{id}
-activate sys
-alt patient profile not found
-    admin <-- sys : 404 Not Found
-else patient profile deleted successfully
-    admin <-- sys : 200 OK
-end
+activate admin
+   admin -> sys : Requests to Delete Patient profile
+   activate sys
+   sys --> admin : Shows list of patients
+   admin -> sys : Selects a patient
+   sys --> admin : Confirms deletion action
+   admin -> sys : Confirms deletion
+   sys --> admin : success message
 deactivate sys
+deactivate admin
 
 @enduml

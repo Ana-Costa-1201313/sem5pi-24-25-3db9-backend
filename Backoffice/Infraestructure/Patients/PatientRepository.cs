@@ -20,7 +20,7 @@ namespace Backoffice.Infraestructure.Patients
             if(!string.IsNullOrEmpty(name))
                 query = query.Where(p => p.FullName.Contains(name));
             if(!string.IsNullOrEmpty(email))
-                query = query.Where(p => p.Email._Email == email);
+                query = query.Where(p=>p.Email._Email == email);
             if(dateOfBirth.HasValue)
                 query = query.Where(p => p.DateOfBirth == dateOfBirth);
             if(!string.IsNullOrEmpty(medicalRecordNumber))

@@ -45,14 +45,14 @@ namespace Backoffice
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //services.AddDbContext<BDContext>(opt =>
+            // services.AddDbContext<BDContext>(opt =>
             // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-            //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            // .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-        
+
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
@@ -86,6 +86,32 @@ namespace Backoffice
             {
                 endpoints.MapControllers();
             });
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<BDContext>();
+                var dbBootstrap = serviceScope.ServiceProvider.GetRequiredService<DbBootstrap>();
+
+                if (!dbContext.Users.Any())
+                {
+                    dbBootstrap.UserBootstrap();
+                }
+
+                if (!dbContext.Specializations.Any())
+                {
+                    dbBootstrap.SpecializationBootstrap();
+                }
+
+                if (!dbContext.Staff.Any())
+                {
+                    dbBootstrap.StaffBootstrap();
+                }
+
+                if (!dbContext.OperationTypes.Any())
+                {
+                    dbBootstrap.OperationTypeBootstrap();
+                }
+            }
         }
 
         public void ConfigureMyServices(IServiceCollection services)
@@ -110,6 +136,8 @@ namespace Backoffice
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
             services.AddTransient<StaffMapper>();
+            services.AddTransient<OperationTypeMapper>();
+            services.AddTransient<SpecializationMapper>();
 
             services.AddTransient<IPatientRepository, PatientRepository>();
             services.AddTransient<PatientService>();
@@ -123,9 +151,11 @@ namespace Backoffice
             services.AddTransient<AuthService>();
             services.AddTransient<LogInServices>();
             services.AddTransient<ExternalApiServices>();
+            services.AddTransient<TokenService>();
             services.AddHttpClient();
             services.AddHttpLogging(o => { });
 
+            services.AddTransient<DbBootstrap>();
         }
     }
 }

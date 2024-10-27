@@ -10,6 +10,8 @@ namespace Backoffice.Tests
 {
     public class SpecializationServiceTests
     {
+        private readonly SpecializationMapper _mapper = new SpecializationMapper();
+
         private SpecializationService Setup(List<Specialization> specializationDatabase)
         {
             var specializationRepository = new Mock<ISpecializationRepository>();
@@ -32,7 +34,7 @@ namespace Backoffice.Tests
 
             unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
 
-            return new SpecializationService(unitOfWork.Object, specializationRepository.Object);
+            return new SpecializationService(unitOfWork.Object, specializationRepository.Object, _mapper);
         }
 
         [Fact]
@@ -40,8 +42,8 @@ namespace Backoffice.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                SpecializationMapper.ToDomainForTests("Surgeon"),
-                SpecializationMapper.ToDomainForTests("Cardio")
+                _mapper.ToDomainForTests("Surgeon"),
+                _mapper.ToDomainForTests("Cardio")
             };
             var service = Setup(specializationDatabase);
 
@@ -59,8 +61,8 @@ namespace Backoffice.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                SpecializationMapper.ToDomainForTests("Surgeon"),
-                SpecializationMapper.ToDomainForTests("Cardio")
+                _mapper.ToDomainForTests("Surgeon"),
+                _mapper.ToDomainForTests("Cardio")
             };
             var service = Setup(specializationDatabase);
 
@@ -75,7 +77,7 @@ namespace Backoffice.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                SpecializationMapper.ToDomainForTests("Surgeon")
+                _mapper.ToDomainForTests("Surgeon")
             };
             var service = Setup(specializationDatabase);
 
@@ -90,7 +92,7 @@ namespace Backoffice.Tests
             var specializationDatabase = new List<Specialization>();
             var service = Setup(specializationDatabase);
 
-            var dto = SpecializationMapper.ToCreateDtoForTests("Surgeon");
+            var dto = _mapper.ToCreateDtoForTests("Surgeon");
 
             var result = await service.AddAsync(dto);
 
@@ -104,11 +106,11 @@ namespace Backoffice.Tests
         {
             var specializationDatabase = new List<Specialization>
             {
-                SpecializationMapper.ToDomainForTests("Surgeon")
+                _mapper.ToDomainForTests("Surgeon")
             };
             var service = Setup(specializationDatabase);
 
-            var dto = SpecializationMapper.ToCreateDtoForTests("Surgeon");
+            var dto = _mapper.ToCreateDtoForTests("Surgeon");
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
 

@@ -1,17 +1,15 @@
-@startuml US8_nivel1
+@startuml US8_Nivel1
 autonumber
 
-participant "<<Admin>>\nAdmin" as admin
-participant "<<system>>\nSystem HealthcareApp" as sys
-activate admin
-admin -> sys: POST /patients
+actor "Admin" as admin
 
-activate sys
-    alt patient profile not created
-        [<-- sys : 422: Unprocessable Content
-    else patient profile created successfully
-        [<-- sys : 201: Created
-    end
-deactivate sys
-deactivate admin
+participant "HealthcareApp" as sys
+
+activate admin
+   admin -> sys :Requests to Create a new Patient profile
+   activate sys
+   sys --> admin :Requests the Patient Data 
+   admin -> sys :Inserts the Patient Data 
+   sys --> admin :success message
+
 @enduml

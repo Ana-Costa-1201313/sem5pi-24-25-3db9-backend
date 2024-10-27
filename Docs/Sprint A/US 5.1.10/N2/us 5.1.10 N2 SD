@@ -1,19 +1,23 @@
-@startuml US_Delete_Nivel2
+@startuml US10_Nivel2
 autonumber
 
 actor "Admin" as admin
-participant "BE" as be
+participant ": SPA" as spa
+participant "BackOffice" as bo
+
 activate admin
+activate spa
+admin -> spa : Requests to Delete Patient profile
+spa --> admin : Confirms deletion action
 
-admin -> be : DELETE /patient/{id}
+admin-> spa : Confirms deletion
 
-activate be
-    alt patient profile not found
-        admin <-- be : 404: Not Found
-    else patient profile deleted successfully
-        admin <-- be : 200: OK
-    end
-deactivate be
+spa -> bo : Deletes Patient profile
+activate bo
+bo --> spa : success message
+deactivate bo
+spa --> admin : success message
+deactivate spa
 deactivate admin
 
 @enduml

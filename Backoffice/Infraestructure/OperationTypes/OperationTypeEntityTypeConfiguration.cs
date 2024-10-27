@@ -16,6 +16,7 @@ namespace Backoffice.Infraestructure.OperationTypes
             builder.OwnsOne(b => b.Name, n =>
             {
                 n.Property(c => c.Name).HasColumnName("Name").IsRequired();
+                n.HasIndex(c => c.Name).IsUnique();
             });
 
             builder.OwnsOne(b => b.Duration);
@@ -27,7 +28,7 @@ namespace Backoffice.Infraestructure.OperationTypes
                 rs.HasKey("SpecializationId", "OperationTypeId");
 
                 rs.HasOne(staff => staff.Specialization)
-                    .WithMany()  
+                    .WithMany()
                     .HasForeignKey(staff => staff.SpecializationId)
                     .IsRequired();
 

@@ -7,7 +7,7 @@ participant "PatientController" as ctrl
 participant "PatientService" as svc
 participant "Patient" as patient
 participant "IPatientRepository" as repo
-participant "DBDriver" as db
+participant "Persistence" as db
 participant "PatientMapper" as map
 participant "dto:\nPatientDto" as dto
 

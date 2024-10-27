@@ -73,5 +73,28 @@ namespace Backoffice.Domain.Shared
             }
             return true;
         }
+
+        public async Task<bool> checkHeaderEmail(string email, String tokenHeader)
+        {
+            var token = tokenHeader.ToString().Replace("Bearer ", string.Empty);
+
+            LoginDTO loginDTO = new LoginDTO()
+            {
+                jwt = token
+            };
+
+            LoginDTO loginDTOResult = await validateToken(loginDTO);
+
+            try
+            {
+                if (loginDTOResult == null || !email.Equals(loginDTOResult.username)) throw new UnauthorizedAccessException("User does not correspond to request!");
+            }
+            catch (Exception e)
+            {
+                throw new UnauthorizedAccessException($"User does not have necessary roles! {e.Message}");
+                //return false;
+            }
+            return true;
+        }
     }
 }
