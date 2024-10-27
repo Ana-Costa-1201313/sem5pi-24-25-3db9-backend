@@ -58,7 +58,7 @@ note that we are not doing the user interface of the system in this sprint.
 
 The following **HTTP requests** will be implemented:
 - PATCH (to edit the new patient profile)
-
+- PUT (to edit the new patient profile)
 ## 4. Design
 
 This section presents the design adopted to solve the requirement.
@@ -67,27 +67,23 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.9 N1 SD](US5.1.9%20N1%20SD.svg)
+![US5.1.9 N1 SD](US5.1.9%20N1%20SD.png)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.9 N2 SD](US5.1.9%20N2%20SD.svg)
+![US5.1.9 N2 SD](US5.1.9%20N2%20SD.png)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.9 N3 SD](US5.1.9%20N3%20SD.svg)
+![US5.1.9 N3 SD PATCH](US5.1.9%20N3%20SD%20PATCH.png)
+![US5.1.9 N3 SD PUT](US5.1.9%20N3%20SD%20PUT.png)
 
-
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-*To do*
 
 
 ### 4.5. Applied Design Patterns
@@ -103,13 +99,12 @@ This diagram presents the classes that support the functionality.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
-The following tests are to be developed:
-- 
-- 
-- 
-- 
+The following tests were developed:
+- Controller Tests
+- Service Tests
+- Result, Error/Sucess code
 
 
 ## 5. Implementation
@@ -121,7 +116,7 @@ All commits referred the corresponding issue in GitHub, using the #10 tag, as we
 
 ## 6. Integration/Demonstration
 
-To edit a new patient profile, run the Backoffice app and send a PATCH HTTP request with the new patient data.
+To edit a new patient profile, run the Backoffice app and send a PATCH or PUT HTTP request with the new patient data.
 
 ## 7. Observations
 

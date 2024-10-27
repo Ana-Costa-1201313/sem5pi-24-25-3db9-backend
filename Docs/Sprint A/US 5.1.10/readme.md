@@ -30,8 +30,14 @@ Some relevant answers excerpts are here specified:
 
 - **
 
-- **Question:** 
-  - **Answer:** 
+- **Question:** When generating the audit record to log the deletion of patient profiles what patient information (if any) are we allowed to keep in the log for identification purposes? If none are the logs then only a record of deletion operations and not actually tied to the deletion of a specific patient?
+
+Best regards.
+  - **Answer:** The ERS (health regulator) issued an opinion on the retention of health data in which it established a minimum retention period of 5 years, after which the data can be deleted. 
+
+You may wish to keep some of the information anonymised for statistical purposes only, limiting yourself to, for example, gender and type of surgery.
+
+You can find the issued opinion in moodle.
 
 
 - **Question:** 
@@ -67,30 +73,26 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.10 N1 SD](US5.1.10%20N1%20SD.svg)
+![US5.1.10 N1 SD](US5.1.10%20N1%20SD.png)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.10 N2 SD](US5.1.10%20N2%20SD.svg)
+![US5.1.10 N2 SD](US5.1.10%20N2%20SD.png)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.10 N3 SD](US5.1.10%20N3%20SD.svg)
+![US5.1.10 N3 SD](US5.1.10%20N3%20SD.png)
 
 
-### 4.4. Class Diagram
-
-This diagram presents the classes that support the functionality.
-*To do*
 
 
-### 4.5. Applied Design Patterns
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -103,13 +105,13 @@ This diagram presents the classes that support the functionality.
 - **Dependency Injection:** used to implement inversion of control. The dependencies are injected into a class from the outside.
 
 
-### 4.6. Tests
+### 4.5. Tests
 
 The following tests are to be developed:
-- 
-- 
-- 
-- 
+The following tests were developed:
+- Controller Tests
+- Service Tests
+- Result, Error/Sucess code
 
 
 ## 5. Implementation

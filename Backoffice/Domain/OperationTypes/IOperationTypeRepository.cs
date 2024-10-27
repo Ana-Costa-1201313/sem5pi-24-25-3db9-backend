@@ -8,7 +8,6 @@ namespace Backoffice.Domain.OperationTypes
         public Task<OperationType> GetByIdWithDetailsAsync(OperationTypeId id);
         public Task<bool> OperationTypeNameExists(string name);
         public Task<List<OperationType>> FilterOperationTypesAsync(string name, string specialization, bool? status);
-
-
+        public Task<OperationType> GetByOperationTypeName(string name);
     }
 }
