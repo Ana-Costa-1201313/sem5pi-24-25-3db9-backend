@@ -87,18 +87,26 @@ namespace Backoffice.Domain.Staffs
             }
             catch (DbUpdateException e)
             {
+                if (e.InnerException != null)
+                {
+                    var message = e.InnerException.Message;
 
-                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Phone"))
-                {
-                    throw new BusinessRuleValidationException("Error: This phone number is already in use!");
-                }
-                if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.Email"))
-                {
-                    throw new BusinessRuleValidationException("Error: This email is already in use!");
-                }
-                else if (e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Staff.LicenseNumber"))
-                {
-                    throw new BusinessRuleValidationException("Error: This License number is already in use!");
+                    if (message.Contains("UNIQUE constraint failed: Staff.Phone") || message.Contains("IX_Staff_Phone"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This phone number is already in use!");
+                    }
+                    else if (message.Contains("UNIQUE constraint failed: Staff.Email") || message.Contains("IX_Staff_Email"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This email is already in use!");
+                    }
+                    else if (message.Contains("UNIQUE constraint failed: Staff.LicenseNumber") || message.Contains("IX_Staff_LicenseNumber"))
+                    {
+                        throw new BusinessRuleValidationException("Error: This License number is already in use!");
+                    }
+                    else
+                    {
+                        throw new BusinessRuleValidationException("Error: Can't save this data!");
+                    }
                 }
                 else
                 {
