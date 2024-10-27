@@ -127,6 +127,22 @@ namespace Backoffice.Domain.Staffs
             return _staffMapper.ToStaffDto(staff);
         }
 
+        public async Task<StaffDto> Delete(Guid id)
+        {
+            Staff staff = await this._repo.GetByIdWithDetailsAsync(new StaffId(id));
+
+            if (staff == null)
+            {
+                return null;
+            }
+
+            this._repo.Remove(staff);
+
+            await this._unitOfWork.CommitAsync();
+
+            return _staffMapper.ToStaffDto(staff);
+        }
+
         public async Task<StaffDto> UpdateAsync(EditStaffDto dto, bool partial)
         {
             Staff staff = await _repo.GetByIdWithDetailsAsync(new StaffId(dto.Id));

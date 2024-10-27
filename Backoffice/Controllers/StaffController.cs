@@ -119,7 +119,36 @@ namespace Backoffice.Controllers
 
                 if (staff == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Message = "There's no Staff with that ID!" });
+                }
+
+                return Ok(staff);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpDelete("{id}/hard")]
+        public async Task<ActionResult<StaffDto>> Delete(Guid id)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                StaffDto staff = await _service.Delete(id);
+
+                if (staff == null)
+                {
+                    return NotFound(new { Message = "There's no Staff with that ID!" });
                 }
 
                 return Ok(staff);
@@ -153,7 +182,7 @@ namespace Backoffice.Controllers
 
                 if (staff == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Message = "There's no Staff with that ID!" });
                 }
 
                 return Ok(staff);
@@ -187,7 +216,7 @@ namespace Backoffice.Controllers
 
                 if (staff == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Message = "There's no Staff with that ID!" });
                 }
 
                 return Ok(staff);

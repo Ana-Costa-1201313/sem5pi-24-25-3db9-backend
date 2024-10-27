@@ -765,7 +765,7 @@ namespace Backoffice.Tests
 
             var result = await mockController.Object.Deactivate(staffId);
 
-            Assert.IsType<NotFoundResult>(result.Result);
+            Assert.IsType<NotFoundObjectResult>(result.Result);
         }
 
         [Fact]
@@ -1041,7 +1041,7 @@ namespace Backoffice.Tests
 
             var result = await mockController.Object.Update(staffId, editDto);
 
-            Assert.IsType<NotFoundResult>(result.Result);
+            Assert.IsType<NotFoundObjectResult>(result.Result);
         }
 
         [Fact]
