@@ -1,5 +1,8 @@
+using Backoffice.Domain.Logs;
+using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Staffs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Net.Mail;
 
@@ -15,16 +18,19 @@ namespace Backoffice.Domain.Users
         private readonly IEmailService _emailService;
         private readonly ExternalApiServices _externalApiServices;
 
+        private readonly IPatientService _patientService;
+
         // passar isto para o configurations file
         private readonly string emailBody = $"https://localhost:5001/api/Users/";
 
-        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo)
+        public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IEmailService emailService, ExternalApiServices externalApiServices, IStaffRepository staffRepo, IPatientService patientService)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._emailService = emailService;
             this._externalApiServices = externalApiServices;
             this._staffRepo = staffRepo;
+            this._patientService = patientService;
         }
 
         public async Task<List<UserDto>> GetAllAsync()
@@ -147,6 +153,69 @@ namespace Backoffice.Domain.Users
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public async Task<UserDto> createPatient(CreatePatientRequestDto createPatientRequestDto)
+        {
+            if (createPatientRequestDto == null || createPatientRequestDto.UserDto == null || createPatientRequestDto.PatientDto == null)
+            {
+                throw new ArgumentNullException($"userdto or patientDto is null");
+            }
+
+            UserDto resultUserDto = null;
+            try
+            {
+                resultUserDto = await AddAsync(createPatientRequestDto.UserDto);
+
+                // log
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                throw new BusinessRuleValidationException($"{e.Message}, create user fail");
+            }
+
+            try
+            {
+                var medicalRecordNumber = await _patientService.GenerateNextMedicalRecordNumber();
+
+                var patient = await _patientService.AddAsync(createPatientRequestDto.PatientDto, medicalRecordNumber);
+
+                // log
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                throw new BusinessRuleValidationException($"{e.Message}, create patient fail");
+            }
+            
+            return resultUserDto;
+        }
+
+        public async Task<Boolean> askConsentDeletePatientUserAsync(UserDto userDto)
+        {
+            var user = await _repo.getUserByEmail(userDto.Email);
+            SearchPatientDto patientProfile = await _patientService.GetByEmailAsync(new Email(userDto.Email));
+
+            await _emailService.SendEmail(userDto.Email, "If you want to delete account please click link:\n" +
+                $"https://localhost:5001/api/Users/deletePatient?email={userDto.Email}", "Deletion of User account and Patient Profile");
+            
+            return true;
+        }
+
+        public async Task<Boolean> deletePatientUserAsync(String email)
+        {
+            var user = await _repo.getUserByEmail(email);
+            SearchPatientDto patientProfile = await _patientService.GetByEmailAsync(new Email(email));
+
+            if (user == null || patientProfile == null)
+                throw new BusinessRuleValidationException("Error: User/Patient doesn't exist !!!");
+
+            _repo.Remove(user);
+
+            _patientService.DeletePacientProfileAsync(email);
+
+            await _unitOfWork.CommitAsync();
+
+            return true;
         }
     }
 }

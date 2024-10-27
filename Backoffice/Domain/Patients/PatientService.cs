@@ -11,7 +11,7 @@ using Backoffice.Domain.Users;
 namespace Backoffice.Domain.Patients{
 
 
-    public class PatientService{
+    public class PatientService : IPatientService{
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
@@ -226,7 +226,14 @@ namespace Backoffice.Domain.Patients{
 
         }
 
+        public async void DeletePacientProfileAsync(string email)
+        {
+            Patient p = await _repo.GetPatientByEmailAsync(new Email(email));
 
+            if (p != null) throw new NullReferenceException("Patient Profile does not exist");
+
+            _repo.Remove(p);
+        }
     }
 }
 
