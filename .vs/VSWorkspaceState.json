@@ -1,16 +1,17 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Auth",
-    "\\Auth\\Domain",
-    "\\Auth\\Domain\\Services",
     "\\Auth\\Infrastructure",
     "\\Auth\\Infrastructure\\Users",
     "\\Auth\\Properties",
-    "\\HealthcareApp",
-    "\\HealthcareApp\\Controllers",
-    "\\HealthcareApp\\Properties"
+    "\\Backoffice",
+    "\\Backoffice\\Controllers",
+    "\\Backoffice\\Domain",
+    "\\Backoffice\\Domain\\Patients",
+    "\\Backoffice\\Domain\\Shared",
+    "\\Backoffice\\Domain\\Users",
+    "\\HealthcareApp"
   ],
-  "SelectedNode": "\\Auth\\Infrastructure\\Users\\UserRepository.cs",
+  "SelectedNode": "\\Backoffice\\Domain\\Patients\\SearchPatientDto.cs",
   "PreviewInSolutionExplorer": false
 }

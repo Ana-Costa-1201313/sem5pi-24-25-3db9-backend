@@ -45,14 +45,14 @@ namespace Backoffice
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //services.AddDbContext<BDContext>(opt =>
+            // services.AddDbContext<BDContext>(opt =>
             // opt.UseSqlServer("Server=vsgate-s1.dei.isep.ipp.pt,10513;Initial Catalog=BD;User Id=sa;Password=rscxDifxGw==Xa5;encrypt=true;TrustServerCertificate=True;")
-            //.ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            // .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-        
+
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();

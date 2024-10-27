@@ -31,5 +31,22 @@ namespace Backoffice.Domain.Shared
                 throw new UnauthorizedAccessException("Error: User not authenticated");
             }
         }
+
+        public virtual async Task<bool> IsAuthorized(HttpRequest request, String email)
+        {
+            if (!request.Headers.TryGetValue("Authorization", out var tokenHeader))
+            {
+                throw new UnauthorizedAccessException("Error: Authorization header is missing");
+            }
+
+            try
+            {
+                return await _authService.checkHeaderEmail(email, tokenHeader);
+            }
+            catch (Exception)
+            {
+                throw new UnauthorizedAccessException("Error: User not authenticated");
+            }
+        }
     }
 }
