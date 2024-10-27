@@ -2,6 +2,7 @@ using Backoffice.Domain.Shared;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.OperationTypes;
 using Backoffice.Domain.Staffs;
+using Backoffice.Domain.Logs;
 using Backoffice.Domain.OperationRequests.ValueObjects;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,16 +15,18 @@ namespace Backoffice.Domain.OperationRequests
         private readonly IOperationTypeRepository _optyperepo;
         private readonly IPatientRepository _patientrepo;
         private readonly IStaffRepository _doctorrepo;
+        private readonly ILogRepository _logrepo;
 
         public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo, 
                                         IOperationTypeRepository optyperepo, IPatientRepository patientrepo, 
-                                        IStaffRepository doctorrepo)
+                                        IStaffRepository doctorrepo, ILogRepository logrepo)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _optyperepo = optyperepo;
             _patientrepo = patientrepo;
             _doctorrepo = doctorrepo;
+            _logrepo = logrepo;
         }
 
         public async Task<List<OperationRequestDto>> GetAllAsync()
@@ -182,11 +185,12 @@ namespace Backoffice.Domain.OperationRequests
 
             await this._repo.AddAsync(opRequest);
 
-            await this._unitOfWork.CommitAsync();
-
             OperationTypeName operationTypeName = opType.Name;
             string patientName = patient.FullName.ToString();
             string doctorName = doctor.Name.ToString();
+
+            await this._logrepo.AddAsync(new Log(opRequest.ToJSON(operationTypeName.Name, patientName, doctorName), LogType.Update, LogEntity.OperationRequest, opRequest.Id));
+            await this._unitOfWork.CommitAsync();
 
             return OperationRequestMapper.ToDto(opRequest, operationTypeName, patientName, doctorName);
             //return null;
@@ -229,13 +233,15 @@ namespace Backoffice.Domain.OperationRequests
 
             var deadlineDate = DateTime.Parse(dto.DeadlineDate);
 
-            opReq.UpdateOperationRequest(deadlineDate, prio, dto.Description);
-
-            await this._unitOfWork.CommitAsync();
-
             OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
             string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
             string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            await this._logrepo.AddAsync(new Log(opReq.ToJSON(operationTypeName.Name, patientName, doctorName), LogType.Update, LogEntity.OperationRequest, opReq.Id));
+
+            opReq.UpdateOperationRequest(deadlineDate, prio, dto.Description);
+
+            await this._unitOfWork.CommitAsync();
 
             return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
             //return null;
@@ -246,15 +252,17 @@ namespace Backoffice.Domain.OperationRequests
             var opReq = await this._repo.GetByIdAsync(new OperationRequestId(id));
 
             if (opReq == null)
-                return null;
-
-            await this._repo.DeleteOpRequestAsync(opReq.Id);
-
-            await this._unitOfWork.CommitAsync();
+                throw new BusinessRuleValidationException("Error: Operation Request not found!");
 
             OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
             string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
             string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            await this._logrepo.AddAsync(new Log(opReq.ToJSON(operationTypeName.Name, patientName, doctorName), LogType.Delete, LogEntity.OperationRequest, opReq.Id));
+
+            await this._repo.DeleteOpRequestAsync(opReq.Id);
+
+            await this._unitOfWork.CommitAsync();
 
             return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
             //return null;

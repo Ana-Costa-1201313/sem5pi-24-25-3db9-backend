@@ -99,16 +99,16 @@ namespace Backoffice.Domain.OperationRequests
             this.Description = description;
         }
 
-        public string ToJSON()
+        public string ToJSON(string optypename, string patientname, string doctorname)
         {
             var jsonRepresentation = new
             {
                 Id = this.Id.Value,
-                OpType = new { this.OpType.Name.Name },  // Pass the name object directly
+                OperationType = optypename,  // Pass the name object directly
                 DeadlineDate = this.DeadlineDate,
                 Priority = this.Priority.ToString(),
-                Patient = new { this.Patient.FullName },  // Pass the name object directly
-                Doctor = new { this.Doctor.Name },  // Pass the name object directly
+                Patient = patientname,  // Pass the name object directly
+                Doctor = doctorname,  // Pass the name object directly
                 Status = this.Status.ToString(),
                 Description = this.Description
             };
