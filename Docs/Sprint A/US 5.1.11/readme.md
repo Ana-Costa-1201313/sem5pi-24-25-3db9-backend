@@ -1,21 +1,24 @@
-# US 5.1.9
+# US 5.1.11
 
 ## 1. Context
 
-This task appears in the start of the project's development, to be able to edit a patient profile.
+This task appears in the start of the project's development, to be able to search a list of patients by various attributes.
 
 
 ## 2. Requirements
 
-**US 5.1.9** As an Admin, I want to edit an existing patient profile, so that I can update their
-information when needed.
+**US 5.1.10** As an Admin, I want to list/search patient profiles by different attributes, so that I
+can view the details, edit, and remove patient profiles
 
 **Acceptance Criteria:**
 
-- Admins can search for and select a patient profile to edit.
-- Editable fields include name, contact information, medical history, and allergies.
-- Changes to sensitive data (e.g., contact information) trigger an email notification to the patient.
-- The system logs all profile changes for auditing purposes.
+- Admins can search patient profiles by various attributes, including name, email, date of birth,
+or medical record number.
+- The system displays search results in a list view with key patient information (name, email, date
+of birth).
+- Admins can select a profile from the list to view, edit, or delete the patient record.
+- The search results are paginated, and filters are available to refine the search results.
+
 
 **Dependencies/References:**
 
@@ -29,26 +32,8 @@ Some relevant answers excerpts are here specified:
 
 - **
 
-- **Question:** In this US an admin can edit a user profile. Does the system display a list of all users or the admin searchs by ID? Or both?
-  - **Answer:** this requirement is for the editing of the user profile. from a usability point of view, the user should be able to start this feature either by searching for a specific user or listing all users and selecting one.
-note that we are not doing the user interface of the system in this sprint.
-
-
-- **Question:** Regarding the editing of patient information, is contact information the only sensitive data? Is it the only data that triggers an email notification?
-  - **Answer:** faz parte das vossas responsabilidades no âmbito do módulo de proteçãod e dados e de acordo com a politica que venham a definir
-
-
-- **Question:** 
+- **Question:**
   - **Answer:** 
-
-
-- **Question:** 
-  - **Answer:** 
-
-
-- **Question:**  
-  - **Answer:** 
-
 
 
 - **Question:** 
@@ -57,8 +42,8 @@ note that we are not doing the user interface of the system in this sprint.
 
 
 The following **HTTP requests** will be implemented:
-- PATCH (to edit the new patient profile)
-- PUT (to edit the new patient profile)
+- GET By Various Attributes
+
 ## 4. Design
 
 This section presents the design adopted to solve the requirement.
@@ -67,26 +52,26 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.9 N1 SD](US5.1.9%20N1%20SD.png)
+![US5.1.11 N1 SD](US5.1.11%20N1%20SD.png)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.9 N2 SD](US5.1.9%20N2%20SD.png)
+![US5.1.11 N2 SD](US5.1.11%20N2%20SD.png)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.9 N3 SD PATCH](US5.1.9%20N3%20SD%20PATCH.png)
-![US5.1.9 N3 SD PUT](US5.1.9%20N3%20SD%20PUT.png)
+![US5.1.11 N3 SD](US5.1.11%20N3%20SD.png)
 
 
 
-### 4.5. Applied Design Patterns
+
+### 4.4. Applied Design Patterns
 
 - **Domain Driven Development (DDD):** the focus is the business logic and not the implementation.
 - **Data Transfer Object (DTO):** gives an abstraction layer to the domain, so that it's only presented specific information regarding the object.
@@ -101,6 +86,7 @@ This diagram guides the realization of the functionality, for level 3 process vi
 
 ### 4.5. Tests
 
+The following tests are to be developed:
 The following tests were developed:
 - Controller Tests
 - Service Tests
@@ -111,12 +97,12 @@ The following tests were developed:
 
 The implementation of this US is according to the design, as can be seen in the diagrams presented before.
 
-All commits referred the corresponding issue in GitHub, using the #10 tag, as well as a relevant commit message.
+All commits referred the corresponding issue in GitHub, using the #12 tag, as well as a relevant commit message.
 
 
 ## 6. Integration/Demonstration
 
-To edit a new patient profile, run the Backoffice app and send a PATCH or PUT HTTP request with the new patient data.
+To search a list of patients by various atttributes, run the Backoffice app and send a GET/ByVariousAttributes HTTP request with the attributes that you want to search.
 
 ## 7. Observations
 
