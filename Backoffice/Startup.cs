@@ -105,6 +105,11 @@ namespace Backoffice
                 {
                     dbBootstrap.StaffBootstrap();
                 }
+
+                if (!dbContext.OperationTypes.Any())
+                {
+                    dbBootstrap.OperationTypeBootstrap();
+                }
             }
         }
 
