@@ -81,6 +81,11 @@ After these client's clarifications, the following flow will be implemented:
 3- After that, a user may be created, using the staff professional email as the username, but also requesting a personal email just to be used once, to send the confirmation link (US 5.1.1);
 4 - Finally, the new staff member can insert the password and the user account will become active (US 5.1.1).
 
+### 3.1. Domain Model excerpt
+![DM Staff](DM%20Staff.png)
+
+
+### 3.2. HTTP requests
 
 The following **HTTP requests** will be implemented:
 - POST (to register the new staff profile)

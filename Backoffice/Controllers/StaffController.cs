@@ -149,7 +149,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                StaffDto staff = await _service.UpdateAsync(dto);
+                StaffDto staff = await _service.UpdateAsync(dto, false);
 
                 if (staff == null)
                 {
@@ -183,7 +183,7 @@ namespace Backoffice.Controllers
 
             try
             {
-                StaffDto staff = await _service.PartialUpdateAsync(dto);
+                StaffDto staff = await _service.UpdateAsync(dto, true);
 
                 if (staff == null)
                 {

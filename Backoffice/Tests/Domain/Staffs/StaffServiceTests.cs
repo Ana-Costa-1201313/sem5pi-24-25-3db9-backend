@@ -24,6 +24,10 @@ namespace Backoffice.Tests
 
         Mock<ILogRepository> logRepository;
 
+        Mock<IConfiguration> config;
+
+        Mock<IEmailService> emailService;
+
         Mock<StaffService> mockService;
 
         private void Setup(List<Staff> staffDb, List<Specialization> specializationsDb)
@@ -32,6 +36,8 @@ namespace Backoffice.Tests
             unitOfWork = new Mock<IUnitOfWork>();
             specRepository = new Mock<ISpecializationRepository>();
             logRepository = new Mock<ILogRepository>();
+            config = new Mock<IConfiguration>();
+            emailService = new Mock<IEmailService>();
 
 
             staffRepository.Setup(repo => repo.GetAllWithDetailsAsync(1, 5))
@@ -55,9 +61,13 @@ namespace Backoffice.Tests
             logRepository.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
             .ReturnsAsync(new Mock<Log>().Object);
 
-            unitOfWork.Setup(uow => uow.CommitAsync()).ReturnsAsync(0);
+            unitOfWork.Setup(uow => uow.CommitAsync())
+            .ReturnsAsync(0);
 
-            mockService = new Mock<StaffService>(unitOfWork.Object, staffRepository.Object, new StaffMapper(), specRepository.Object, logRepository.Object);
+            config.Setup(c => c["EmailSmtp:DefaultStaffConfirmationEmail"])
+            .Returns("1201313@isep.ipp.pt");
+
+            mockService = new Mock<StaffService>(unitOfWork.Object, staffRepository.Object, new StaffMapper(), specRepository.Object, logRepository.Object, emailService.Object, config.Object);
 
         }
 
@@ -622,7 +632,7 @@ namespace Backoffice.Tests
                 Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
-            var result = await service.UpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, false);
 
             staffRepository.Verify(repo => repo.GetByIdWithDetailsAsync(staff1.Id), Times.Once);
 
@@ -675,7 +685,7 @@ namespace Backoffice.Tests
             EditStaffDto editDto = new EditStaffDto
             {
                 Id = staff1.Id.AsGuid(),
-                Phone = "999999991",
+                Phone = "999999999",
                 Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
@@ -683,7 +693,7 @@ namespace Backoffice.Tests
             await service.Deactivate(staff1.Id.AsGuid());
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                 await service.UpdateAsync(editDto));
+                 await service.UpdateAsync(editDto, false));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
 
@@ -737,7 +747,7 @@ namespace Backoffice.Tests
             };
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                await service.UpdateAsync(editDto));
+                await service.UpdateAsync(editDto, false));
 
             Assert.Equal("Error: The staff must have a phone number!", exception.Message);
         }
@@ -788,7 +798,7 @@ namespace Backoffice.Tests
                 Specialization = "skin",
                 AvailabilitySlots = AvailabilitySlots2
             };
-            var result = await service.PartialUpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, true);
 
             staffRepository.Verify(repo => repo.GetByIdWithDetailsAsync(staff1.Id), Times.Once);
 
@@ -850,7 +860,7 @@ namespace Backoffice.Tests
             await service.Deactivate(staff1.Id.AsGuid());
 
             var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(async () =>
-                 await service.PartialUpdateAsync(editDto));
+                 await service.UpdateAsync(editDto, true));
 
             Assert.Equal("Error: Can't update an inactive staff!", exception.Message);
 
@@ -903,7 +913,7 @@ namespace Backoffice.Tests
                 AvailabilitySlots = AvailabilitySlots2
             };
 
-            var result = await service.PartialUpdateAsync(editDto);
+            var result = await service.UpdateAsync(editDto, true);
 
             Assert.NotNull(result);
 
