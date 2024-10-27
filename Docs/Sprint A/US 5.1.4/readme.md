@@ -1,40 +1,33 @@
-# US 5.1.16
+# US 5.1.4
 
 ## 1. Context
 
-This task appears in the start of the project's development, to be able to request an operation.
+This task appears in the start of the project's development, to be able to update a profile as a patient.
 
 
 ## 2. Requirements
 
-**US 5.1.16** As a Doctor, I want to request an operation, so that the Patient has access to the necessary healthcare.
+**US 5.1.4** As a Patient, I want to update my user profile, so that I can change my personal details and preferences.
 
 **Acceptance Criteria:**
 
-- Doctors can create an operation request by selecting the patient, operation type, priority, and suggested deadline.
-- The system validates that the operation type matches the doctor’s specialization.
-- The operation request includes:
-    - Patient ID
-  - Doctor ID
-  - Operation Type
-  - Deadline
-  - Priority
-- The system confirms successful submission of the operation request and logs the request in the patient’s medical history.
+- Patients can log in and update their profile details (e.g., name, contact information, preferences).
+- Changes to sensitive data, such as email, trigger an additional verification step (e.g., confirmation email).
+- All profile updates are securely stored in the system.
+- The system logs all changes made to the patient's profile for audit purposes.
 
 
 **Dependencies/References:**
 
-The user logged in must be registered in the system as a 'Doctor'.
+The user logged in must be registered in the system as a 'Patient'.
 
 ## 3. Analysis
 
 The following requirements specified by the client were considered during the development of this user story:
 
-- **Question:** Does the system adds automically the operation request to the medical history of the patient?
-  - **Answer:** No need. it will be the doctor's responsibility to add it.
-
-- **Question:** Can a doctor make more than one operation request for the same patient? If so, is there any limit or rules to follow? For example, doctors can make another operation request for the same patient as long as it's not the same operation type?
-  - **Answer:** It should not be possible to have more than one "open" surgery request (that is, a surgery that is requested or scheduled but not yet performed) for the same patient and operation type.
+- **Question:** My question is whether patients can also update patient profile information in addition to user profile information.
+And if so, is there any information in the patient profile that can be updated?
+  - **Answer:**  If we're talking about contact information, yes. Okay? So the patient, if he has a user in the system, he should be able to at least activate, as you can see in the second acceptance criteria, to activate the update. For example, if I want to change my phone number or if I want to change my email, then that cannot be changed directly through my user contact. It needs to be verified and validated. That is what is expected. You cannot change anything related to the medical information.
 
 ## 4. Design
 
@@ -42,15 +35,15 @@ The following requirements specified by the client were considered during the de
 
 ### 4.1. Level 1 Sequence Diagram
 
-![US5.1.16 N1 SD](US5.1.16%20N1%20SD.svg)
+![US5.1.4 N1 SD](US5.1.4%20N1%20SD.svg)
 
 ### 4.2. Level 2 Sequence Diagram
 
-![US5.1.16 N2 SD](US5.1.16%20N2%20SD.svg)
+![US5.1.4 N2 SD](US5.1.4%20N2%20SD.svg)
 
 ### 4.3. Level 3 Sequence Diagram
 
-![US5.1.16 N3 SD](US5.1.16%20N3%20SD.svg)
+![US5.1.4 N3 SD](US5.1.4%20N3%20SD.svg)
 
 ### 4.4. Applied Design Patterns
 

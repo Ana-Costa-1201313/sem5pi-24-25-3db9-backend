@@ -141,6 +141,32 @@ namespace Backoffice.Controllers
             }
         }
 
+        [HttpPatch("patient/{id}")]
+        public async Task<ActionResult<PatientDto>> PatchAsPatient(Guid id, EditPatientAsPatientDto dto)
+        {
+             try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Patient" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); //Erro na validação erro 400 
+            }
+
+            try 
+            {
+                var updatedPatient = await _service.PatchAsPatientAsync(id,dto);
+                if(updatedPatient == null)
+                {
+                    return NotFound(); // Erro 404, nao foi encontrado
+                }
+                return Ok(updatedPatient); // Sucesso 200 e o patient profile updated 
+
+            } catch (BusinessRuleValidationException e){
+                        return BadRequest(new {Message = e.Message}); // Erro 400, erro na validação dos dados
+            }
+        }
+
         [HttpGet("SearchByVariousAttributes")]
         public async Task<ActionResult<List<SearchPatientDto>>> SearchPatients(
             //[FromQuery] usado para ir buscar à query o que existe la porque como todos sao opcionais podem existir ou nao 

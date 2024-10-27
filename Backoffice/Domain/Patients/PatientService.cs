@@ -169,6 +169,55 @@ namespace Backoffice.Domain.Patients{
             return _patientMapper.ToPatientDto(patient);
         }
 
+        public async Task<PatientDto> PatchAsPatientAsync(Guid id, EditPatientAsPatientDto dto)
+        {
+            var patient = await _repo.GetByIdAsync(new PatientId(id));
+            if(patient == null)
+                return null;
+
+            var oldEmail = patient.Email._Email;
+            var oldPhoneNumber = patient.Phone.PhoneNum;
+            
+           if(!string.IsNullOrEmpty(dto.FirstName))
+            patient.ChangeFirstName(dto.FirstName);
+
+            if(!string.IsNullOrEmpty(dto.LastName))
+            patient.ChangeLastName(dto.LastName);
+
+            if(!string.IsNullOrEmpty(dto.FullName))
+            patient.ChangeFullName(dto.FullName);
+
+            if(!string.IsNullOrEmpty(dto.Email))
+            patient.ChangeEmail(dto.Email);
+
+            if(!string.IsNullOrEmpty(dto.Phone))
+            patient.ChangePhone(dto.Phone);
+
+            //if(dto.Allergies != null)
+            //patient.ChangeAllergies(dto.Allergies);
+
+            if(!string.IsNullOrEmpty(dto.EmergencyContact))
+            patient.ChangeEmergencyContact(dto.EmergencyContact);
+
+           
+            bool emailChanged = oldEmail != dto.Email;
+            bool phoneChanged = oldPhoneNumber != dto.Phone;
+
+            if (emailChanged || phoneChanged)
+            {
+            var message = "Your contact information has been updated, if you didn't request this change please contact us !!!";
+            var subject = "Patient Profile Updated";
+        
+           
+            await _emailService.SendEmail(oldEmail, message, subject);
+            }
+
+            await _repoLog.AddAsync(new Log(patient.ToJSON(),LogType.Update,LogEntity.Patient,patient.Id));
+
+            await _unitOfWork.CommitAsync();
+            return _patientMapper.ToPatientDto(patient);
+        }
+
         //Dar delete de um Patient profile
         public async Task<PatientDto> DeleteAsync(Guid id)
         {
