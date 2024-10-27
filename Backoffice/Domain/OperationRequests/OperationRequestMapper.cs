@@ -16,12 +16,12 @@ namespace Backoffice.Domain.OperationRequests
                 OpTypeName = operationRequest.OpType.Name.ToString(),
                 OpTypeId = operationRequest.OpTypeId.ToString(),
                 DeadlineDate = operationRequest.DeadlineDate.ToString(),
-                Priority = operationRequest.Priority,
+                Priority = operationRequest.Priority.ToString(),
                 PatientName = operationRequest.Patient.FullName.ToString(),
                 PatientId = operationRequest.PatientId.ToString(),
                 DoctorName = operationRequest.Doctor.Name.ToString(),
                 DoctorId = operationRequest.DoctorId.ToString(),
-                Status = operationRequest.Status,
+                Status = operationRequest.Status.ToString(),
                 Description = operationRequest.Description
             };
         }
@@ -33,7 +33,7 @@ namespace Backoffice.Domain.OperationRequests
             return new OperationRequest(
                 operationType,
                 DateTime.Parse(dto.DeadlineDate),
-                dto.Priority,
+                Enum.TryParse<Priority>(dto.Priority, out var priority) ? priority : (Priority?)null,
                 patient,
                 doctor,
                 dto.Description

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Backoffice.Domain.OperationRequests;
+using Backoffice.Domain.OperationRequests.ValueObjects;
 
 namespace Backoffice.Infraestructure.OperationRequests
 {
@@ -18,10 +19,18 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .HasColumnName("DeadlineDate").IsRequired();
 
             builder.Property(b => b.Priority)
-                .HasColumnName("Priority").IsRequired();
+                .HasConversion(
+                    p => p.ToString(),
+                    p => (Priority)Enum.Parse(typeof(Priority), p))
+                .HasColumnName("Priority")
+                .IsRequired();
 
             builder.Property(b => b.Status)
-                .HasColumnName("Status").IsRequired();
+                .HasConversion(
+                    s => s.ToString(),
+                    s => (Status)Enum.Parse(typeof(Status), s))
+                .HasColumnName("Status")
+                .IsRequired();
 
             builder.Property(b => b.Description)
                 .HasColumnName("Description").IsRequired();

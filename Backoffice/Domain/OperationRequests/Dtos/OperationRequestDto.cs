@@ -9,16 +9,12 @@ namespace Backoffice.Domain.OperationRequests
         public string OpTypeName { get; set; }
         public string OpTypeId { get; set; }
         public string DeadlineDate { get; set; }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public Priority Priority { get; set; }
+        public string Priority { get; set; }
         public string PatientName { get; set; }
         public string PatientId { get; set; }
         public string DoctorName { get; set; }
         public string DoctorId { get; set; }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public Status Status { get; set; }
+        public string Status { get; set; }
         public string Description { get; set; }
     }
 }
