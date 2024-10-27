@@ -79,6 +79,8 @@ All commits referred the corresponding issue in GitHub, using the #21 tag, as we
 
 ## 6. Integration/Demonstration
 
+To edit an operation request, run the Backoffice app and send a PUT HTTP request with your doctor ID and the updated operation request data.
+Then send a GET request with the operation request ID and check the updated data.
 
 ## 7. Observations
 

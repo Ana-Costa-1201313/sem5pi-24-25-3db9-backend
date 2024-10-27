@@ -38,8 +38,6 @@ The following requirements specified by the client were considered during the de
 
 ## 4. Design
 
-
-
 ### 4.1. Level 1 Sequence Diagram
 
 ![US5.1.16 N1 SD](US5.1.16%20N1%20SD.svg)
@@ -67,8 +65,7 @@ The following requirements specified by the client were considered during the de
 
 ### 4.5. Tests
 
-
-
+The OperationRequest Controller will be tested to check if the request is properly created and if the responses are correct.
 
 ## 5. Implementation
 
@@ -79,6 +76,7 @@ All commits referred the corresponding issue in GitHub, using the #19 tag, as we
 
 ## 6. Integration/Demonstration
 
+To register a new operation request, run the Backoffice app and send a POST HTTP request with the new operation request data.
 
 ## 7. Observations
 

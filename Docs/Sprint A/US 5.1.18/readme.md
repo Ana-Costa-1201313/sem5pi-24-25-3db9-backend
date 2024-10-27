@@ -75,6 +75,8 @@ All commits referred the corresponding issue in GitHub, using the #22 tag, as we
 
 ## 6. Integration/Demonstration
 
+To deactivate an operation request, run the Backoffice app and send a DELETE HTTP request with the operation request ID.
+Then send a GET request with the operation request ID and check that the data has been deleted.
 
 ## 7. Observations
 
