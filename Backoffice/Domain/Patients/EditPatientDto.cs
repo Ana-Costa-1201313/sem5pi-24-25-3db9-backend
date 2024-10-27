@@ -1,4 +1,4 @@
-namespace Backoffice.Domain.Patient
+namespace Backoffice.Domain.Patients
 {
     public class EditPatientDto
     {

@@ -2,7 +2,6 @@
 
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Patients;
-using Backoffice.Domain.Patient;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.Logs;
 using Backoffice.Domain.Users;

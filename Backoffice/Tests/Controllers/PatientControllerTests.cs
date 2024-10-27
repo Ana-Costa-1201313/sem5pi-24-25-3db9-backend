@@ -1,7 +1,6 @@
 using Azure.Core.Pipeline;
 using Backoffice.Controllers;
 using Backoffice.Domain.Logs;
-using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;

@@ -1,5 +1,4 @@
 using Backoffice.Domain.Logs;
-using Backoffice.Domain.Patient;
 using Backoffice.Domain.Patients;
 using Backoffice.Domain.Shared;
 using Backoffice.Domain.Users;

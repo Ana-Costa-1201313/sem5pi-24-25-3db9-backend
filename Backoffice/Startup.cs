@@ -19,9 +19,10 @@ using Backoffice.Infraestructure.Specializations;
 using Backoffice.Domain.Logs;
 using Backoffice.Infraestructure.Logs;
 using System.Text.Json.Serialization;
+using Backoffice.Domain.OperationRequests;
+using Backoffice.Infraestructure.OperationRequests;
 using Backoffice.Domain.Patients;
 using Backoffice.Infraestructure.Patients;
-
 
 
 namespace Backoffice
@@ -51,7 +52,7 @@ namespace Backoffice
             services.AddDbContext<BDContext>(opt =>
                 opt.UseSqlite($"Data Source={DbPath}")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
+        
             ConfigureMyServices(services);
 
             services.AddEndpointsApiExplorer();
@@ -134,10 +135,16 @@ namespace Backoffice
 
             services.AddTransient<IStaffRepository, StaffRepository>();
             services.AddTransient<StaffService>();
-
             services.AddTransient<StaffMapper>();
             services.AddTransient<OperationTypeMapper>();
             services.AddTransient<SpecializationMapper>();
+
+            services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<PatientService>();
+            services.AddTransient<PatientMapper>();
+
+            services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+            services.AddTransient<OperationRequestService>();
 
             services.AddTransient<IExternalApiServices, ExternalApiServices>();
 
