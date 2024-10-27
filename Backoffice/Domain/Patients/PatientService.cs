@@ -176,7 +176,7 @@ namespace Backoffice.Domain.Patients{
             var patient = await _repo.GetByIdAsync(new PatientId(id));
 
             if(patient == null)
-                throw new BusinessRuleValidationException("Error: Patient doesn't exist !!!");
+                return null;
                 
             _repo.Remove(patient);
 

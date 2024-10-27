@@ -42,7 +42,7 @@ Some relevant answers excerpts are here specified:
 
 
 The following **HTTP requests** will be implemented:
-- GET ()
+- GET By Various Attributes
 
 ## 4. Design
 
@@ -52,21 +52,21 @@ This section presents the design adopted to solve the requirement.
 
 This diagram guides the realization of the functionality, for level 1 procecss view.
 
-![US5.1.10 N1 SD](US5.1.10%20N1%20SD.png)
+![US5.1.11 N1 SD](US5.1.11%20N1%20SD.png)
 
 
 ### 4.2. Level 2 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 2 procecss view.
 
-![US5.1.10 N2 SD](US5.1.10%20N2%20SD.png)
+![US5.1.11 N2 SD](US5.1.11%20N2%20SD.png)
 
 
 ### 4.3. Level 3 Sequence Diagram
 
 This diagram guides the realization of the functionality, for level 3 process view.
 
-![US5.1.10 N3 SD](US5.1.10%20N3%20SD.png)
+![US5.1.11 N3 SD](US5.1.11%20N3%20SD.png)
 
 
 
@@ -97,12 +97,12 @@ The following tests were developed:
 
 The implementation of this US is according to the design, as can be seen in the diagrams presented before.
 
-All commits referred the corresponding issue in GitHub, using the #11 tag, as well as a relevant commit message.
+All commits referred the corresponding issue in GitHub, using the #12 tag, as well as a relevant commit message.
 
 
 ## 6. Integration/Demonstration
 
-To delete a patient profile, run the Backoffice app and send a DELETE HTTP request with the new patient data.
+To search a list of patients by various atttributes, run the Backoffice app and send a GET/ByVariousAttributes HTTP request with the attributes that you want to search.
 
 ## 7. Observations
 

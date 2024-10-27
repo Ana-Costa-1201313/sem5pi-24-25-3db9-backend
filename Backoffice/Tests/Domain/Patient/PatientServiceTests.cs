@@ -379,9 +379,9 @@ namespace Backoffice.Tests
 
             var id = Guid.NewGuid();
 
-            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(()=> service.DeleteAsync(id));
+            var result = await service.DeleteAsync(id);
 
-            Assert.Equal("Error: Patient doesn't exist !!!",exception.Message);
+            Assert.Null(result);
         }
 
         [Fact]
