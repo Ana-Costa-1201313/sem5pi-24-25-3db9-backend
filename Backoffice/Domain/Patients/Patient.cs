@@ -30,7 +30,6 @@ namespace Backoffice.Domain.Patients
         public bool isInactive{get; private set;}
         private Patient(){}
 
-         public string EmailAddress => Email._Email;
         public Patient(CreatePatientDto dto, string sequencialNumber)
         {
             this.Id = new PatientId(Guid.NewGuid());
