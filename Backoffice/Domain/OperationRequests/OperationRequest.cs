@@ -115,5 +115,8 @@ namespace Backoffice.Domain.OperationRequests
 
             return JsonConvert.SerializeObject(jsonRepresentation, Formatting.Indented);
         }
+
+        // TODO: create Appointment class and associate with OperationRequest
+        // TODO: update OperationRequest related acceptance criteria
     }
 }
