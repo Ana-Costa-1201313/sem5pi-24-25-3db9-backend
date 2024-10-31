@@ -118,5 +118,7 @@ namespace Backoffice.Domain.OperationRequests
 
         // TODO: create Appointment class and associate with OperationRequest
         // TODO: update OperationRequest related acceptance criteria
+        // TODO: update operation request GET list
+        // TODO: update operation request related tests
     }
 }
