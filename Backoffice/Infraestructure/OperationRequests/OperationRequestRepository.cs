@@ -81,5 +81,37 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .ToListAsync()
             ;
         }
+
+        public async Task<List<OperationRequest>> FilterOpRequestsAsync(StaffId doctorId, PatientId patientId, string operationTypeName, Priority? priority, Status? status)
+        {
+            var query = _context.OperationRequests
+                .Include(x => x.Patient)
+                .Include(x => x.Doctor)
+                .Include(x => x.OpType)
+                .AsQueryable()
+            ;
+
+            if (patientId != null)
+            {
+                query = query.Where(x => x.Patient.Id.Equals(patientId));
+            }
+
+            if (!string.IsNullOrEmpty(operationTypeName))
+            {
+                query = query.Where(x => x.OpType.Name.Name.Equals(operationTypeName));
+            }
+
+            if (priority.HasValue && priority.Value != Priority.Null)
+            {
+                query = query.Where(x => x.Priority.Equals(priority.Value));
+            }
+
+            if (status.HasValue && status.Value != Status.Null)
+            {
+                query = query.Where(x => x.Status.Equals(status.Value));
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }
