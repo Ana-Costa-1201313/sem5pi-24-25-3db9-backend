@@ -249,7 +249,7 @@ namespace Backoffice.Tests
                 };
                 
 
-                var patient = new Patient(patientDto1,"202410000001");
+                var patient = new Patient(patientDto1,"202411000001");
                 _repo.Setup(repo => repo.AddAsync(It.IsAny<Patient>())).ReturnsAsync(patient);
 
                 _logRepo.Setup(repo => repo.AddAsync(It.IsAny<Log>()))
@@ -265,7 +265,7 @@ namespace Backoffice.Tests
                 Assert.Equal(new DateTime(1996,6,22),value.DateOfBirth);
                 Assert.Equal("rodriBallonDOr@gmail.com",value.Email);
                 Assert.Equal("919871010",value.Phone);
-                Assert.Equal("202410000001",value.MedicalRecordNumber);
+                Assert.Equal("202411000001",value.MedicalRecordNumber);
          }
 
         [Fact]
