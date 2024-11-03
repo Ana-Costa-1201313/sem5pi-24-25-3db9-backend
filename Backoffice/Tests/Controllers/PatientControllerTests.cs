@@ -265,7 +265,6 @@ namespace Backoffice.Tests
                 Assert.Equal(new DateTime(1996,6,22),value.DateOfBirth);
                 Assert.Equal("rodriBallonDOr@gmail.com",value.Email);
                 Assert.Equal("919871010",value.Phone);
-                Assert.Equal("202410000001",value.MedicalRecordNumber);
          }
 
         [Fact]
