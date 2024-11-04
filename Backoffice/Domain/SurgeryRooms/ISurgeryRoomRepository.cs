@@ -1,0 +1,11 @@
+using Backoffice.Domain.Shared;
+
+namespace Backoffice.Domain.SurgeryRooms
+{
+    public interface ISurgeryRoomRepository : IRepository<SurgeryRoom, SurgeryRoomId>
+    {
+        public Task<List<SurgeryRoom>> GetAllSurgeryRoomsAsync();
+        //public Task<SurgeryRoom> GetOpRequestByIdAsync(SurgeryRoomId id);
+        //public Task<List<SurgeryRoom>> GetOpRequestsByDoctorIdAsync(StaffId doctorId);
+    }
+}
