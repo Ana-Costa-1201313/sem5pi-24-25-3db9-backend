@@ -143,7 +143,84 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
-        }/*
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<OperationRequestDto>> Create(CreateOperationRequestDto dto)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Doctor", "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var opRequest = await _service.AddAsync(dto);
+
+                return CreatedAtAction(nameof(GetById), new { id = opRequest.Id }, opRequest);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<OperationRequestDto>> Update(Guid id, [FromBody] EditOperationRequestDto dto)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                var opRequest = await _service.PatchAsync(id, dto );
+
+                if (opRequest == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(opRequest);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                return BadRequest(new { Message = e.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            var opRequest = await _service.DeleteAsync(id);
+
+            if (opRequest == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(opRequest);
+        }
+
+        /*
 
         [HttpGet("doctorGetByPatientEmail/{doctorEmail}/{patientEmail}")]
         public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByPatientEmailAsDoctor(string doctorEmail, string patientEmail)
@@ -260,80 +337,5 @@ namespace Backoffice.Controllers
                 return BadRequest(new { Message = e.Message });
             }
         }*/
-
-        [HttpPost]
-        public async Task<ActionResult<OperationRequestDto>> Create(CreateOperationRequestDto dto)
-        {
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Doctor", "Admin" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            try
-            {
-                var opRequest = await _service.AddAsync(dto);
-
-                return CreatedAtAction(nameof(GetById), new { id = opRequest.Id }, opRequest);
-            }
-            catch (BusinessRuleValidationException e)
-            {
-                return BadRequest(new { Message = e.Message });
-            }
-        }
-
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<OperationRequestDto>> Update(Guid id, [FromBody] EditOperationRequestDto dto)
-        {
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            try
-            {
-                var opRequest = await _service.PatchAsync(id, dto );
-
-                if (opRequest == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(opRequest);
-            }
-            catch (BusinessRuleValidationException e)
-            {
-                return BadRequest(new { Message = e.Message });
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<OperationRequestDto>> Delete(Guid id)
-        {
-            try
-            {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
-            var opRequest = await _service.DeleteAsync(id);
-
-            if (opRequest == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(opRequest);
-        }
     }
 }
