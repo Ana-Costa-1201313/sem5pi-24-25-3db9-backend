@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Backoffice.Domain.Staffs;
 using Backoffice.Domain.Shared;
+using Microsoft.AspNetCore.Cors;
 
 namespace Backoffice.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
+    [EnableCors("SpaPolicy")]
     public class StaffController : ControllerBase
     {
         private readonly StaffService _service;
@@ -225,6 +227,25 @@ namespace Backoffice.Controllers
             {
                 return BadRequest(new { Message = e.Message });
             }
+        }
+
+        [HttpGet("totalRecords")]
+        public async Task<ActionResult<int>> GetTotalRecords()
+        {
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            int totalRecords;
+
+            totalRecords = await _service.GetTotalRecords();
+
+            return Ok(totalRecords);
         }
     }
 }

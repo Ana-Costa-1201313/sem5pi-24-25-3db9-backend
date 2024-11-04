@@ -70,5 +70,10 @@ namespace Backoffice.Infraestructure.Staffs
 
             return result.OrderBy(s => s.Id).Skip((pageNum - 1) * pageSize).Take(pageSize).ToList();
         }
+
+        public async Task<int> CountAsync()
+        {
+            return await _context.Staff.CountAsync();
+        }
     }
 }

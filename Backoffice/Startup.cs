@@ -58,8 +58,19 @@ namespace Backoffice
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SpaPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +90,8 @@ namespace Backoffice
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("SpaPolicy");
 
             app.UseAuthorization();
 
