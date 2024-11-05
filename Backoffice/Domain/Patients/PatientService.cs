@@ -71,11 +71,11 @@ namespace Backoffice.Domain.Patients{
             }
             catch (DbUpdateException e)
             {
-                if(e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Patients.Email"))
+                if(e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Patient.Email"))
                 {
                     throw new BusinessRuleValidationException("Error: This email is already in use !!!");
                 }
-                if(e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Patients.Phone"))
+                if(e.InnerException != null && e.InnerException.Message.Contains("UNIQUE constraint failed: Patient.Phone"))
                 {
                     throw new BusinessRuleValidationException("Error: This Phone Number is already in use !!!");
                 }
