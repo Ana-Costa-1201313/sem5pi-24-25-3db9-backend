@@ -6,6 +6,7 @@ namespace Backoffice.Domain.Appointments
         public Guid OpRequestId { get; set; }
         public string StaffIds { get; set; }
         public Guid SurgeryRoomId { get; set; }
+        public Int32 SurgeryRoomNumber { get; set; }
         public string DateTime { get; set; }
         public string Status { get; set; }
     }

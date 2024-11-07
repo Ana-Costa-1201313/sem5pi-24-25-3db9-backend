@@ -17,6 +17,7 @@ namespace Backoffice.Domain.Appointments
                 OpRequestId = appointment.OperationRequestId?.AsGuid() ?? Guid.Empty,
                 StaffIds = appointment.StaffIds.ToString(),
                 SurgeryRoomId = appointment.SurgeryRoomId?.AsGuid() ?? Guid.Empty,
+                SurgeryRoomNumber = appointment.SurgeryRoom.RoomNumber,
                 DateTime = appointment.DateTime.ToString(),
                 Status = appointment.Status.ToString()
             };

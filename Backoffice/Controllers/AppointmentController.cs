@@ -36,5 +36,30 @@ namespace Backoffice.Controllers
 
             return Ok(appointments);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<AppointmentDto>> Create(CreateAppointmentDto appointmentDto)
+        {/*
+            try
+            {
+                await _authService.IsAuthorized(Request, new List<string> { "Admin" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }*/
+
+            try
+            {
+                var appointment = await _service.CreateAsync(appointmentDto);
+                return Ok(appointment);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            //return null;
+        }
     }
 }

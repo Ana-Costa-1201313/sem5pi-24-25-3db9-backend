@@ -18,5 +18,11 @@ namespace Backoffice.Infraestructure.SurgeryRooms
                 .ToListAsync()
             ;
         }
+
+        public async Task<SurgeryRoom> GetSurgeryRoomByIdAsync(SurgeryRoomId id)
+        {
+            return await _context.SurgeryRooms
+                .Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+        }
     }
 }
