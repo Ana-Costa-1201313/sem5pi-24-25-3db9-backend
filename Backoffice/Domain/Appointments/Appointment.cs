@@ -21,7 +21,7 @@ namespace Backoffice.Domain.Appointments
         public DateTime DateTime { get; set; }
         public AppointmentStatus Status { get; set; }
 
-        private Appointment() { }
+        private Appointment(){}
 
         public Appointment(OperationRequest operationRequest, List<Staff> staff, SurgeryRoom surgeryRoom, DateTime dateTime)
         {

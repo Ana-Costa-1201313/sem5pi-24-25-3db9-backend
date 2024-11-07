@@ -5,6 +5,7 @@ using Backoffice.Domain.Patients;
 using Backoffice.Domain.Staffs;
 using Microsoft.EntityFrameworkCore;
 using Backoffice.Domain.OperationRequests.ValueObjects;
+using Backoffice.Domain.Shared;
 
 namespace Backoffice.Infraestructure.OperationRequests
 {
@@ -29,38 +30,26 @@ namespace Backoffice.Infraestructure.OperationRequests
                 .Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
         }
 
+        public async Task<OperationRequest> PickOperationRequestByIdAsync(OperationRequestId id)
+        {
+            var operationRequest = await _context.OperationRequests
+            .Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+
+            if (operationRequest != null)
+            {
+                if (operationRequest.Status == Status.Picked) throw new BusinessRuleValidationException("Error: The operation request is already picked.");
+
+                operationRequest.ChangeStatus();
+                await _context.SaveChangesAsync();
+            }
+
+            return operationRequest;
+        }
+
         public async Task<List<OperationRequest>> GetOpRequestsByDoctorIdAsync(StaffId doctorId)
         {
             return await _context.OperationRequests
                 .Where(x => x.DoctorId.Equals(doctorId))
-                .ToListAsync();
-        }
-        
-        public async Task<List<OperationRequest>> GetOpRequestsByPatientIdAsDoctorAsync(StaffId staffId, PatientId patientId)
-        {
-            return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.PatientId.Equals(patientId))
-                .ToListAsync();
-        }
-
-        public async Task<List<OperationRequest>> GetOpRequestsByOperationTypeIdAsDoctorAsync(StaffId staffId, OperationTypeId operationTypeId)
-        {
-            return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.OpTypeId.Equals(operationTypeId))
-                .ToListAsync();
-        }
-
-        public async Task<List<OperationRequest>> GetOpRequestsByPriorityAsDoctorAsync(StaffId staffId, Priority priority)
-        {
-            return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.Priority.Equals(priority))
-                .ToListAsync();
-        }
-
-        public async Task<List<OperationRequest>> GetOpRequestsByStatusAsDoctorAsync(StaffId staffId, Status status)
-        {
-            return await _context.OperationRequests
-                .Where(x => x.DoctorId.Equals(staffId) && x.Status.Equals(status))
                 .ToListAsync();
         }
 
@@ -113,5 +102,34 @@ namespace Backoffice.Infraestructure.OperationRequests
 
             return await query.ToListAsync();
         }
+
+        /*
+        public async Task<List<OperationRequest>> GetOpRequestsByPatientIdAsDoctorAsync(StaffId staffId, PatientId patientId)
+        {
+            return await _context.OperationRequests
+                .Where(x => x.DoctorId.Equals(staffId) && x.PatientId.Equals(patientId))
+                .ToListAsync();
+        }
+
+        public async Task<List<OperationRequest>> GetOpRequestsByOperationTypeIdAsDoctorAsync(StaffId staffId, OperationTypeId operationTypeId)
+        {
+            return await _context.OperationRequests
+                .Where(x => x.DoctorId.Equals(staffId) && x.OpTypeId.Equals(operationTypeId))
+                .ToListAsync();
+        }
+
+        public async Task<List<OperationRequest>> GetOpRequestsByPriorityAsDoctorAsync(StaffId staffId, Priority priority)
+        {
+            return await _context.OperationRequests
+                .Where(x => x.DoctorId.Equals(staffId) && x.Priority.Equals(priority))
+                .ToListAsync();
+        }
+
+        public async Task<List<OperationRequest>> GetOpRequestsByStatusAsDoctorAsync(StaffId staffId, Status status)
+        {
+            return await _context.OperationRequests
+                .Where(x => x.DoctorId.Equals(staffId) && x.Status.Equals(status))
+                .ToListAsync();
+        }*/
     }
 }

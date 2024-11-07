@@ -85,6 +85,21 @@ namespace Backoffice.Domain.OperationRequests
             //return null;
         }
 
+        public async Task<OperationRequestDto> PickByIdAsync(Guid id)
+        {
+            var opReq = await this._repo.PickOperationRequestByIdAsync(new OperationRequestId(id));
+
+            if (opReq == null)
+                throw new BusinessRuleValidationException("Error: Operation Request not found!");
+
+            OperationTypeName operationTypeName = _optyperepo.GetByIdAsync(opReq.OpTypeId).Result.Name;
+            string patientName = _patientrepo.GetByIdAsync(opReq.PatientId).Result.FullName.ToString();
+            string doctorName = _doctorrepo.GetByIdAsync(opReq.DoctorId).Result.Name.ToString();
+
+            return OperationRequestMapper.ToDto(opReq, operationTypeName, patientName, doctorName);
+            //return null;
+        }
+
         public async Task<OperationRequestDto> AddAsync(CreateOperationRequestDto dto)
         {
             var opType = await this._optyperepo.GetByOperationTypeName(dto.OpTypeName);

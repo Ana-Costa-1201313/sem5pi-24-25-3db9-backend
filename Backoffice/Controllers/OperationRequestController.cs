@@ -116,33 +116,17 @@ namespace Backoffice.Controllers
             }
         }
 
-        [HttpGet("doctorGetAll/{doctorId}")]
-        public async Task<ActionResult<IEnumerable<OperationRequestDto>>> GetAllByDoctorId(string doctorId)
+        [HttpGet("pick/{id}")]
+        public async Task<ActionResult<OperationRequestDto>> Pick(Guid id)
         {
-            try
+            var OperationRequest = await _service.PickByIdAsync(id);
+
+            if (OperationRequest == null)
             {
-                await _authService.IsAuthorized(Request, new List<string> { "Admin", "Doctor" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
 
-            try
-            {
-                var OperationRequests = await _service.GetAllByDoctorIdAsync(doctorId);
-
-                if (OperationRequests == null || !OperationRequests.Any())
-                {
-                    return NotFound();
-                }
-
-                return Ok(OperationRequests);
-            }
-            catch (BusinessRuleValidationException e)
-            {
-                return BadRequest(new { Message = e.Message });
-            }
+            return OperationRequest;
         }
 
         [HttpPost]
