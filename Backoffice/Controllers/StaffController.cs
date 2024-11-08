@@ -7,7 +7,6 @@ namespace Backoffice.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    [EnableCors("SpaPolicy")]
     public class StaffController : ControllerBase
     {
         private readonly StaffService _service;
